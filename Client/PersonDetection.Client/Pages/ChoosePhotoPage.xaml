@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PersonDetection.Client.Pages.ChoosePhotoPage"
+             xmlns:viewmodel="clr-namespace:PersonDetection.Client.Application.ViewModels;assembly=PersonDetection.Client.Application"
+             x:DataType="viewmodel:ChoosePhotoViewModel">
+    <ContentPage.Content>
+        <VerticalStackLayout Padding="16" Spacing="16">
+            <Button Text="Add Photo" Command="{Binding AddNewPhotoCommand}"></Button>
+        </VerticalStackLayout>
+    </ContentPage.Content>
+</ContentPage>
