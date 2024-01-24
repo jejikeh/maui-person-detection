@@ -5,11 +5,9 @@ namespace PersonDetection.Client.Infrastructure;
 
 public static class InfrastructureInjection
 {
-    public static IServiceCollection UseInfrastructure(this IServiceCollection serviceCollection)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddHttpClient();
         serviceCollection.AddSingleton<HttpClientProvider>();
-        serviceCollection.AddMemoryCache();
         serviceCollection.AddScoped<CacheHttpClientService>();
         serviceCollection.AddScoped<IPhotoProcessService, HttpPhotoProcessService>();
         serviceCollection.AddSingleton<IProcessedPhotoGallery, ProcessedPhotoGallery>();
