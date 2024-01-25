@@ -1,7 +1,9 @@
+using Microsoft.Extensions.DependencyInjection;
 using PersonDetection.Client.Application.Services;
+using PersonDetection.Client.Services;
 
 #if ANDROID
-using PersonDetection.Client.Platforms.Android.Services;
+    using PersonDetection.Client.Platforms.Android.Services;
 #endif
 
 #if MACCATALYST
@@ -23,6 +25,7 @@ public static class PlatformServiceImplementationsInjection
     {
         #if ANDROID
             serviceCollection.AddSingleton<IPlatformFilePicker, AndroidFilePicker>();
+            serviceCollection.AddSingleton<IPlatformImageSourceLoader, AndroidImageSourceLoader>();
         #endif
         
         return serviceCollection;
@@ -31,9 +34,10 @@ public static class PlatformServiceImplementationsInjection
     private static IServiceCollection AddMacServiceImplementations(this IServiceCollection serviceCollection)
     {
         #if MACCATALYST
-                serviceCollection.AddSingleton<IPlatformFilePicker, MacFilePicker>();
+            serviceCollection.AddSingleton<IPlatformFilePicker, MacFilePicker>();
+            serviceCollection.AddSingleton<IPlatformImageSourceLoader, MacImageSourceLoader>();
+            serviceCollection.AddFilePicker();
         #endif
-        
         
         return serviceCollection;
     }

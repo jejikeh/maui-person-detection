@@ -10,5 +10,6 @@ public partial class AppShell
         InitializeComponent();
         
         Routing.RegisterRoute(nameof(ChoosePhotoPage), typeof(ChoosePhotoPage));
+        Routing.RegisterRoute(nameof(PhotoPage), typeof(PhotoPage));
     }
 }

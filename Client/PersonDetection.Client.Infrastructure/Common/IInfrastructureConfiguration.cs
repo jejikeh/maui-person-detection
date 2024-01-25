@@ -8,4 +8,6 @@ public interface IInfrastructureConfiguration
     
     public string DatabasePath =>
         Path.Combine(FileSystem.AppDataDirectory, DatabaseFileName);
+    
+    public bool SavePhotoToGallery { get; set; }
 }

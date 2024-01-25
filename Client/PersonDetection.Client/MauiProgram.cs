@@ -1,4 +1,5 @@
-﻿using PersonDetection.Client.Configuration;
+﻿using Microsoft.Maui.Hosting;
+using PersonDetection.Client.Configuration;
 
 namespace PersonDetection.Client;
 

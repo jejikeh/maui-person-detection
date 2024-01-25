@@ -1,6 +1,8 @@
+using PersonDetection.Client.Application.Models;
+
 namespace PersonDetection.Client.Application.Services;
 
 public interface IPlatformFilePicker
 { 
-    public Task<FileResult?> PickPhotosAsync();
+    public Task<Photo?> PickPhotoAsync();
 }

@@ -16,17 +16,12 @@ public class CacheHttpClientService(
 {
     private readonly HttpClient _httpClient = httpClientProvider.CreateClient();
 
-    public async Task<T> GetAsync<T>(string url, CancellationToken cancellationToken = default)
+    public async Task<T?> GetAsync<T>(string url, CancellationToken cancellationToken = default)
     {
         var json = await GetOrCreateJsonAsync(url, cancellationToken);
-        
         var result = JsonSerializer.Deserialize<T>(json);
-        if (result is null)
-        {
-            throw new NullReferenceException(nameof(result));
-        }
         
-        return result;
+        return result ?? default;
     }
     
     public async Task<T> PostAsync<T>(string url, T data, CancellationToken cancellationToken = default)

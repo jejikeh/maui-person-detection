@@ -1,7 +1,11 @@
+using CommunityToolkit.Maui.Storage;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Maui.Networking;
 using PersonDetection.Client.Application;
 using PersonDetection.Client.Infrastructure;
 using PersonDetection.Client.Infrastructure.Common;
 using PersonDetection.Client.Pages;
+using PersonDetection.Client.ViewModels;
 
 namespace PersonDetection.Client.Configuration;
 
@@ -14,6 +18,7 @@ public static class InjectionsConfiguration
             .AddDeviceAccessServices()
             .AddPlatformServiceImplementations()
             .AddPages()
+            .AddViewModels()
             .AddApplication()
             .AddInfrastructure();
     }
@@ -32,6 +37,7 @@ public static class InjectionsConfiguration
         serviceCollection.AddSingleton(Connectivity.Current);
         serviceCollection.AddHttpClient();
         serviceCollection.AddMemoryCache();
+        serviceCollection.AddSingleton(FileSaver.Default);
         
         return serviceCollection;
     }
@@ -39,7 +45,15 @@ public static class InjectionsConfiguration
     private static IServiceCollection AddPages(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddTransient<ChoosePhotoPage>();
-        serviceCollection.AddTransient<StreamVideoPage>();
+        serviceCollection.AddTransient<PhotoPage>();
+        
+        return serviceCollection;
+    }
+    
+    private static IServiceCollection AddViewModels(this IServiceCollection serviceCollection)
+    {
+        serviceCollection.AddTransient<ChoosePhotoViewModel>();
+        serviceCollection.AddTransient<PhotoViewModel>();
         
         return serviceCollection;
     }

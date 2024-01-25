@@ -3,11 +3,38 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="PersonDetection.Client.Pages.ChoosePhotoPage"
-             xmlns:viewmodel="clr-namespace:PersonDetection.Client.Application.ViewModels;assembly=PersonDetection.Client.Application"
-             x:DataType="viewmodel:ChoosePhotoViewModel">
+             xmlns:viewModels="clr-namespace:PersonDetection.Client.ViewModels"
+             xmlns:models="clr-namespace:PersonDetection.Client.Models"
+             xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+             x:DataType="viewModels:ChoosePhotoViewModel">
     <ContentPage.Content>
-        <VerticalStackLayout Padding="16" Spacing="16">
-            <Button Text="Add Photo" Command="{Binding AddNewPhotoCommand}"></Button>
-        </VerticalStackLayout>
+        <StackLayout Padding="16" Spacing="16">
+            <Frame>
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AddNewPhotoCommand}"></TapGestureRecognizer>
+                </Frame.GestureRecognizers>
+                <HorizontalStackLayout>
+                    <mi:MauiIcon Icon="{mi:FontAwesome Plus}"/>
+                    <Label Text="Choose Photo" FontSize="24" HorizontalOptions="Center" FontAttributes="Bold"/>
+                </HorizontalStackLayout>
+            </Frame>
+            <ListView
+                HasUnevenRows="True"
+                ItemsSource="{Binding Photos}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:ViewPhotoPair">
+                        <ViewCell>
+                            <Image Source="{Binding Processed}" MinimumHeightRequest="320">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ChoosePhotoViewModel}}, Path=SelectPhotoCommandCommand}" 
+                                        CommandParameter="{Binding Id}"/>
+                                </Image.GestureRecognizers>
+                            </Image>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -10,7 +10,8 @@ public static class InfrastructureInjection
         serviceCollection.AddSingleton<HttpClientProvider>();
         serviceCollection.AddScoped<CacheHttpClientService>();
         serviceCollection.AddScoped<IPhotoProcessService, HttpPhotoProcessService>();
-        serviceCollection.AddSingleton<IProcessedPhotoGallery, ProcessedPhotoGallery>();
+        serviceCollection.AddSingleton<IPhotoGallery, PhotoGallery>();
+        serviceCollection.AddSingleton<PhotoSaverService>();
         
         return serviceCollection;
     }

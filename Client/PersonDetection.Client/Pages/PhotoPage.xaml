@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PersonDetection.Client.Pages.PhotoPage"
+             xmlns:viewModels="clr-namespace:PersonDetection.Client.ViewModels"
+             xmlns:models="clr-namespace:PersonDetection.Client.Models"
+             x:DataType="viewModels:PhotoViewModel">
+    <ContentPage.Content>
+        <ScrollView Padding="16">
+            <StackLayout Spacing="16">
+                <Label 
+                    Text="{Binding Path=ViewPhotoPair.Id, StringFormat='Photo {0}'}" 
+                    FontSize="24" 
+                    HorizontalOptions="Center" 
+                    FontAttributes="Bold"/>
+                <Label Text="Original" FontSize="18" HorizontalOptions="Center"/>
+                <Image Source="{Binding ViewPhotoPair.Original}"/>
+                <Label Text="Processed" FontSize="18" HorizontalOptions="Center"/>
+                <Image Source="{Binding ViewPhotoPair.Processed}"/>
+                <HorizontalStackLayout
+                    Spacing="16"
+                    HorizontalOptions="StartAndExpand">
+                    <Button Text="Save" Command="{Binding SaveCommand}"/>
+                    <Button Text="Delete" Command="{Binding DeleteCommand}"/>
+                </HorizontalStackLayout>
+                <Button Text="Back" Command="{Binding BackCommand}"/>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

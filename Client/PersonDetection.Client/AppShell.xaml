@@ -13,10 +13,5 @@
                 ContentTemplate="{DataTemplate pages1:ChoosePhotoPage}"
                 Route="Choose Photo" />
         </Tab>
-        <Tab Title="Stream Video" Icon="videosolid.png">
-            <ShellContent 
-                ContentTemplate="{DataTemplate pages1:StreamVideoPage}"
-                Route="Stream Video" />
-        </Tab>
     </TabBar>
 </Shell>

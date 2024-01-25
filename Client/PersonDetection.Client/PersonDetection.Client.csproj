@@ -57,10 +57,15 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="AathifMahir.Maui.MauiIcons.FontAwesome" Version="2.1.0" />
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+        <PackageReference Include="BrighterTools.MauiFilePicker" Version="1.0.0" />
+        <PackageReference Include="CommunityToolkit.Maui" Version="7.0.1" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
         <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)"/>
         <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)"/>
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0"/>
+        <PackageReference Include="Refractored.MvvmHelpers" Version="1.6.2" />
     </ItemGroup>
 
     <ItemGroup>
@@ -96,13 +101,10 @@
 
     <ItemGroup>
       <AdditionalFiles Include="Pages\ChoosePhotoPage.xaml" />
-      <AdditionalFiles Include="Pages\StreamVideoPage.xaml" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Resources\Images\" />
-        <MauiImage Update="Resources\Images\imageregular.svg" BaseSize="50,50" />
-        <MauiImage Update="Resources\Images\videosolid.svg" BaseSize="50,50" />
+        <MauiImage Update="Resources\Images\imageregular.svg" BaseSize="24,24" />
+        <MauiImage Update="Resources\Images\videosolid.svg" BaseSize="24,24" />
     </ItemGroup>
-
 </Project>

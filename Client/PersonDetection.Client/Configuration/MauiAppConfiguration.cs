@@ -1,4 +1,8 @@
+using CommunityToolkit.Maui;
+using MauiIcons.FontAwesome;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Controls.Hosting;
+using Microsoft.Maui.Hosting;
 
 namespace PersonDetection.Client.Configuration;
 
@@ -8,11 +12,14 @@ public static class MauiAppConfiguration
     {
         builder
             .UseMauiApp<App>()
+            .UseMauiCommunityToolkit()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
+        
+        builder.UseMauiApp<App>().UseFontAwesomeMauiIcons();
         
         #if DEBUG
                 builder.Logging.AddDebug();
