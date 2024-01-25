@@ -18,7 +18,7 @@ public class AndroidImageSourceLoader : IPlatformImageSourceLoader
         // - https://github.com/dotnet/maui/issues/14205
         // - https://github.com/dotnet/maui/issues/7074
         //
-        // For now, I will use ImageSource.FromStream(), though it may impact performance and memory.
+        // For now, I will use ImageSource.FromStream(), though it may impact performance and memory usage.
         return new ViewPhotoPair()
         {
             Id = originalPhoto.Id,

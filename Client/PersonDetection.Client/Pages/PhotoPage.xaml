@@ -4,8 +4,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="PersonDetection.Client.Pages.PhotoPage"
              xmlns:viewModels="clr-namespace:PersonDetection.Client.ViewModels"
-             xmlns:models="clr-namespace:PersonDetection.Client.Models"
-             x:DataType="viewModels:PhotoViewModel">
+             x:DataType="viewModels:PhotoViewModel"
+             Shell.NavBarIsVisible="False">
     <ContentPage.Content>
         <ScrollView Padding="16">
             <StackLayout Spacing="16">
@@ -20,11 +20,11 @@
                 <Image Source="{Binding ViewPhotoPair.Processed}"/>
                 <HorizontalStackLayout
                     Spacing="16"
-                    HorizontalOptions="StartAndExpand">
+                    HorizontalOptions="Center">
+                    <Button Text="Back" Command="{Binding BackCommand}"/>
                     <Button Text="Save" Command="{Binding SaveCommand}"/>
                     <Button Text="Delete" Command="{Binding DeleteCommand}"/>
                 </HorizontalStackLayout>
-                <Button Text="Back" Command="{Binding BackCommand}"/>
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

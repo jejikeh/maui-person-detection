@@ -1,8 +1,5 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Maui.Controls;
 using MvvmHelpers;
 using PersonDetection.Client.Application.Services;
 using PersonDetection.Client.Models;
@@ -20,13 +17,16 @@ public partial class ChoosePhotoViewModel(
     [ObservableProperty]
     private ObservableRangeCollection<ViewPhotoPair> _photos = new();
     
+    [ObservableProperty]
+    private int _imageHeight = (int)Shell.Current.Height / 3;
+    
     [RelayCommand(AllowConcurrentExecutions = true)]
     private async Task AddNewPhoto()
     {
         var photo = await photoService.NewPhoto();
         if (photo is null)
         {
-            await Shell.Current.DisplayAlert("Error", "Photo not found", "Ok");
+            await Shell.Current.DisplayAlert("Error", "Something went wrong", "Ok");
             return;
         }
 

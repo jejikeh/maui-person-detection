@@ -16,7 +16,7 @@ public partial class ChoosePhotoPage
         // Temporary Workaround for url styled namespace in xaml
         _ = new MauiIcon();
     }
-
+    
     protected override async void OnAppearing()
     {
         await _viewModel.LoadPhotosAsync();

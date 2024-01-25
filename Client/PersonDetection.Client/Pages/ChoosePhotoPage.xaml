@@ -6,16 +6,17 @@
              xmlns:viewModels="clr-namespace:PersonDetection.Client.ViewModels"
              xmlns:models="clr-namespace:PersonDetection.Client.Models"
              xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
-             x:DataType="viewModels:ChoosePhotoViewModel">
+             x:DataType="viewModels:ChoosePhotoViewModel"
+             Shell.NavBarIsVisible="False">
     <ContentPage.Content>
         <StackLayout Padding="16" Spacing="16">
             <Frame>
                 <Frame.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding AddNewPhotoCommand}"></TapGestureRecognizer>
                 </Frame.GestureRecognizers>
-                <HorizontalStackLayout>
-                    <mi:MauiIcon Icon="{mi:FontAwesome Plus}"/>
-                    <Label Text="Choose Photo" FontSize="24" HorizontalOptions="Center" FontAttributes="Bold"/>
+                <HorizontalStackLayout HorizontalOptions="Center">
+                    <mi:MauiIcon Icon="{mi:FontAwesome Plus}" IconSize="16" HorizontalOptions="Center"/>
+                    <Label Text="Choose Photo" FontSize="16" HorizontalOptions="Center"/>
                 </HorizontalStackLayout>
             </Frame>
             <ListView
@@ -24,7 +25,9 @@
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="models:ViewPhotoPair">
                         <ViewCell>
-                            <Image Source="{Binding Processed}" MinimumHeightRequest="320">
+                            <Image
+                                Source="{Binding Processed}" 
+                                MinimumHeightRequest="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ChoosePhotoViewModel}}, Path=ImageHeight}">
                                 <Image.GestureRecognizers>
                                     <TapGestureRecognizer
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ChoosePhotoViewModel}}, Path=SelectPhotoCommandCommand}" 

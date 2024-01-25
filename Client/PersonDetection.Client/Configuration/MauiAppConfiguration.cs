@@ -1,8 +1,6 @@
 using CommunityToolkit.Maui;
 using MauiIcons.FontAwesome;
 using Microsoft.Extensions.Logging;
-using Microsoft.Maui.Controls.Hosting;
-using Microsoft.Maui.Hosting;
 
 namespace PersonDetection.Client.Configuration;
 

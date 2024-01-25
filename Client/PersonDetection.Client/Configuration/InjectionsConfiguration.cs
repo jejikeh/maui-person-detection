@@ -1,6 +1,4 @@
 using CommunityToolkit.Maui.Storage;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Maui.Networking;
 using PersonDetection.Client.Application;
 using PersonDetection.Client.Infrastructure;
 using PersonDetection.Client.Infrastructure.Common;
