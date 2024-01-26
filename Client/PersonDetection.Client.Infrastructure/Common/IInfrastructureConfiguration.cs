@@ -5,9 +5,7 @@ public interface IInfrastructureConfiguration
     public string PhotoProcessUrl { get; set; }
     public TimeSpan CacheExpirationTime { get; set; }
     public string DatabaseFileName { get; set; }
-    
-    public string DatabasePath =>
-        Path.Combine(FileSystem.AppDataDirectory, DatabaseFileName);
-    
-    public bool SavePhotoToGallery { get; set; }
+    public string ImageDirectoryName { get; }
+    public string DatabasePath => Path.Combine(FileSystem.AppDataDirectory, DatabaseFileName);
+    public string ImageCacheDirectory => Path.Combine(FileSystem.AppDataDirectory, ImageDirectoryName);
 }

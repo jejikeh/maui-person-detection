@@ -8,7 +8,7 @@ namespace PersonDetection.Client.Infrastructure.Services;
 public class PhotoGallery : IPhotoGallery
 {
     private readonly SQLiteAsyncConnection _dbConnection;
-    private readonly PhotoSaverService? _fileSaver;
+    private readonly PhotoSaverService _fileSaver;
     
     public PhotoGallery(IInfrastructureConfiguration configuration, PhotoSaverService fileSaver)
     {
@@ -19,11 +19,8 @@ public class PhotoGallery : IPhotoGallery
         
         _dbConnection.CreateTableAsync<Photo>().Wait();
         _dbConnection.CreateTableAsync<PhotoPair>().Wait();
-
-        if (configuration.SavePhotoToGallery)
-        {
-            _fileSaver = fileSaver;
-        }
+        
+        _fileSaver = fileSaver;
     }
     
     public Task<List<PhotoPair>> GetPhotoPairsAsync()
@@ -82,14 +79,8 @@ public class PhotoGallery : IPhotoGallery
 
     public async Task AddPairAsync(Photo originalPhoto, Photo processedPhoto)
     {
-        if (_fileSaver is not null)
-        {
-            var path = await _fileSaver.SavePhotoAsync(processedPhoto.Content);
-            if (!string.IsNullOrEmpty(path))
-            {
-                processedPhoto.FileUrl = path;
-            }
-        }
+        await _fileSaver.CachePhotoAsync(processedPhoto);
+        await _fileSaver.CachePhotoAsync(originalPhoto);
         
         await _dbConnection.InsertAsync(processedPhoto);
         await _dbConnection.InsertAsync(originalPhoto);
