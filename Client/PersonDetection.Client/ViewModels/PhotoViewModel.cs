@@ -43,6 +43,6 @@ public partial class PhotoViewModel(
             return;
         }
         
-        await photoSaverService.SavePhotoAsync(photos.Value.Processed);
+        await photoSaverService.UserSavePhotoAsync(photos.Value.Processed);
     }
 }
