@@ -1,4 +1,5 @@
 using PersonDetection.Client.Application.Models;
+using PersonDetection.Client.Application.Models.Types;
 
 namespace PersonDetection.Client.Application.Services;
 
@@ -7,24 +8,28 @@ public class PhotoService(
     IPhotoGallery photoGallery,
     IPlatformFilePicker platformFilePicker)
 {
-    public async Task<(Photo Original, Photo Processed)?> NewPhoto()
+    public async Task<Result<PhotoTuple, Error>> NewPhoto()
     {
         var originalPhoto = await platformFilePicker.PickPhotoAsync();
-        if (originalPhoto is null)
+        if (originalPhoto.IsError)
         {
-            return null;
+            return originalPhoto.GetError();
         }
 
         var processedPhoto = await photoProcessService.ProcessPhotoAsync(
             originalPhoto, 
             CancellationToken.None);
-        if (processedPhoto is null)
+        if (processedPhoto.IsError)
         {
-            return null;
+            return processedPhoto.GetError();
         }
         
         await photoGallery.AddPairAsync(originalPhoto, processedPhoto);
         
-        return (originalPhoto, processedPhoto);
+        return new PhotoTuple()
+        {
+            Original = originalPhoto,
+            Processed = processedPhoto
+        };
     }
 }

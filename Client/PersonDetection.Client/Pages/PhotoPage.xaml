@@ -7,25 +7,31 @@
              x:DataType="viewModels:PhotoViewModel"
              Shell.NavBarIsVisible="False">
     <ContentPage.Content>
-        <ScrollView Padding="16">
-            <StackLayout Spacing="16">
-                <Label 
+        <StackLayout Padding="16" Spacing="16">
+                <Label
                     Text="{Binding Path=ViewPhotoPair.Id, StringFormat='Photo {0}'}" 
                     FontSize="24" 
                     HorizontalOptions="Center" 
+                    VerticalOptions="Center"
                     FontAttributes="Bold"/>
+            <ScrollView
+                    VerticalOptions="FillAndExpand"
+                    Padding="32">
+                    <StackLayout Spacing="16">
                 <Label Text="Original" FontSize="18" HorizontalOptions="Center"/>
                 <Image Source="{Binding ViewPhotoPair.Original}"/>
                 <Label Text="Processed" FontSize="18" HorizontalOptions="Center"/>
                 <Image Source="{Binding ViewPhotoPair.Processed}"/>
-                <HorizontalStackLayout
-                    Spacing="16"
-                    HorizontalOptions="Center">
-                    <Button Text="Back" Command="{Binding BackCommand}"/>
-                    <Button Text="Save" Command="{Binding SaveCommand}"/>
-                    <Button Text="Delete" Command="{Binding DeleteCommand}"/>
-                </HorizontalStackLayout>
-            </StackLayout>
-        </ScrollView>
+                    </StackLayout>
+                </ScrollView>
+            <HorizontalStackLayout
+                Spacing="16"
+                HorizontalOptions="Center"
+                VerticalOptions="Center">
+                <Button Text="Back" Command="{Binding BackCommand}"/>
+                <Button Text="Save" Command="{Binding SaveCommand}"/>
+                <Button Text="Delete" Command="{Binding DeleteCommand}"/>
+            </HorizontalStackLayout>
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -1,5 +1,4 @@
-using Microsoft.Maui.Controls;
-using PersonDetection.Client.Pages;
+using PersonDetection.Client.Configuration;
 
 namespace PersonDetection.Client;
 
@@ -8,8 +7,6 @@ public partial class AppShell
     public AppShell()
     {
         InitializeComponent();
-        
-        Routing.RegisterRoute(nameof(ChoosePhotoPage), typeof(ChoosePhotoPage));
-        Routing.RegisterRoute(nameof(PhotoPage), typeof(PhotoPage));
+        MauiAppConfiguration.RegisterRoutes();
     }
 }

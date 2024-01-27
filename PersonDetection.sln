@@ -10,8 +10,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersonDetection.Client.Infr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{9BD70682-5AF0-4489-AB1F-2F0E803E5396}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersonDetection.Backend.Presentation", "Backend\PersonDetection.Backend.Presentation\PersonDetection.Backend.Presentation.csproj", "{5D364CB1-7099-4B6E-A7A0-194EBA19DBCC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,15 +28,10 @@ Global
 		{A051362F-3615-4631-97C3-6F0D98D51D58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A051362F-3615-4631-97C3-6F0D98D51D58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A051362F-3615-4631-97C3-6F0D98D51D58}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5D364CB1-7099-4B6E-A7A0-194EBA19DBCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5D364CB1-7099-4B6E-A7A0-194EBA19DBCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5D364CB1-7099-4B6E-A7A0-194EBA19DBCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5D364CB1-7099-4B6E-A7A0-194EBA19DBCC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{17C5C1B0-3927-4949-BCB0-946F88921239} = {FAF06995-DBE6-4035-BE23-23B0C3197B1D}
 		{66F80A84-85C9-437D-8750-AC9EEE28D262} = {FAF06995-DBE6-4035-BE23-23B0C3197B1D}
 		{A051362F-3615-4631-97C3-6F0D98D51D58} = {FAF06995-DBE6-4035-BE23-23B0C3197B1D}
-		{5D364CB1-7099-4B6E-A7A0-194EBA19DBCC} = {9BD70682-5AF0-4489-AB1F-2F0E803E5396}
 	EndGlobalSection
 EndGlobal
