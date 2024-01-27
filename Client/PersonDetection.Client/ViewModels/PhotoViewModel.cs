@@ -1,8 +1,8 @@
-using System.Threading.Tasks;
+using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Maui.Controls;
 using PersonDetection.Client.Application.Services;
+using PersonDetection.Client.Extensions;
 using PersonDetection.Client.Infrastructure.Services;
 using PersonDetection.Client.Models;
 
@@ -22,27 +22,37 @@ public partial class PhotoViewModel(
     [RelayCommand]
     private async Task Delete()
     {
-        var pair = await photoGallery.GetPhotosByIdAsync(ViewPhotoPair.Id);
-        if (pair is null)
+        var getPhotosResult = await photoGallery.GetPhotosByIdAsync(ViewPhotoPair.Id);
+        if (getPhotosResult.IsError)
         {
-            await Shell.Current.DisplayAlert("Error", "Photo not found", "Ok");
+            await getPhotosResult.GetError().DisplayErrorAsync();
             await Back();
         }
+
+        var photo = getPhotosResult.GetValue();
+        var deletePairResult = await photoGallery.DeletePairAsync(photo.Original);
+        if (deletePairResult.IsError)
+        {
+            await deletePairResult.GetError().DisplayErrorAsync();
+        }
+        else
+        {
+            await Toast.Make($"{deletePairResult.GetValue()}").Show();
+        }
         
-        await photoGallery.DeletePairAsync(pair!.Value.Original);
         await Back();
     }
 
     [RelayCommand]
     private async Task Save()
     {
-        var photos = await photoGallery.GetPhotosByIdAsync(ViewPhotoPair.Id);
-        if (photos is null)
+        var result = await photoGallery.GetPhotosByIdAsync(ViewPhotoPair.Id);
+        if (result.IsError)
         {
-            await Shell.Current.DisplayAlert("Error", "Photo not found", "Ok");
+            await result.GetError().DisplayErrorAsync();
             return;
         }
         
-        await photoSaverService.UserSavePhotoAsync(photos.Value.Processed);
+        await photoSaverService.UserSavePhotoAsync(result.GetValue().Processed);
     }
 }

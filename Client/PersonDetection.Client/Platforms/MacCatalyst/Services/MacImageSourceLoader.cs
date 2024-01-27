@@ -1,5 +1,4 @@
 using PersonDetection.Client.Application.Models;
-using PersonDetection.Client.Configuration;
 using PersonDetection.Client.Models;
 using PersonDetection.Client.Services;
 
@@ -20,7 +19,7 @@ public class MacImageSourceLoader : IPlatformImageSourceLoader
             // There a option in ClientConfiguration.cs to not save processed photo as file.
             Processed = string.IsNullOrEmpty(processedPhoto.FileUrl) 
                 ? ImageSource.FromStream(() => new MemoryStream(Convert.FromBase64String(processedPhoto.Content)))
-                : ImageSource.FromFile(processedPhoto.FileUrl),
+                : ImageSource.FromFile(processedPhoto.FileUrl)
         };
     }
 }

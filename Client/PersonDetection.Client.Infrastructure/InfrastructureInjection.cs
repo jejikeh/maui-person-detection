@@ -9,6 +9,16 @@ public static class InfrastructureInjection
     {
         serviceCollection.AddSingleton<IPhotoGallery, PhotoGallery>();
         serviceCollection.AddSingleton<PhotoSaverService>();
+        serviceCollection.AddHttpClientProviders();
+        
+        return serviceCollection;
+    }
+
+    private static IServiceCollection AddHttpClientProviders(this IServiceCollection serviceCollection)
+    {
+        serviceCollection.AddSingleton<HttpClientProvider>();
+        serviceCollection.AddScoped<CacheHttpClientService>();
+        serviceCollection.AddScoped<IPhotoProcessService, HttpPhotoProcessService>();
         
         return serviceCollection;
     }

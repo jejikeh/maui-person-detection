@@ -10,21 +10,16 @@
              Shell.NavBarIsVisible="False">
     <ContentPage.Content>
         <StackLayout Padding="16" Spacing="16">
-            <Frame>
-                <Frame.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding AddNewPhotoCommand}"></TapGestureRecognizer>
-                </Frame.GestureRecognizers>
-                <HorizontalStackLayout HorizontalOptions="Center">
-                    <mi:MauiIcon Icon="{mi:FontAwesome Plus}" IconSize="16" HorizontalOptions="Center"/>
-                    <Label Text="Choose Photo" FontSize="16" HorizontalOptions="Center"/>
-                </HorizontalStackLayout>
-            </Frame>
             <ListView
                 HasUnevenRows="True"
                 ItemsSource="{Binding Photos}">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="models:ViewPhotoPair">
                         <ViewCell>
+                            <Border
+                                StrokeShape="RoundRectangle 16,16,16,16"
+                                HorizontalOptions="Center"
+                                    Margin="0,0,0,0">
                             <Image
                                 Source="{Binding Processed}" 
                                 MinimumHeightRequest="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ChoosePhotoViewModel}}, Path=ImageHeight}">
@@ -34,10 +29,19 @@
                                         CommandParameter="{Binding Id}"/>
                                 </Image.GestureRecognizers>
                             </Image>
+                                </Border>
                         </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            <HorizontalStackLayout Spacing="16" VerticalOptions="Fill" HorizontalOptions="Center">
+                    <Button
+                        Command="{Binding AddNewPhotoCommand}"
+                        Text="Upload"/>
+                    <Button 
+                        Command="{Binding StreamCameraCommand}" 
+                        Text="Stream"/>
+            </HorizontalStackLayout>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using PersonDetection.Client.Application.Services;
 using PersonDetection.Client.Services;
 
@@ -36,7 +35,6 @@ public static class PlatformServiceImplementationsInjection
         #if MACCATALYST
             serviceCollection.AddSingleton<IPlatformFilePicker, MacFilePicker>();
             serviceCollection.AddSingleton<IPlatformImageSourceLoader, MacImageSourceLoader>();
-            serviceCollection.AddFilePicker();
         #endif
         
         return serviceCollection;

@@ -9,7 +9,7 @@ public class PhotoSaverService(
     IFileSaver fileSaver, 
     IInfrastructureConfiguration infrastructureConfiguration)
 {
-    public async Task<string> UserSavePhotoAsync(Photo photo)
+    public async Task UserSavePhotoAsync(Photo photo)
     {
         var decodedImage = Convert.FromBase64String(photo.Content);
         using var stream = new MemoryStream(decodedImage);
@@ -17,12 +17,10 @@ public class PhotoSaverService(
         if (!fileSaverResult.IsSuccessful)
         {
             await Toast.Make($"Failed to save image: {fileSaverResult.Exception.Message} ").Show();
-            return string.Empty;
+            return;
         }
         
         await Toast.Make($"Image saved to: {fileSaverResult.FilePath}").Show();
-        
-        return fileSaverResult.FilePath!;
     }
 
     public async Task CachePhotoAsync(Photo photo)

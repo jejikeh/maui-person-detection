@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PersonDetection.Client.Pages.StreamCameraPage"
+             xmlns:viewModels="clr-namespace:PersonDetection.Client.ViewModels"
+             xmlns:models="clr-namespace:PersonDetection.Client.Models"
+             xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+             xmlns:cv="clr-namespace:Camera.MAUI;assembly=Camera.MAUI"
+             x:DataType="viewModels:StreamCameraViewModel"
+             Shell.NavBarIsVisible="False">
+    <ContentPage.Content>
+            <VerticalStackLayout
+                Spacing="24"
+                Padding="16"
+                VerticalOptions="Fill"
+                HorizontalOptions="Fill">
+                <cv:CameraView 
+                    x:Name="CameraView"
+                    CamerasLoaded="CameraView_OnCamerasLoaded"
+                    Camera="{Binding Camera}" 
+                    WidthRequest="300" 
+                    HeightRequest="300"
+                    AutoSnapShotAsImageSource="True"
+                    TakeAutoSnapShot="True"></cv:CameraView>
+                
+                <Border
+                            StrokeShape="RoundRectangle 16,16,16,16"
+                            HorizontalOptions="Center"
+                            Margin="0,0,0,0">
+                    <Image Source="{Binding SnapshotImage}" MinimumHeightRequest="300" MinimumWidthRequest="300"></Image>
+                </Border>
+                <Button Text="Take Snapshot" Command="{Binding TakeSnapshotCommand}"></Button>
+            </VerticalStackLayout>
+    </ContentPage.Content>
+</ContentPage>
