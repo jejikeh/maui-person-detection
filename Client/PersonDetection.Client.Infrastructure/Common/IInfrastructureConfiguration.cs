@@ -1,11 +1,21 @@
+using PersonDetection.ImageProcessing.Configuration;
+
 namespace PersonDetection.Client.Infrastructure.Common;
 
 public interface IInfrastructureConfiguration
 {
-    public string PhotoProcessUrl { get; set; }
-    public TimeSpan CacheExpirationTime { get; set; }
-    public string DatabaseFileName { get; set; }
+    public string PhotoProcessUrl { get; }
+    public TimeSpan CacheExpirationTime { get; }
+    public string DatabaseFileName { get; }
     public string ImageDirectoryName { get; }
     public string DatabasePath => Path.Combine(FileSystem.AppDataDirectory, DatabaseFileName);
     public string ImageCacheDirectory => Path.Combine(FileSystem.AppDataDirectory, ImageDirectoryName);
+    public PhotoProcessProvider PhotoProcessProvider { get; set; }
+
+}
+
+public enum PhotoProcessProvider
+{
+    Http,
+    YoloV5
 }

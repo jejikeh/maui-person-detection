@@ -5,6 +5,7 @@ using PersonDetection.Client.Infrastructure.Common;
 using PersonDetection.Client.Pages;
 using PersonDetection.Client.Services;
 using PersonDetection.Client.ViewModels;
+using PersonDetection.ImageProcessing.Configuration;
 
 namespace PersonDetection.Client.Configuration;
 
@@ -12,15 +13,19 @@ public static class InjectionsConfiguration
 {
     public static IServiceCollection AddInjections(this IServiceCollection serviceCollection)
     {
-        return serviceCollection
-            .AddConfiguration()
+        var configuration = serviceCollection.AddConfiguration();
+
+        serviceCollection
             .AddDeviceAccessServices()
             .AddPlatformServiceImplementations()
             .AddServices()
             .AddPages()
             .AddViewModels()
             .AddApplication()
-            .AddInfrastructure();
+            .AddInfrastructure()
+            .AddPhotoProcessServices(configuration.PhotoProcessProvider);
+
+        return serviceCollection;
     }
 
     private static IServiceCollection AddServices(this IServiceCollection serviceCollection)
@@ -30,13 +35,14 @@ public static class InjectionsConfiguration
         return serviceCollection;
     }
 
-    private static IServiceCollection AddConfiguration(this IServiceCollection serviceCollection)
+    private static ClientConfiguration AddConfiguration(this IServiceCollection serviceCollection)
     {
         var clientConfiguration = new ClientConfiguration();
         serviceCollection.AddSingleton(clientConfiguration);
         serviceCollection.AddSingleton<IInfrastructureConfiguration>(clientConfiguration);
-
-        return serviceCollection;
+        serviceCollection.AddSingleton<IImageProcessingConfiguration>(clientConfiguration);
+        
+        return clientConfiguration;
     }
 
     private static IServiceCollection AddDeviceAccessServices(this IServiceCollection serviceCollection)

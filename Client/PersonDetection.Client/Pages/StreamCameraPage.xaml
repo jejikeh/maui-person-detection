@@ -16,18 +16,9 @@
                 <cv:CameraView
                     x:Name="CameraView"
                     CamerasLoaded="CameraView_OnCamerasLoaded"
-                    AutoSnapShotAsImageSource="True"
                     MinimumHeightRequest="300"
                     MinimumWidthRequest="300"
-                    TakeAutoSnapShot="True"
-                    AutoSnapShotSeconds="0.0016"/>
-            </Border>
-            <Border
-                StrokeShape="RoundRectangle 16,16,16,16"
-                HorizontalOptions="Center"
-                Margin="0,0,0,0">
-                <Image Source="{Binding Source={x:Reference CameraView}, Path=SnapShot}" MinimumHeightRequest="300"
-                       MinimumWidthRequest="300" />
+                    AutoStartPreview="True"/>
             </Border>
             <ScrollView
                 VerticalOptions="FillAndExpand"

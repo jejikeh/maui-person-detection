@@ -27,11 +27,8 @@ public partial class StreamCameraViewModel(
         // On some devices, the camera could not be started first time.
         if (result != CameraResult.Success)
         {
-            MainThread.BeginInvokeOnMainThread(async () =>
-            {
-                await CameraView.StopCameraAsync();
-                result = await CameraView.StartCameraAsync();
-            });
+            await CameraView.StopCameraAsync();
+            result = await CameraView.StartCameraAsync();
         }
 
         if (result != CameraResult.Success)
@@ -39,9 +36,8 @@ public partial class StreamCameraViewModel(
             throw new Exception("Camera could not be started");
         }
         
-        _cameraView = cameraView;
-        cameraView.AutoSnapShotAsImageSource = true;
-        cameraView.TakeAutoSnapShot = true;
+        CameraView = cameraView;
+        CameraView.GetSnapShot();
     }
 
     [RelayCommand]
@@ -67,7 +63,7 @@ public partial class StreamCameraViewModel(
 
     private async Task<Photo?> GetPhotoFromCamera()
     {
-        var snapShot = (StreamImageSource)_cameraView.GetSnapShot();
+        var snapShot = (StreamImageSource)CameraView.GetSnapShot();
         if (snapShot == null)
         {
             return null;
