@@ -28,8 +28,8 @@ public class MacFilePicker : IPlatformFilePicker
         // @Old: Currently, I am utilizing the FilePickerService from LukeMauiFilePicker.
         // @New: It appears that the DispatchAsync() function is resolving the issue with the Default File Picker,
         // but it is causing a crash in LukeMauiFilePicker.
-        var result = await MauiApplication.Current?.Dispatcher.DispatchAsync(async ()
-            => await FilePicker.Default.PickAsync(new PickOptions
+        var result = await MauiApplication.Current?.Dispatcher.DispatchAsync(async () => 
+            await FilePicker.Default.PickAsync(new PickOptions
             {
                 PickerTitle = "Select Photo",
                 FileTypes = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>>
@@ -44,7 +44,6 @@ public class MacFilePicker : IPlatformFilePicker
         }
 
         await using var stream = await result.OpenReadAsync();
-
         var photo = new Photo
         {
             Content = stream.ToBase64(),

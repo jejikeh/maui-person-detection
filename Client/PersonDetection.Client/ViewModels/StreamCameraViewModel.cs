@@ -8,6 +8,7 @@ using PersonDetection.Client.Extensions;
 using PersonDetection.Client.Models;
 using PersonDetection.Client.Services;
 
+
 namespace PersonDetection.Client.ViewModels;
 
 public partial class StreamCameraViewModel(
@@ -21,50 +22,53 @@ public partial class StreamCameraViewModel(
     [ObservableProperty]
     private CameraView _cameraView = default!;
     
+    [ObservableProperty]
+    private CameraInfo _camera = default!;
+    
     public async void StartCamera(CameraView cameraView)
     {
+        await cameraView.StopCameraAsync();
+        
         var result = await cameraView.StartCameraAsync();
-        // On some devices, the camera could not be started first time.
-        if (result != CameraResult.Success)
-        {
-            await CameraView.StopCameraAsync();
-            result = await CameraView.StartCameraAsync();
-        }
-
         if (result != CameraResult.Success)
         {
             throw new Exception("Camera could not be started");
         }
         
         CameraView = cameraView;
-        CameraView.GetSnapShot();
+        // @Note: These two lines are required for the camera to start on android
+        cameraView.AutoSnapShotAsImageSource = true;
+        cameraView.TakeAutoSnapShot = true;
     }
 
     [RelayCommand]
     public async Task TakeSnapshot()
     {
         var photo = await GetPhotoFromCamera();
-        if (photo == null)
+        if (photo is null)
         {
             await Toast.Make("No image was taken").Show();
             return;
         }
 
-        var processPhotoToGallery = await photoService.ProcessPhotoToGalleryAsync(photo);
-        if (processPhotoToGallery.IsError)
+        await Task.Run(async () =>
         {
-            await processPhotoToGallery.GetError().DisplayErrorAsync();
-            return;
-        }
-        
-        var photoTuple = processPhotoToGallery.GetValue();
-        ViewPhotoPair = imageSourceLoader.LoadViewPhotoPair(photoTuple.Original, photoTuple.Processed);
+            var processPhotoToGallery = await photoService.ProcessPhotoToGalleryAsync(photo);
+            if (processPhotoToGallery.IsError)
+            {
+                await processPhotoToGallery.GetError().DisplayErrorAsync();
+                return;
+            }
+
+            var photoTuple = processPhotoToGallery.GetValue();
+            ViewPhotoPair = imageSourceLoader.LoadViewPhotoPair(photoTuple.Original, photoTuple.Processed);
+        });
     }
 
     private async Task<Photo?> GetPhotoFromCamera()
     {
         var snapShot = (StreamImageSource)CameraView.GetSnapShot();
-        if (snapShot == null)
+        if (snapShot is null)
         {
             return null;
         }

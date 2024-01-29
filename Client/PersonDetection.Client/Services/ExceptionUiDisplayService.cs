@@ -14,14 +14,9 @@ public class ExceptionUiDisplayService(ClientConfiguration clientConfiguration) 
     {
         if (_displayAlerts)
         {
-            HandleException(firstChanceExceptionEventArgs.Exception);
+            MauiApplication.Current?.Dispatcher.DispatchAsync(() => ShowAlert(firstChanceExceptionEventArgs.Exception));
         }
     }
 
-    private void HandleException(Exception ex)
-    {
-        MauiApplication.Current?.Dispatcher.DispatchAsync(() => ShowAlert(ex));
-    }
-    
     private static void ShowAlert(Exception ex) => Toast.Make($"{ex.Message}").Show();
 }

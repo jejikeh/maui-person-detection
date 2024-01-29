@@ -12,9 +12,9 @@ public partial class App
 
         if (clientConfiguration.UseExceptionHandler)
         {
-            // @Note: This is not working on Android, and on MacCatalyst there are strange issues (Exceptions handled more than once).
+            // @Note: This is not working on Android, and on MacCatalyst there are strange issues (Exceptions can be thrown more than once).
             // - https://github.com/dotnet/maui/discussions/653?sort=top
-            // I can use Sentry here, but it only for logging, and not for displaying UI.
+            // I can use Sentry here, but it only for logging and not for displaying UI.
             AppDomain.CurrentDomain.FirstChanceException += exceptionHandler.OnException!;
         }
     }

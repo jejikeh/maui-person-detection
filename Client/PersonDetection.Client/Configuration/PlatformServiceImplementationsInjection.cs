@@ -1,4 +1,8 @@
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using PersonDetection.Client.Application.Services;
+using PersonDetection.Client.Infrastructure;
+using PersonDetection.Client.Infrastructure.Common;
+using PersonDetection.Client.Infrastructure.Services;
 using PersonDetection.Client.Services;
 
 #if ANDROID
@@ -18,6 +22,24 @@ public static class PlatformServiceImplementationsInjection
         return serviceCollection
             .AddAndroidServiceImplementations()
             .AddMacServiceImplementations();
+    }
+    
+    public static IServiceCollection AddPhotoProcessServices(
+        this IServiceCollection serviceCollection, 
+        PhotoProcessProvider photoProcessProvider)
+    {
+        return photoProcessProvider switch
+        {
+            #if MACCATALYST
+                PhotoProcessProvider.YoloV5 => serviceCollection.AddHttpClientProviders(),
+                PhotoProcessProvider.Http => serviceCollection.AddHttpClientProviders(),
+                _ => throw new ArgumentOutOfRangeException()
+            #else
+                PhotoProcessProvider.YoloV5 => serviceCollection.AddYoloServices(),
+                PhotoProcessProvider.Http => serviceCollection.AddHttpClientProviders(),
+                _ => throw new ArgumentOutOfRangeException()
+            #endif
+        };
     }
 
     private static IServiceCollection AddAndroidServiceImplementations(this IServiceCollection serviceCollection)

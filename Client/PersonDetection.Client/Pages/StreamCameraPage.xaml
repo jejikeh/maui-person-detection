@@ -16,9 +16,11 @@
                 <cv:CameraView
                     x:Name="CameraView"
                     CamerasLoaded="CameraView_OnCamerasLoaded"
-                    MinimumHeightRequest="300"
-                    MinimumWidthRequest="300"
-                    AutoStartPreview="True"/>
+                    Camera="{Binding Camera}" 
+                    WidthRequest="300" 
+                    HeightRequest="300"
+                    AutoSnapShotAsImageSource="True"
+                    TakeAutoSnapShot="True"/>
             </Border>
             <ScrollView
                 VerticalOptions="FillAndExpand"

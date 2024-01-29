@@ -10,8 +10,6 @@ public interface IInfrastructureConfiguration
     public string ImageDirectoryName { get; }
     public string DatabasePath => Path.Combine(FileSystem.AppDataDirectory, DatabaseFileName);
     public string ImageCacheDirectory => Path.Combine(FileSystem.AppDataDirectory, ImageDirectoryName);
-    public PhotoProcessProvider PhotoProcessProvider { get; set; }
-
 }
 
 public enum PhotoProcessProvider

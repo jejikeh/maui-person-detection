@@ -8,18 +8,16 @@ public class ClientConfiguration : IInfrastructureConfiguration, IImageProcessin
     // Client
     public bool UseExceptionHandler => true;
     public bool DisplayExceptionDetails => true;
+    public PhotoProcessProvider PhotoProcessProvider { get; set; } = PhotoProcessProvider.YoloV5;
     
     // Infrastructure
     public string PhotoProcessUrl { get; set; } = "http://localhost:12532/imagegen";
     public TimeSpan CacheExpirationTime { get; set; } = TimeSpan.FromHours(1);
     public string DatabaseFileName { get; set; } = "PersonDetection.db";
     public string ImageDirectoryName => "Images";
-    public PhotoProcessProvider PhotoProcessProvider { get; set; } = PhotoProcessProvider.YoloV5;
 
     // Image processing 
     public string WeightsDirectory { get; set; } = "Weights/";
     public WeightType WeightType { get; set; } = WeightType.YoloV5N;
-    public string FontPath { get; set; } = "Inter.ttf";
-    public int FontSize { get; set; } = 16;
+    public int FontSize { get; set; } = 18;
 }
-

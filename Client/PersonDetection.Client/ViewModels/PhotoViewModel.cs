@@ -17,7 +17,7 @@ public partial class PhotoViewModel(
     private ViewPhotoPair _viewPhotoPair = default!;
     
     [RelayCommand]
-    private async Task Back() => await Shell.Current.GoToAsync("..");
+    private async Task Back() => await Shell.Current.GoToAsync("..", true);
 
     [RelayCommand]
     private async Task Delete()

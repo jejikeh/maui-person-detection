@@ -1,19 +1,19 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Maui.Storage;
 using PersonDetection.ImageProcessing.Configuration;
 using PersonDetection.ImageProcessing.Model;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
-using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
 namespace PersonDetection.ImageProcessing;
 
+// @Note: Original source code - https://github.com/techwingslab/yolov5-net
+// This version is a fix of YoloV5-net.
+// Some of method were outdated and not cross-platform.
 public class YoloImageProcessing(IImageProcessingConfiguration configuration) : IDisposable
 {
     private YoloScorer _scorer;
@@ -35,7 +35,7 @@ public class YoloImageProcessing(IImageProcessingConfiguration configuration) : 
             var (x, y) = (prediction.Rectangle.Left - 3, prediction.Rectangle.Top - 23);
 
             image.Mutate(
-                a => a.DrawPolygon(new SolidPen(new SolidBrush(Color.Red)),
+                a => a.DrawPolygon(new SolidPen(new SolidBrush(Color.Red), 3),
                 new PointF(prediction.Rectangle.Left, prediction.Rectangle.Top),
                 new PointF(prediction.Rectangle.Right, prediction.Rectangle.Top),
                 new PointF(prediction.Rectangle.Right, prediction.Rectangle.Bottom),
@@ -63,7 +63,6 @@ public class YoloImageProcessing(IImageProcessingConfiguration configuration) : 
     private async Task InitializeAsync()
     {
         _scorer ??= await YoloScorer.CreateAsync(configuration.WeightsPath);
-        var fontCollection = SystemFonts.Families.FirstOrDefault();
-        _font ??= fontCollection.CreateFont(configuration.FontSize);
+        _font ??= SystemFonts.Get("Roboto").CreateFont(configuration.FontSize);
     }
 }

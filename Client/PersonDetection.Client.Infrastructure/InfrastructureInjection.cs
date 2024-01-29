@@ -14,20 +14,8 @@ public static class InfrastructureInjection
         
         return serviceCollection;
     }
-    
-    public static IServiceCollection AddPhotoProcessServices(
-        this IServiceCollection serviceCollection, 
-        PhotoProcessProvider photoProcessProvider)
-    {
-        return photoProcessProvider switch
-        {
-            PhotoProcessProvider.YoloV5 => serviceCollection.AddYoloServices(),
-            PhotoProcessProvider.Http => serviceCollection.AddHttpClientProviders(),
-            _ => throw new ArgumentOutOfRangeException()
-        };
-    }
 
-    private static IServiceCollection AddHttpClientProviders(this IServiceCollection serviceCollection)
+    public static IServiceCollection AddHttpClientProviders(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<HttpClientProvider>();
         serviceCollection.AddScoped<CacheHttpClientService>();
@@ -36,7 +24,7 @@ public static class InfrastructureInjection
         return serviceCollection;
     }
 
-    private static IServiceCollection AddYoloServices(this IServiceCollection serviceCollection)
+    public static IServiceCollection AddYoloServices(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<YoloImageProcessing>();
         serviceCollection.AddSingleton<IPhotoProcessService, YoloPhotoProcessService>();

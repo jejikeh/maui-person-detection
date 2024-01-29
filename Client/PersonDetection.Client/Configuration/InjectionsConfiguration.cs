@@ -36,7 +36,7 @@ public static class InjectionsConfiguration
     }
 
     private static ClientConfiguration AddConfiguration(this IServiceCollection serviceCollection)
-    {
+    {        
         var clientConfiguration = new ClientConfiguration();
         serviceCollection.AddSingleton(clientConfiguration);
         serviceCollection.AddSingleton<IInfrastructureConfiguration>(clientConfiguration);
