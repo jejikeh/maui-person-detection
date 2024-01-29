@@ -13,8 +13,7 @@ namespace PersonDetection.Client.ViewModels;
 public partial class ChoosePhotoViewModel(
     PhotoService photoService, 
     IPhotoGallery photoGallery,
-    IPlatformImageSourceLoader imageSourceLoader,
-    IPlatformFilePicker platformFilePicker) : ObservableObject
+    IPlatformImageSourceLoader imageSourceLoader) : ObservableObject
 {
     [ObservableProperty]
     private ObservableRangeCollection<ViewPhotoPair> _photos = new();
@@ -25,7 +24,7 @@ public partial class ChoosePhotoViewModel(
     [RelayCommand]
     private async Task AddNewPhoto()
     {
-        var result = await photoService.NewPhoto();
+        var result = await photoService.NewPhotoToGalleryAsync();
         if (result.IsError)
         {
             await result.GetError().ToastErrorAsync();

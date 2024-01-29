@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Camera.MAUI;
+using CommunityToolkit.Maui.Alerts;
 using PersonDetection.Client.ViewModels;
 
 namespace PersonDetection.Client.Pages;
@@ -20,12 +21,18 @@ public partial class StreamCameraPage : ContentPage
         _streamCameraViewModel = streamCameraViewModel;
     }
 
-    private void CameraView_OnCamerasLoaded(object? sender, EventArgs e)
+    private async void CameraView_OnCamerasLoaded(object? sender, EventArgs e)
     {
+        var status = await StreamCameraViewModel.CheckAndRequestCameraPermission();
+        if (status != PermissionStatus.Granted)
+        {
+            return;
+        }
+        
         if (CameraView.Cameras.Count == 0)
         {
-            throw new Exception("No camera found");
-        } 
+            await Toast.Make("No cameras found").Show();
+        }
         
         CameraView.Camera = CameraView.Cameras.FirstOrDefault();
         MainThread.BeginInvokeOnMainThread(() => _streamCameraViewModel.StartCamera(CameraView));

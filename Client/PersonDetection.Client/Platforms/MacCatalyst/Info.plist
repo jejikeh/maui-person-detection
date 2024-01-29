@@ -9,6 +9,9 @@
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>arm64</string>
+		<string>video-camera</string>
+		<string>still-camera</string>
+		<string>front-facing-camera</string>
 	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>

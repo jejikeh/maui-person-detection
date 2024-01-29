@@ -8,7 +8,7 @@ public class PhotoService(
     IPhotoGallery photoGallery,
     IPlatformFilePicker platformFilePicker)
 {
-    public async Task<Result<PhotoTuple, Error>> NewPhoto()
+    public async Task<Result<PhotoTuple, Error>> NewPhotoToGalleryAsync()
     {
         var originalPhoto = await platformFilePicker.PickPhotoAsync();
         if (originalPhoto.IsError)
@@ -16,16 +16,19 @@ public class PhotoService(
             return originalPhoto.GetError();
         }
 
-        var processedPhoto = await photoProcessService.ProcessPhotoAsync(
-            originalPhoto, 
-            CancellationToken.None);
+        return await ProcessPhotoToGalleryAsync(originalPhoto);
+    }
+
+    public async Task<Result<PhotoTuple, Error>> ProcessPhotoToGalleryAsync(Photo originalPhoto)
+    {
+        var processedPhoto = await photoProcessService.ProcessPhotoAsync(originalPhoto);
         if (processedPhoto.IsError)
         {
             return processedPhoto.GetError();
         }
         
         await photoGallery.AddPairAsync(originalPhoto, processedPhoto);
-        
+
         return new PhotoTuple()
         {
             Original = originalPhoto,

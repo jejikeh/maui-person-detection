@@ -5,7 +5,6 @@
              x:Class="PersonDetection.Client.Pages.ChoosePhotoPage"
              xmlns:viewModels="clr-namespace:PersonDetection.Client.ViewModels"
              xmlns:models="clr-namespace:PersonDetection.Client.Models"
-             xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
              x:DataType="viewModels:ChoosePhotoViewModel"
              Shell.NavBarIsVisible="False">
     <ContentPage.Content>
@@ -19,29 +18,33 @@
                             <Border
                                 StrokeShape="RoundRectangle 16,16,16,16"
                                 HorizontalOptions="Center"
-                                    Margin="0,0,0,0">
-                            <Image
-                                Source="{Binding Processed}" 
-                                MinimumHeightRequest="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ChoosePhotoViewModel}}, Path=ImageHeight}">
-                                <Image.GestureRecognizers>
-                                    <TapGestureRecognizer
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ChoosePhotoViewModel}}, Path=SelectPhotoCommandCommand}" 
-                                        CommandParameter="{Binding Id}"/>
-                                </Image.GestureRecognizers>
-                            </Image>
-                                </Border>
+                                Margin="0,0,0,0">
+                                <Image
+                                    Source="{Binding Processed}"
+                                    MinimumHeightRequest="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ChoosePhotoViewModel}}, Path=ImageHeight}">
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ChoosePhotoViewModel}}, Path=SelectPhotoCommandCommand}"
+                                            CommandParameter="{Binding Id}" />
+                                    </Image.GestureRecognizers>
+                                </Image>
+                            </Border>
                         </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <HorizontalStackLayout Spacing="16" VerticalOptions="Fill" HorizontalOptions="Center">
-                    <Button
+            <Grid ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0"
                         Command="{Binding AddNewPhotoCommand}"
-                        Text="Upload"/>
-                    <Button 
-                        Command="{Binding StreamCameraCommand}" 
-                        Text="Stream"/>
-            </HorizontalStackLayout>
+                        Text="Upload" />
+                <Button Grid.Column="1"
+                        Command="{Binding StreamCameraCommand}"
+                        Text="Stream" />
+            </Grid>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

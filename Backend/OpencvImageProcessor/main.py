@@ -1,8 +1,11 @@
 from flask import Flask, request, jsonify
+from flask_socketio import SocketIO
 
 from imagegen import landmarker, object_detection
 
 app = Flask(__name__)
+socketio = SocketIO(
+    app, debug=True, cors_allowed_origins='*')
 
 
 @app.route("/imagegen", methods=["POST"])
@@ -21,4 +24,4 @@ def process_image():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="localhost", port=12532)
+    socketio.run(app, port=12532, host="localhost")
