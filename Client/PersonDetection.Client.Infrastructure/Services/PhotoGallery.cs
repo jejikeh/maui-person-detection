@@ -10,16 +10,13 @@ public class PhotoGallery : IPhotoGallery
 {
     private readonly SQLiteAsyncConnection _dbConnection;
     private readonly PhotoSaverService _fileSaver;
+    private const SQLiteOpenFlags _flags = SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.SharedCache;
     
     public PhotoGallery(IInfrastructureConfiguration configuration, PhotoSaverService fileSaver)
     {
-        _dbConnection = new SQLiteAsyncConnection(
-            configuration.DatabasePath, 
-            SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.SharedCache);
-        
+        _dbConnection = new SQLiteAsyncConnection(configuration.DatabasePath, _flags);
         _dbConnection.CreateTableAsync<Photo>().Wait();
         _dbConnection.CreateTableAsync<PhotoPair>().Wait();
-        
         _fileSaver = fileSaver;
     }
     
@@ -34,6 +31,7 @@ public class PhotoGallery : IPhotoGallery
             .Table<Photo>()
             .Where(x => x.Id == photoPair.OriginalPhotoId)
             .FirstOrDefaultAsync();
+        
         if (original is null)
         {
             return new Error("Original photo not found");
@@ -43,6 +41,7 @@ public class PhotoGallery : IPhotoGallery
             .Table<Photo>()
             .Where(x => x.Id == photoPair.ProcessedPhotoId)
             .FirstOrDefaultAsync();
+        
         if (processed is null)
         {
             return new Error("Processed photo not found");
@@ -59,6 +58,7 @@ public class PhotoGallery : IPhotoGallery
     {
         var pair = await _dbConnection.Table<PhotoPair>()
             .FirstOrDefaultAsync(pair => pair.OriginalPhotoId == id);
+        
         if (pair is null)
         {
             return new Error("Photo pair not found");
@@ -66,6 +66,7 @@ public class PhotoGallery : IPhotoGallery
         
         var original =  await _dbConnection.Table<Photo>()
             .FirstOrDefaultAsync(photo => photo.Id == pair.OriginalPhotoId);
+        
         if (original is null)
         {
             return new Error("Original photo not found");
@@ -73,6 +74,7 @@ public class PhotoGallery : IPhotoGallery
         
         var processed = await _dbConnection.Table<Photo>()
             .FirstOrDefaultAsync(photo => photo.Id == pair.ProcessedPhotoId);
+        
         if (processed is null)
         {
             return new Error("Processed photo not found");
@@ -104,6 +106,7 @@ public class PhotoGallery : IPhotoGallery
     {
         var pair = await _dbConnection.Table<PhotoPair>()
             .FirstOrDefaultAsync(photoPair => photoPair.OriginalPhotoId == photoFromPair.Id);
+        
         if (pair is null)
         {
             return new Error("Photo pair not found");

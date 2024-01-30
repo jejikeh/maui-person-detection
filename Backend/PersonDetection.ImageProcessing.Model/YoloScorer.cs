@@ -26,10 +26,12 @@ public class YoloScorer : IDisposable
     public static async Task<YoloScorer> CreateAsync(string weightsPath)
     {
         using var memoryStream = new MemoryStream();
-        var yoloScorer = new YoloScorer();
         var stream = await FileSystem.OpenAppPackageFileAsync(weightsPath);
+        
         await stream.CopyToAsync(memoryStream);
         var bytes = memoryStream.ToArray();
+        
+        var yoloScorer = new YoloScorer();
         yoloScorer._inferenceSession = new InferenceSession(bytes, new SessionOptions());
         
         return yoloScorer;
@@ -82,7 +84,9 @@ public class YoloScorer : IDisposable
     private DenseTensor<float>[] Inference(Image<Rgba32> image)
     {
         if (image.Width != _model.Width || image.Height != _model.Height)
+        {
             image.Mutate(x => x.Resize(_model.Width, _model.Height));
+        }
 
         var inputs = new List<NamedOnnxValue> 
         {
@@ -100,10 +104,11 @@ public class YoloScorer : IDisposable
     {
         var result = new ConcurrentBag<YoloPrediction>();
 
-        var (xGain, yGain) = (_model.Width / (float)image.Width, _model.Height / (float)image.Height); // x, y gains
+        var xGain = _model.Width / (float)image.Width;
+        var yGain = _model.Height / (float)image.Height;
 
-        var (xPadding, yPadding) =
-            ((_model.Width - image.Width * xGain) / 2, (_model.Height - image.Height * yGain) / 2); // left, right pads
+        var xPadding = (_model.Width - image.Width * xGain) / 2;
+        var yPadding = (_model.Height - image.Height * yGain) / 2;
 
         Parallel.For(0, (int)output.Length / _model.Dimensions, i =>
         {
@@ -113,6 +118,7 @@ public class YoloScorer : IDisposable
             }
 
             Parallel.For(5, _model.Dimensions, j => output[0, i, j] *= output[0, i, 4]);
+            
             Parallel.For(5, _model.Dimensions, k =>
             {
                 if (output[0, i, k] <= _model.MulConfidence)
@@ -132,7 +138,9 @@ public class YoloScorer : IDisposable
 
                 var label = _model.Labels[k - 5];
 
-                var prediction = new YoloPrediction(label, output[0, i, k],
+                var prediction = new YoloPrediction(
+                    label, 
+                    output[0, i, k],
                     new RectangleF(xMin, yMin, xMax - xMin, yMax - yMin));
 
                 result.Add(prediction);
@@ -146,10 +154,11 @@ public class YoloScorer : IDisposable
     {
         var result = new ConcurrentBag<YoloPrediction>();
 
-        var (xGain, yGain) = (_model.Width / (float)image.Width, _model.Height / (float)image.Height); 
+        var xGain = _model.Width / (float)image.Width;
+        var yGain = _model.Height / (float)image.Height;
 
-        var (xPadding, yPadding) =
-            ((_model.Width - image.Width * xGain) / 2, (_model.Height - image.Height * yGain) / 2); 
+        var xPadding  = (_model.Width - image.Width * xGain) / 2;
+        var yPadding = (_model.Height - image.Height * yGain) / 2; 
 
         Parallel.For(0, output.Length, i => 
         {
@@ -161,13 +170,14 @@ public class YoloScorer : IDisposable
                     Parallel.For(0, shapes, x => 
                     {
                         var offset = (shapes * shapes * a + shapes * y + x) * _model.Dimensions;
-
                         var buffer = output[i].Skip(offset).Take(_model.Dimensions).Select(Sigmoid).ToArray();
 
-                        if (buffer[4] <= _model.Confidence) return; 
+                        if (buffer[4] <= _model.Confidence)
+                        {
+                            return;
+                        } 
 
-                        var scores =
-                            buffer.Skip(5).Select(b => b * buffer[4]).ToList();
+                        var scores = buffer.Skip(5).Select(b => b * buffer[4]).ToList();
 
                         var mulConfidence = scores.Max();
 
@@ -191,7 +201,9 @@ public class YoloScorer : IDisposable
 
                         var label = _model.Labels[scores.IndexOf(mulConfidence)];
 
-                        var prediction = new YoloPrediction(label, mulConfidence,
+                        var prediction = new YoloPrediction(
+                            label, 
+                            mulConfidence,
                             new RectangleF(xMin, yMin, xMax - xMin, yMax - yMin));
 
                         result.Add(prediction);
@@ -216,7 +228,8 @@ public class YoloScorer : IDisposable
         {
             foreach (var current in result.ToList().Where(current => current != item))
             {
-                var (rect1, rect2) = (item.Rectangle, current.Rectangle);
+                var rect1 = item.Rectangle;
+                var rect2 = current.Rectangle;
 
                 var intersection = RectangleF.Intersect(rect1, rect2);
 

@@ -10,24 +10,13 @@ public class MacFilePicker : IPlatformFilePicker
 {
     private static readonly string[] SupportedImageFileTypes = ["public.image"];
 
-    private static readonly Dictionary<DevicePlatform, IEnumerable<string>> ImageFileType =
-        new()
+    private static readonly Dictionary<DevicePlatform, IEnumerable<string>> ImageFileType = new Dictionary<DevicePlatform, IEnumerable<string>>()
         {
             { DevicePlatform.MacCatalyst, SupportedImageFileTypes }
         };
 
     public async Task<Result<Photo, Error>> PickPhotoAsync()
     {
-        // @Note: Maui FilePicker is not working on MacCatalyst.
-        // The result from FilePicker is always null.
-        // See these issues:
-        // - https://github.com/dotnet/maui/issues/15126
-        // - https://github.com/dotnet/maui/issues/11088
-        //
-        // The last fix in https://github.com/dotnet/maui/pull/13814 doesn't work.
-        // @Old: Currently, I am utilizing the FilePickerService from LukeMauiFilePicker.
-        // @New: It appears that the DispatchAsync() function is resolving the issue with the Default File Picker,
-        // but it is causing a crash in LukeMauiFilePicker.
         var result = await MauiApplication.Current?.Dispatcher.DispatchAsync(async () => 
             await FilePicker.Default.PickAsync(new PickOptions
             {

@@ -6,9 +6,7 @@ using PersonDetection.Client.Infrastructure.Dto;
 
 namespace PersonDetection.Client.Infrastructure.Services;
 
-public class HttpPhotoProcessService(
-    CacheHttpClientService httpClient, 
-    IInfrastructureConfiguration configuration) : IPhotoProcessService
+public class HttpPhotoProcessService(CacheHttpClientService httpClient, IInfrastructureConfiguration configuration) : IPhotoProcessService
 {
     public async Task<Result<Photo, Error>> ProcessPhotoAsync(Photo originalPhoto, CancellationToken cancellationToken = default)
     {

@@ -18,5 +18,6 @@ public class ExceptionUiDisplayService(ClientConfiguration clientConfiguration) 
         }
     }
 
-    private static void ShowAlert(Exception ex) => Toast.Make($"{ex.Message}").Show();
+    private static void ShowAlert(Exception ex) => 
+        Toast.Make($"{ex.Message}").Show();
 }

@@ -11,6 +11,7 @@ public class PhotoService(
     public async Task<Result<PhotoTuple, Error>> NewPhotoToGalleryAsync()
     {
         var originalPhoto = await platformFilePicker.PickPhotoAsync();
+        
         if (originalPhoto.IsError)
         {
             return originalPhoto.GetError();
@@ -22,6 +23,7 @@ public class PhotoService(
     public async Task<Result<PhotoTuple, Error>> ProcessPhotoToGalleryAsync(Photo originalPhoto)
     {
         var processedPhoto = await photoProcessService.ProcessPhotoAsync(originalPhoto);
+        
         if (processedPhoto.IsError)
         {
             return processedPhoto.GetError();
