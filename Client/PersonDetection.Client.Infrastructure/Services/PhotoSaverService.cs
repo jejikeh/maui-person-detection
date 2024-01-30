@@ -5,9 +5,7 @@ using PersonDetection.Client.Infrastructure.Common;
 
 namespace PersonDetection.Client.Infrastructure.Services;
 
-public class PhotoSaverService(
-    IFileSaver fileSaver, 
-    IInfrastructureConfiguration infrastructureConfiguration)
+public class PhotoSaverService(IFileSaver fileSaver, IInfrastructureConfiguration infrastructureConfiguration)
 {
     public async Task UserSavePhotoAsync(Photo photo)
     {
@@ -17,7 +15,8 @@ public class PhotoSaverService(
         
         if (!fileSaverResult.IsSuccessful)
         {
-            await Toast.Make($"Failed to save image: {fileSaverResult.Exception.Message} ").Show();
+            await Toast.Make($"Failed to save image: {fileSaverResult.Exception.Message}").Show();
+            
             return;
         }
         
@@ -30,10 +29,7 @@ public class PhotoSaverService(
         var filePath = infrastructureConfiguration.ImageCacheDirectory + Guid.NewGuid();
         
         using var stream = new MemoryStream(decodedImage);
-        await using var file = new FileStream(
-            filePath,
-            FileMode.Create, 
-            FileAccess.Write);
+        await using var file = new FileStream(filePath, FileMode.Create, FileAccess.Write);
         stream.WriteTo(file);
         
         photo.FileUrl = filePath;

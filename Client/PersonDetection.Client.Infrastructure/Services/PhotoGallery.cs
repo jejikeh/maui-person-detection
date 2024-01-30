@@ -10,14 +10,15 @@ public class PhotoGallery : IPhotoGallery
 {
     private readonly SQLiteAsyncConnection _dbConnection;
     private readonly PhotoSaverService _fileSaver;
-    private const SQLiteOpenFlags _flags = SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.SharedCache;
+    
+    private const SQLiteOpenFlags SqLiteOpenFlags = SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.SharedCache;
     
     public PhotoGallery(IInfrastructureConfiguration configuration, PhotoSaverService fileSaver)
     {
-        _dbConnection = new SQLiteAsyncConnection(configuration.DatabasePath, _flags);
+        _fileSaver = fileSaver;
+        _dbConnection = new SQLiteAsyncConnection(configuration.DatabasePath, SqLiteOpenFlags);
         _dbConnection.CreateTableAsync<Photo>().Wait();
         _dbConnection.CreateTableAsync<PhotoPair>().Wait();
-        _fileSaver = fileSaver;
     }
     
     public Task<List<PhotoPair>> GetPhotoPairsAsync()
