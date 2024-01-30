@@ -10,9 +10,9 @@ public partial class ChoosePhotoPage
     public ChoosePhotoPage(ChoosePhotoViewModel viewModel)
     {
         InitializeComponent();
-        
         _viewModel = viewModel;
         BindingContext = _viewModel;
+        
         // Temporary Workaround for url styled namespace in xaml
         _ = new MauiIcon();
     }

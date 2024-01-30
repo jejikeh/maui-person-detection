@@ -16,7 +16,6 @@ public partial class StreamCameraPage : ContentPage
     public StreamCameraPage(StreamCameraViewModel streamCameraViewModel)
     {
         InitializeComponent();
-        
         BindingContext = streamCameraViewModel;
         _streamCameraViewModel = streamCameraViewModel;
     }
@@ -24,6 +23,7 @@ public partial class StreamCameraPage : ContentPage
     private async void CameraView_OnCamerasLoaded(object? sender, EventArgs e)
     {
         var status = await StreamCameraViewModel.CheckAndRequestCameraPermission();
+        
         if (status != PermissionStatus.Granted)
         {
             return;

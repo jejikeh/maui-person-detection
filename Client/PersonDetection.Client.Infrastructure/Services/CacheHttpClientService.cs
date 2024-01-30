@@ -35,6 +35,7 @@ public class CacheHttpClientService(
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync(url, content, cancellationToken);
+            
             if (!response.IsSuccessStatusCode)
             {
                 return new Error(response.ReasonPhrase ?? "Unknown error");
@@ -46,7 +47,7 @@ public class CacheHttpClientService(
         }
         catch (Exception e)
         {
-            // @Note: There are change, what the http client throws native exception.
+            // There are change, what the http client throws native exception.
             return new Error(e.Message);
         }
     }
@@ -54,6 +55,7 @@ public class CacheHttpClientService(
     private async Task<Result<string, Error>> GetOrCreateJsonAsync(string url, CancellationToken cancellationToken = default)
     {
         var cacheKey = url.RemoveSpecialCharacters();
+        
         if (memoryCache.TryGetValue(cacheKey, out string? json))
         {
             return json!;
@@ -65,6 +67,7 @@ public class CacheHttpClientService(
         }
         
         var response = await _httpClient.GetAsync(url, cancellationToken);
+        
         if (!response.IsSuccessStatusCode)
         {
             return new Error(response.ReasonPhrase ?? "Unknown error");

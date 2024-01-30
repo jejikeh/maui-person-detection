@@ -25,6 +25,7 @@ public partial class ChoosePhotoViewModel(
     private async Task AddNewPhoto()
     {
         var result = await photoService.NewPhotoToGalleryAsync();
+        
         if (result.IsError)
         {
             await result.GetError().ToastErrorAsync();
@@ -48,6 +49,7 @@ public partial class ChoosePhotoViewModel(
     private async Task SelectPhotoCommand(int id)
     {
         var result = await photoGallery.GetPhotosByIdAsync(id);
+        
         if (result.IsError)
         {
             await result.GetError().DisplayErrorAsync();
@@ -55,6 +57,7 @@ public partial class ChoosePhotoViewModel(
         }
 
         var photo = result.GetValue();
+        
         await Shell.Current.GoToAsync(nameof(PhotoPage), true, new Dictionary<string, object>()
         {
             {
@@ -67,9 +70,11 @@ public partial class ChoosePhotoViewModel(
     {
         Photos.Clear();
         var photoPairs = await photoGallery.GetPhotoPairsAsync();
+        
         foreach (var photoPair in photoPairs)
         {
             var result = await photoGallery.GetPhotosAsync(photoPair);
+            
             if (result.IsError)
             {
                 await result.GetError().DisplayErrorAsync();

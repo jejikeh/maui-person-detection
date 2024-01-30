@@ -32,26 +32,30 @@ public class YoloImageProcessing(IImageProcessingConfiguration configuration) : 
         foreach (var prediction in predictions)
         {
             var score = Math.Round(prediction.Score, 2);
-            var (x, y) = (prediction.Rectangle.Left - 3, prediction.Rectangle.Top - 23);
+            var x = prediction.Rectangle.Left - 3; 
+            var y = prediction.Rectangle.Top - 23;
 
             image.Mutate(
-                a => a.DrawPolygon(new SolidPen(new SolidBrush(Color.Red), 3),
-                new PointF(prediction.Rectangle.Left, prediction.Rectangle.Top),
-                new PointF(prediction.Rectangle.Right, prediction.Rectangle.Top),
-                new PointF(prediction.Rectangle.Right, prediction.Rectangle.Bottom),
-                new PointF(prediction.Rectangle.Left, prediction.Rectangle.Bottom)
-            ));
+                imageProcessingContext => 
+                    imageProcessingContext.DrawPolygon(
+                        new SolidPen(new SolidBrush(Color.Red), 3), 
+                        new PointF(prediction.Rectangle.Left, prediction.Rectangle.Top), 
+                        new PointF(prediction.Rectangle.Right, prediction.Rectangle.Top), 
+                        new PointF(prediction.Rectangle.Right, prediction.Rectangle.Bottom), 
+                        new PointF(prediction.Rectangle.Left, prediction.Rectangle.Bottom)));
             
             image.Mutate(
-                a => a.DrawText($"{prediction.Label.Name} ({score})",
-                _font, 
-                prediction.Label.Color, 
-                new PointF(x, y)));
+                imageProcessingContext => 
+                    imageProcessingContext.DrawText($"{prediction.Label.Name} ({score})", 
+                        _font, 
+                        prediction.Label.Color, 
+                        new PointF(x, y)));
         }
 
         var stream = new MemoryStream();
         await image.SaveAsPngAsync(stream);
         var base64 = Convert.ToBase64String(stream.ToArray());
+        
         return base64;
     }
     

@@ -11,10 +11,7 @@ using PersonDetection.Client.Services;
 
 namespace PersonDetection.Client.ViewModels;
 
-public partial class StreamCameraViewModel(
-    PhotoService photoService,
-    IPlatformImageSourceLoader imageSourceLoader) 
-    : ObservableObject
+public partial class StreamCameraViewModel(PhotoService photoService, IPlatformImageSourceLoader imageSourceLoader) : ObservableObject
 {
     [ObservableProperty]
     private ViewPhotoPair _viewPhotoPair = default!;
@@ -30,6 +27,7 @@ public partial class StreamCameraViewModel(
         await cameraView.StopCameraAsync();
         
         var result = await cameraView.StartCameraAsync();
+        
         if (result != CameraResult.Success)
         {
             throw new Exception("Camera could not be started");
@@ -42,9 +40,10 @@ public partial class StreamCameraViewModel(
     }
 
     [RelayCommand]
-    public async Task TakeSnapshot()
+    private async Task TakeSnapshot()
     {
         var photo = await GetPhotoFromCamera();
+        
         if (photo is null)
         {
             await Toast.Make("No image was taken").Show();
@@ -54,6 +53,7 @@ public partial class StreamCameraViewModel(
         await Task.Run(async () =>
         {
             var processPhotoToGallery = await photoService.ProcessPhotoToGalleryAsync(photo);
+            
             if (processPhotoToGallery.IsError)
             {
                 await processPhotoToGallery.GetError().DisplayErrorAsync();
@@ -68,6 +68,7 @@ public partial class StreamCameraViewModel(
     private async Task<Photo?> GetPhotoFromCamera()
     {
         var snapShot = (StreamImageSource)CameraView.GetSnapShot();
+        
         if (snapShot is null)
         {
             return null;

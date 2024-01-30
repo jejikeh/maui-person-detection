@@ -1,5 +1,3 @@
-using PersonDetection.ImageProcessing.Configuration;
-
 namespace PersonDetection.Client.Infrastructure.Common;
 
 public interface IInfrastructureConfiguration
