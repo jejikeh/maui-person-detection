@@ -16,8 +16,8 @@ public class PhotoService(
         {
             return originalPhoto.GetError();
         }
-
-        return await Task.Run(async () => await ProcessPhotoToGalleryAsync(originalPhoto));
+        
+        return await ProcessPhotoToGalleryAsync(originalPhoto);
     }
 
     public async Task<Result<PhotoTuple, Error>> ProcessPhotoToGalleryAsync(Photo originalPhoto)

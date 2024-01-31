@@ -1,6 +1,7 @@
 using PersonDetection.Client.Application.Models;
 using PersonDetection.Client.Application.Models.Types;
 using PersonDetection.Client.Application.Services;
+using PersonDetection.Client.Infrastructure.Common;
 using PersonDetection.ImageProcessing;
 
 namespace PersonDetection.Client.Infrastructure.Services;
@@ -13,7 +14,7 @@ public class YoloPhotoProcessService(YoloImageProcessing yoloImageProcessing) : 
         
         if (predictedPhoto is null)
         {
-            return new Error("Failed to predict photo");
+            return new Error(InfrastructureErrorMessages.FailedToProcessPhoto);
         }
         
         return new Photo()

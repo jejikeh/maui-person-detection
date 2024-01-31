@@ -35,7 +35,7 @@ public class PhotoGallery : IPhotoGallery
         
         if (original is null)
         {
-            return new Error("Original photo not found");
+            return new Error(InfrastructureErrorMessages.OriginalPhotoNotFound);
         }
         
         var processed = await _dbConnection
@@ -45,7 +45,7 @@ public class PhotoGallery : IPhotoGallery
         
         if (processed is null)
         {
-            return new Error("Processed photo not found");
+            return new Error(InfrastructureErrorMessages.ProcessedPhotoNotFound);
         }
         
         return new PhotoTuple
@@ -62,7 +62,7 @@ public class PhotoGallery : IPhotoGallery
         
         if (pair is null)
         {
-            return new Error("Photo pair not found");
+            return new Error(InfrastructureErrorMessages.PhotoPairNotFound);
         }
         
         var original =  await _dbConnection.Table<Photo>()
@@ -70,7 +70,7 @@ public class PhotoGallery : IPhotoGallery
         
         if (original is null)
         {
-            return new Error("Original photo not found");
+            return new Error(InfrastructureErrorMessages.OriginalPhotoNotFound);
         }
         
         var processed = await _dbConnection.Table<Photo>()
@@ -78,7 +78,7 @@ public class PhotoGallery : IPhotoGallery
         
         if (processed is null)
         {
-            return new Error("Processed photo not found");
+            return new Error(InfrastructureErrorMessages.ProcessedPhotoNotFound);
         }
 
         return new PhotoTuple
@@ -110,7 +110,7 @@ public class PhotoGallery : IPhotoGallery
         
         if (pair is null)
         {
-            return new Error("Photo pair not found");
+            return new Error(InfrastructureErrorMessages.PhotoPairNotFound);
         }
         
         await _dbConnection.DeleteAsync(pair);

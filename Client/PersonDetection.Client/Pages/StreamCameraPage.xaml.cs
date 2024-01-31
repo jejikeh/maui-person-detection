@@ -37,4 +37,11 @@ public partial class StreamCameraPage : ContentPage
         CameraView.Camera = CameraView.Cameras.FirstOrDefault();
         MainThread.BeginInvokeOnMainThread(() => _streamCameraViewModel.StartCamera(CameraView));
     }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        
+        _streamCameraViewModel.IsPhotoProcessed = true;
+    }
 }

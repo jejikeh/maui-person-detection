@@ -38,7 +38,7 @@ public class CacheHttpClientService(
             
             if (!response.IsSuccessStatusCode)
             {
-                return new Error(response.ReasonPhrase ?? "Unknown error");
+                return new Error(response.ReasonPhrase ?? InfrastructureErrorMessages.UnknownError);
             }
 
             var jsonResult = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -63,14 +63,14 @@ public class CacheHttpClientService(
 
         if (connectivity.NetworkAccess != NetworkAccess.Internet)
         {
-            return new Error("No internet connection");
+            return new Error(InfrastructureErrorMessages.NoInternet);
         }
         
         var response = await _httpClient.GetAsync(url, cancellationToken);
         
         if (!response.IsSuccessStatusCode)
         {
-            return new Error(response.ReasonPhrase ?? "Unknown error");
+            return new Error(response.ReasonPhrase ?? InfrastructureErrorMessages.UnknownError);
         }
 
         json = await response.Content.ReadAsStringAsync(cancellationToken);

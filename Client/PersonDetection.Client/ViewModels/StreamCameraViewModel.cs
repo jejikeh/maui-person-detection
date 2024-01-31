@@ -21,6 +21,9 @@ public partial class StreamCameraViewModel(PhotoService photoService, IPlatformI
     
     [ObservableProperty]
     private CameraInfo _camera = default!;
+
+    [ObservableProperty] 
+    private bool _isPhotoProcessed = true;
     
     public async void StartCamera(CameraView cameraView)
     {
@@ -42,6 +45,14 @@ public partial class StreamCameraViewModel(PhotoService photoService, IPlatformI
     [RelayCommand]
     private async Task TakeSnapshot()
     {
+        if (!IsPhotoProcessed)
+        {
+            await Toast.Make("Please wait until the photo is processed").Show();
+            
+            return;
+        }
+        
+        IsPhotoProcessed = false;
         var photo = await GetPhotoFromCamera();
         
         if (photo is null)
@@ -53,6 +64,8 @@ public partial class StreamCameraViewModel(PhotoService photoService, IPlatformI
         await Task.Run(async () =>
         {
             var processPhotoToGallery = await photoService.ProcessPhotoToGalleryAsync(photo);
+
+            IsPhotoProcessed = true;
             
             if (processPhotoToGallery.IsError)
             {

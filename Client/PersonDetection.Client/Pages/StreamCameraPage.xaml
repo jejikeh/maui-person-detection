@@ -42,7 +42,10 @@
                     </Border>
                 </StackLayout>
             </ScrollView>
-            <Button Text="Take Snapshot" Command="{Binding TakeSnapshotCommand}" />
+            <Button
+                Text="Take Snapshot" 
+                Command="{Binding TakeSnapshotCommand}" 
+                IsEnabled="{Binding IsPhotoProcessed}"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

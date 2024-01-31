@@ -2,6 +2,7 @@ using PersonDetection.Client.Application.Extensions;
 using PersonDetection.Client.Application.Models;
 using PersonDetection.Client.Application.Models.Types;
 using PersonDetection.Client.Application.Services;
+using PersonDetection.Client.Common;
 using MauiApplication = Microsoft.Maui.Controls.Application;
 
 namespace PersonDetection.Client.Platforms.MacCatalyst.Services;
@@ -29,7 +30,7 @@ public class MacFilePicker : IPlatformFilePicker
 
         if (result is null)
         {
-            return new Error("No photo was selected");
+            return new Error(ClientErrorMessages.NoPhotoSelected);
         }
 
         await using var stream = await result.OpenReadAsync();
