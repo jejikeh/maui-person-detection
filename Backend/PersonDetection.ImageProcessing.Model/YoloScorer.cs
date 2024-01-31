@@ -247,8 +247,6 @@ public class YoloScorer : IDisposable
                     result.Remove(current);
                 }
             }
-
-            result.Add(item);
         }
 
         return result;
