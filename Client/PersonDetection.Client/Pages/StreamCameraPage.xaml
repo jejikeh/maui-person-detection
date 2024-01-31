@@ -5,8 +5,14 @@
              x:Class="PersonDetection.Client.Pages.StreamCameraPage"
              xmlns:viewModels="clr-namespace:PersonDetection.Client.ViewModels"
              xmlns:cv="clr-namespace:Camera.MAUI;assembly=Camera.MAUI"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:DataType="viewModels:StreamCameraViewModel"
              Shell.NavBarIsVisible="False">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <ContentPage.Content>
         <StackLayout Padding="16" Spacing="16">
             <Border
@@ -26,6 +32,7 @@
                 VerticalOptions="FillAndExpand"
                 Padding="32">
                 <StackLayout Spacing="16">
+                    <ActivityIndicator IsRunning="{Binding CanSnapShot, Converter={StaticResource InvertedBoolConverter}}" />
                     <Border
                         StrokeShape="RoundRectangle 16,16,16,16"
                         HorizontalOptions="Center"
@@ -45,7 +52,7 @@
             <Button
                 Text="Take Snapshot" 
                 Command="{Binding TakeSnapshotCommand}" 
-                IsEnabled="{Binding IsPhotoProcessed}"/>
+                IsEnabled="{Binding CanSnapShot}"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

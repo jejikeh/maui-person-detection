@@ -21,4 +21,9 @@ public partial class ChoosePhotoPage
     {
         await _viewModel.LoadPhotosAsync();
     }
+
+    protected override void OnDisappearing()
+    {
+        _viewModel.CanAddPhoto = true;
+    }
 }

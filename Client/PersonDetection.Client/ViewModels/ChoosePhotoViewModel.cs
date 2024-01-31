@@ -1,3 +1,4 @@
+using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MvvmHelpers;
@@ -21,11 +22,24 @@ public partial class ChoosePhotoViewModel(
     [ObservableProperty]
     private int _imageHeight = (int)Shell.Current.Height / 3;
 
+    [ObservableProperty] 
+    private bool _canAddPhoto = true;
+
     [RelayCommand]
     private async Task AddNewPhoto()
     {
-        var result = await photoService.NewPhotoToGalleryAsync();
+        if (!CanAddPhoto)
+        {
+            await Toast.Make("Please wait until the photo is processed").Show();
+            
+            return;
+        }
         
+        CanAddPhoto = false;
+        
+        var result = await Task.Run(async () => await photoService.NewPhotoToGalleryAsync());
+        CanAddPhoto = true;
+
         if (result.IsError)
         {
             await result.GetError().ToastErrorAsync();

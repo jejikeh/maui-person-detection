@@ -42,6 +42,6 @@ public partial class StreamCameraPage : ContentPage
     {
         base.OnDisappearing();
         
-        _streamCameraViewModel.IsPhotoProcessed = true;
+        _streamCameraViewModel.CanSnapShot = true;
     }
 }
