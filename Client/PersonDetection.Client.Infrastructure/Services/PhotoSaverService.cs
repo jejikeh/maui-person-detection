@@ -2,7 +2,6 @@ using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Storage;
 using Microsoft.Extensions.Options;
 using PersonDetection.Client.Application.Models;
-using PersonDetection.Client.Infrastructure.Common;
 using PersonDetection.Client.Infrastructure.Common.Options;
 
 namespace PersonDetection.Client.Infrastructure.Services;

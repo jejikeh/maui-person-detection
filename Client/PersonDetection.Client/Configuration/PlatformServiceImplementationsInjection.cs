@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using PersonDetection.Client.Application.Services;
+using PersonDetection.Client.Common;
 using PersonDetection.Client.Common.Options;
 using PersonDetection.Client.Infrastructure;
 using PersonDetection.Client.Services;
@@ -31,7 +32,7 @@ public static class PlatformServiceImplementationsInjection
         return photoProcessProvider switch
         {
             #if MACCATALYST
-                // MACCATALYST Doesn't support YoloV5
+                // MAC CATALYST Doesn't support YoloV5
                 PhotoProcessProvider.YoloV5 => serviceCollection.AddHttpClientProviders(),
             #else
                 PhotoProcessProvider.YoloV5 => serviceCollection.AddYoloServices(configuration),

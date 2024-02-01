@@ -43,6 +43,7 @@ public partial class ChoosePhotoViewModel(
         if (result.IsError)
         {
             await result.GetError().ToastErrorAsync();
+            
             return;
         }
         
@@ -67,6 +68,7 @@ public partial class ChoosePhotoViewModel(
         if (result.IsError)
         {
             await result.GetError().DisplayErrorAsync();
+            
             return;
         }
 
@@ -92,6 +94,7 @@ public partial class ChoosePhotoViewModel(
             if (result.IsError)
             {
                 await result.GetError().DisplayErrorAsync();
+                
                 continue;
             }
 

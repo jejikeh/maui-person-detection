@@ -8,7 +8,6 @@ using PersonDetection.Client.Extensions;
 using PersonDetection.Client.Models;
 using PersonDetection.Client.Services;
 
-
 namespace PersonDetection.Client.ViewModels;
 
 public partial class StreamCameraViewModel(PhotoService photoService, IPlatformImageSourceLoader imageSourceLoader) : ObservableObject
@@ -58,6 +57,7 @@ public partial class StreamCameraViewModel(PhotoService photoService, IPlatformI
         if (photo is null)
         {
             await Toast.Make("No image was taken").Show();
+            
             return;
         }
 
@@ -69,6 +69,7 @@ public partial class StreamCameraViewModel(PhotoService photoService, IPlatformI
             if (processPhotoToGallery.IsError)
             {
                 await processPhotoToGallery.GetError().DisplayErrorAsync();
+                
                 return;
             }
 

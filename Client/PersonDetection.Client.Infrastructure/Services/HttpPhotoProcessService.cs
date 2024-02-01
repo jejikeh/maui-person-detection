@@ -2,7 +2,6 @@ using Microsoft.Extensions.Options;
 using PersonDetection.Client.Application.Models;
 using PersonDetection.Client.Application.Models.Types;
 using PersonDetection.Client.Application.Services;
-using PersonDetection.Client.Infrastructure.Common;
 using PersonDetection.Client.Infrastructure.Common.Options;
 using PersonDetection.Client.Infrastructure.Dto;
 

@@ -52,6 +52,7 @@ public partial class PhotoViewModel(IPhotoGallery photoGallery, PhotoSaverServic
         if (result.IsError)
         {
             await result.GetError().DisplayErrorAsync();
+            
             return;
         }
         
