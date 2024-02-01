@@ -1,7 +1,9 @@
+using Microsoft.Extensions.Options;
 using PersonDetection.Client.Application.Models;
 using PersonDetection.Client.Application.Models.Types;
 using PersonDetection.Client.Application.Services;
 using PersonDetection.Client.Infrastructure.Common;
+using PersonDetection.Client.Infrastructure.Common.Options;
 using SQLite;
 
 namespace PersonDetection.Client.Infrastructure.Services;
@@ -13,10 +15,10 @@ public class PhotoGallery : IPhotoGallery
     
     private const SQLiteOpenFlags SqLiteOpenFlags = SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.SharedCache;
     
-    public PhotoGallery(IInfrastructureConfiguration configuration, PhotoSaverService fileSaver)
+    public PhotoGallery(IOptions<PhotoGalleryOptions> options, PhotoSaverService fileSaver)
     {
         _fileSaver = fileSaver;
-        _dbConnection = new SQLiteAsyncConnection(configuration.DatabasePath, SqLiteOpenFlags);
+        _dbConnection = new SQLiteAsyncConnection(options.Value.DatabasePath, SqLiteOpenFlags);
         _dbConnection.CreateTableAsync<Photo>().Wait();
         _dbConnection.CreateTableAsync<PhotoPair>().Wait();
     }

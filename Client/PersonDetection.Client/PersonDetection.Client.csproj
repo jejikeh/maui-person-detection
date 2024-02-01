@@ -63,10 +63,13 @@
         <PackageReference Include="Camera.MAUI" Version="1.4.4" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
         <PackageReference Include="CommunityToolkit.Maui" Version="7.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-        <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)"/>
-        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
         <PackageReference Include="Refractored.MvvmHelpers" Version="1.6.2" />
     </ItemGroup>
 
@@ -110,6 +113,12 @@
 
     <ItemGroup>
       <AdditionalFiles Include="Pages\ChoosePhotoPage.xaml" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <EmbeddedResource Include="appsettings.json" />
+        <EmbeddedResource Include="appsettings.Android.json" />
+        <EmbeddedResource Include="appsettings.MacCatalyst.json" />
     </ItemGroup>
 
     <ItemGroup>

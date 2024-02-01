@@ -1,17 +1,19 @@
+using Microsoft.Extensions.Options;
 using PersonDetection.Client.Application.Models;
 using PersonDetection.Client.Application.Models.Types;
 using PersonDetection.Client.Application.Services;
 using PersonDetection.Client.Infrastructure.Common;
+using PersonDetection.Client.Infrastructure.Common.Options;
 using PersonDetection.Client.Infrastructure.Dto;
 
 namespace PersonDetection.Client.Infrastructure.Services;
 
-public class HttpPhotoProcessService(CacheHttpClientService httpClient, IInfrastructureConfiguration configuration) : IPhotoProcessService
+public class HttpPhotoProcessService(CacheHttpClientService httpClient, IOptions<HttpPhotoProcessOptions> options) : IPhotoProcessService
 {
     public async Task<Result<Photo, Error>> ProcessPhotoAsync(Photo originalPhoto, CancellationToken cancellationToken = default)
     {
         var result = await httpClient.PostAsync(
-            configuration.PhotoProcessUrl,
+            options.Value.PhotoProcessUrl,
             new PhotoProcessResultDto
             {
                 Content = originalPhoto.Content

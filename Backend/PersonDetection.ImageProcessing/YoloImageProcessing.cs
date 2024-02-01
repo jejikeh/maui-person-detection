@@ -1,8 +1,9 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using PersonDetection.ImageProcessing.Configuration;
+using Microsoft.Extensions.Options;
 using PersonDetection.ImageProcessing.Model;
+using PersonDetection.ImageProcessing.Options;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
@@ -14,7 +15,7 @@ namespace PersonDetection.ImageProcessing;
 // @Note: Original source code - https://github.com/techwingslab/yolov5-net
 // This version is a fix of YoloV5-net.
 // Some of method were outdated and not cross-platform.
-public class YoloImageProcessing(IImageProcessingConfiguration configuration) : IDisposable
+public class YoloImageProcessing(IOptions<YoloImageProcessingOptions> options) : IDisposable
 {
     private YoloScorer _scorer;
     private Font _font;
@@ -66,7 +67,7 @@ public class YoloImageProcessing(IImageProcessingConfiguration configuration) : 
     
     private async Task InitializeAsync()
     {
-        _scorer ??= await YoloScorer.CreateAsync(configuration.WeightsPath);
-        _font ??= SystemFonts.Get("Roboto").CreateFont(configuration.FontSize);
+        _scorer ??= await YoloScorer.CreateAsync(options.Value.WeightsPath);
+        _font ??= SystemFonts.Get("Roboto").CreateFont(options.Value.FontSize);
     }
 }

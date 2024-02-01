@@ -1,11 +1,13 @@
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Storage;
+using Microsoft.Extensions.Options;
 using PersonDetection.Client.Application.Models;
 using PersonDetection.Client.Infrastructure.Common;
+using PersonDetection.Client.Infrastructure.Common.Options;
 
 namespace PersonDetection.Client.Infrastructure.Services;
 
-public class PhotoSaverService(IFileSaver fileSaver, IInfrastructureConfiguration infrastructureConfiguration)
+public class PhotoSaverService(IFileSaver fileSaver, IOptions<PhotoSaverOptions> options)
 {
     public async Task UserSavePhotoAsync(Photo photo)
     {
@@ -26,7 +28,7 @@ public class PhotoSaverService(IFileSaver fileSaver, IInfrastructureConfiguratio
     public async Task CachePhotoAsync(Photo photo)
     {
         var decodedImage = Convert.FromBase64String(photo.Content);
-        var filePath = infrastructureConfiguration.ImageCacheDirectory + Guid.NewGuid();
+        var filePath = options.Value.ImageCacheDirectory + Guid.NewGuid();
         
         using var stream = new MemoryStream(decodedImage);
         await using var file = new FileStream(filePath, FileMode.Create, FileAccess.Write);

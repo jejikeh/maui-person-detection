@@ -37,7 +37,7 @@ public partial class StreamCameraViewModel(PhotoService photoService, IPlatformI
         }
         
         CameraView = cameraView;
-        // @Note: These two lines are required for the camera to start on android
+        // These two lines are necessary for the camera to start on Android.
         cameraView.AutoSnapShotAsImageSource = true;
         cameraView.TakeAutoSnapShot = true;
     }

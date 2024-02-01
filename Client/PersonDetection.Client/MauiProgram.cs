@@ -9,7 +9,7 @@ public static class MauiProgram
     {
         var builder = MauiApp.CreateBuilder();
         builder.Configure();
-        builder.Services.AddInjections();
+        builder.Services.AddInjections(builder.Configuration);
         
         return builder.Build();
     }

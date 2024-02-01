@@ -1,15 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Camera.MAUI;
 using CommunityToolkit.Maui.Alerts;
 using PersonDetection.Client.ViewModels;
 
 namespace PersonDetection.Client.Pages;
 
-public partial class StreamCameraPage : ContentPage
+public partial class StreamCameraPage
 {
     private readonly StreamCameraViewModel _streamCameraViewModel;
     

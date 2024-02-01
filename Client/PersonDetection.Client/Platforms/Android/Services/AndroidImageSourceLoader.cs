@@ -8,13 +8,12 @@ public class AndroidImageSourceLoader : IPlatformImageSourceLoader
 {
     public ViewPhotoPair LoadViewPhotoPair(Photo originalPhoto, Photo processedPhoto)
     {
-        // On Android, ImageSource.FromFile() doesn't work.
-        // It may be a problem with permissions, but it seems to me that it's a bug.
-        // According to the issues, there are problems with ImageSource.
+        // On Android, ImageSource.FromFile() does not work. It could be a permissions issue, but it appears to be a bug.
+        // Several issues related to ImageSource have been reported:
         // - https://github.com/dotnet/maui/issues/14471
         // - https://github.com/dotnet/maui/issues/14205
         // - https://github.com/dotnet/maui/issues/7074
-        // For now, I will use ImageSource.FromStream(), though it may impact performance and memory usage.
+        // For the time being, I will use ImageSource.FromStream(), even though it might affect performance and memory usage.
         return new ViewPhotoPair()
         {
             Id = originalPhoto.Id,
