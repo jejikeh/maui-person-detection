@@ -82,7 +82,6 @@ public class PhotoProcessingServiceTests
     public void GivenNonExistingModelPath_WhenProcessPhotoAsync_ThenThrowsFileNotFoundException(string path, string file, string imagePath)
     {
         // Arrange
-        // Arrange
         var image = Convert.ToBase64String(File.ReadAllBytes(imagePath));
         _imageProcessingOptions.Setup(options => options.Value).Returns(new YoloImageProcessingOptions
         {

@@ -10,4 +10,12 @@
       <ProjectReference Include="..\..\ImageProcessing\PersonDetection.ImageProcessing\PersonDetection.ImageProcessing.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.1" />
+      <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.1" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.1" />
+      <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.1" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
+    </ItemGroup>
+
 </Project>

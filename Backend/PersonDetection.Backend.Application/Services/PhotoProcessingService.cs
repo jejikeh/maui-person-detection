@@ -6,7 +6,7 @@ namespace PersonDetection.Backend.Application.Services;
 
 public class PhotoProcessingService(YoloImageProcessing imageProcessing)
 {
-    public async Task<ProcessedPhoto> ProcessPhotoAsync(Photo photo)
+    public async Task<Photo> ProcessPhotoAsync(Photo photo)
     {
         var validatePhoto = ValidatePhoto(photo, out _);
         
@@ -22,7 +22,7 @@ public class PhotoProcessingService(YoloImageProcessing imageProcessing)
             throw new InvalidPhotoException();
         }
         
-        return new ProcessedPhoto
+        return new Photo
         {
             Content = processedPhoto
         };

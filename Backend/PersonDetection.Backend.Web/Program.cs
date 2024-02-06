@@ -12,7 +12,7 @@ builder.Services
     
 var app = builder.Build();
 
-app.MapPost("imagegen", async ([FromBody] Photo photo,[FromServices] PhotoProcessingService photoProcessingService) =>
+app.MapPost("photo", async ([FromBody] Photo photo,[FromServices] PhotoProcessingService photoProcessingService) =>
 {
     return Results.Ok(await photoProcessingService.ProcessPhotoAsync(photo));
 });
