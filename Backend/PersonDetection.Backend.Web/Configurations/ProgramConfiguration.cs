@@ -67,7 +67,7 @@ public static class ProgramConfiguration
         try
         {
             var identityDbContext = serviceProvider.GetRequiredService<PersonDetectionDbContext>();
-            await identityDbContext.Database.EnsureCreatedAsync();
+            await identityDbContext.Database.MigrateAsync();
             
             await app.RunAsync();
         }

@@ -10,7 +10,7 @@ import { AuthService } from './auth/auth.service';
   template: `
     <section>
       <div class="navbar">
-        <p>{{ email }}</p>
+        <p>{{ userName }}</p>
         <button (click)="logout()">Logout</button>
       </div>
       <div class="container">
@@ -21,18 +21,20 @@ import { AuthService } from './auth/auth.service';
 })
 export class AppComponent {
   title = 'person-detection-angular';
-  public email = '';
+  public userName = '';
 
   private _authService: AuthService = inject(AuthService);
 
   ngOnInit() {
     this._authService.identify().add(() => {
-      this.email = this._authService.user.email;
-      console.log(this.email);
+      this.userName = this._authService.user.userName;
+      console.log(this.userName);
     });
   }
 
   public logout() {
-    return this._authService.logout();
+    this._authService.logout().add(() => {
+      location.reload();
+    });
   }
 }

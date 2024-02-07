@@ -8,11 +8,11 @@ public class LoginRequestValidator : AbstractValidator<LoginRequest>
 {
     public LoginRequestValidator(IOptions<IdentityModelOptions> options)
     {
-        RuleFor(x => x.UserName)
+        RuleFor(loginRequest => loginRequest.UserName)
             .NotEmpty().WithMessage("Username is required")
             .MaximumLength(50).WithMessage("Username must not exceed 50 characters");
 
-        RuleFor(x => x.Password)
+        RuleFor(loginRequest => loginRequest.Password)
             .NotEmpty()
             .WithMessage("Password is required")
             .MinimumLength(options.Value.Password.RequiredLength)

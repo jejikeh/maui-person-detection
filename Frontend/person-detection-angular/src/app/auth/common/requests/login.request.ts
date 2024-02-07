@@ -1,8 +1,9 @@
 export class LoginRequest {
-  email: string = '';
+  username: string = '';
   password: string = '';
-  constructor(email: string, password: string) {
-    this.email = email;
+
+  constructor(username: string, password: string) {
+    this.username = username;
     this.password = password;
   }
 }

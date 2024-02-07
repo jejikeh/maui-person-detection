@@ -2,7 +2,6 @@ using Bogus;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.Extensions.Options;
 using Moq;
 using PersonDetection.Backend.Application.Common.Exceptions;
@@ -40,12 +39,15 @@ public class AuthorizationServiceTests
     [Theory]
     [InlineData(null, null)]
     [InlineData(null, "test")]
-    [InlineData("nick", "123456")]
+    [InlineData("nick", "")]
     [InlineData("", null)]
     public async void GivenInValidUserCredentials_WhenRegisterUserAsync_ThenThrowsValidationExceptions(string userName, string password)
     {
         // Arrange
-        var loginRequest = new RegisterRequest(userName, password);
+        _userManager.Setup(manager => manager.CreateAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()))
+            .ReturnsAsync(() => IdentityResult.Success);
+        
+        var loginRequest = new RegisterRequest(userName, _faker.Internet.Email(), password);
         var service = new AuthorizationService(_userManager.Object, _signInManager.Object);
 
         // Act
@@ -65,7 +67,7 @@ public class AuthorizationServiceTests
                 userManager.CreateAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Failed());
 
-        var loginRequest = new RegisterRequest(userName, _faker.Internet.Password());
+        var loginRequest = new RegisterRequest(userName, _faker.Internet.Email(), _faker.Internet.Password());
         var service = new AuthorizationService(_userManager.Object, _signInManager.Object);
         
         // Act
@@ -85,7 +87,7 @@ public class AuthorizationServiceTests
             userManager.CreateAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Success);
 
-        var loginRequest = new RegisterRequest(userName, _faker.Internet.Password());
+        var loginRequest = new RegisterRequest(userName, _faker.Internet.Email(), _faker.Internet.Password());
         var service = new AuthorizationService(_userManager.Object, _signInManager.Object);
         
         // Act
@@ -101,6 +103,10 @@ public class AuthorizationServiceTests
     public async void GivenLoginRequestUser_WhenLoginUserAsync_ThenReturnsOk()
     {
         // Arrange
+        _signInManager.Setup(manager =>
+                manager.PasswordSignInAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>()))
+            .ReturnsAsync(() => SignInResult.Success);
+        
         var service = new AuthorizationService(_userManager.Object, _signInManager.Object);
         
         // Act

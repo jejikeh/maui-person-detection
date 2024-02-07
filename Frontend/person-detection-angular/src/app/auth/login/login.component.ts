@@ -7,12 +7,16 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
   selector: 'app-login',
   standalone: true,
   imports: [ReactiveFormsModule],
-  template:
-  `
-  <section>
+  template: `
+    <section>
       <form>
-        <label for="email">Email</label>
-        <input id="email" type="text" name="email" [formControl]="email" />
+        <label for="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          name="username"
+          [formControl]="userName"
+        />
         <label for="password">Password</label>
         <input
           id="password"
@@ -24,15 +28,27 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
       <button (click)="login()">Login</button>
     </section>
   `,
-  styles: ``
+  styles: ``,
 })
 export class LoginComponent {
   private _authService: AuthService = inject(AuthService);
 
-  public email: FormControl = new FormControl('');
   public password: FormControl = new FormControl('');
+  public userName: FormControl = new FormControl('');
+
+  ngOnInit() {
+    this._authService.identify().add(() => {
+      if (this._authService.user.userName !== undefined) {
+        location.replace('/');
+      }
+    });
+  }
 
   public login() {
-    return this._authService.login(new LoginRequest(this.email.value, this.password.value));
+    return this._authService
+      .login(new LoginRequest(this.userName.value, this.password.value))
+      .add(() => {
+        location.reload();
+      });
   }
 }

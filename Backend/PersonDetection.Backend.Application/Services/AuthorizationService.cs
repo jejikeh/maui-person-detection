@@ -16,7 +16,10 @@ public class AuthorizationService(
     {
         await ValidateModelAsync(registerRequest, validator);
 
-        var user = new IdentityUser(registerRequest.UserName);
+        var user = new IdentityUser(registerRequest.UserName)
+        {
+            Email = registerRequest.Email
+        };
         var createUserResult = await userManager.CreateAsync(user, registerRequest.Password);
 
         if (!createUserResult.Succeeded)
