@@ -21,7 +21,7 @@ public class YoloImageProcessing(IOptions<YoloImageProcessingOptions> options, I
     private YoloScorer _scorer;
     private Font _font;
     
-    public async Task<string> Predict(string base64Image)
+    public async Task<string> PredictAsync(string base64Image)
     {
         if (_scorer is null || _font is null)
         {

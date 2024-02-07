@@ -10,7 +10,7 @@ public class YoloPhotoProcessService(YoloImageProcessing yoloImageProcessing) : 
 {
     public async Task<Result<Photo, Error>> ProcessPhotoAsync(Photo originalPhoto, CancellationToken cancellationToken = default)
     {
-        var predictedPhoto = await yoloImageProcessing.Predict(originalPhoto.Content);
+        var predictedPhoto = await yoloImageProcessing.PredictAsync(originalPhoto.Content);
         
         if (predictedPhoto is null)
         {

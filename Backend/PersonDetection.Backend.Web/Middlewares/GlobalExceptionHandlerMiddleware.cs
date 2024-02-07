@@ -13,8 +13,15 @@ public class GlobalExceptionHandlerMiddleware(ILogger<GlobalExceptionHandlerMidd
         }
         catch (StatusCodeException statusCodeException)
         {
-            logger.LogError(statusCodeException, statusCodeException.Message);
-            await statusCodeException.ToContextAsync(context);
+            var problemDetails = new ProblemDetails
+            {
+                Title = "An error occurred",
+                Status = statusCodeException.StatusCode,
+                Detail = statusCodeException.Message,
+            };
+
+            context.Response.StatusCode = statusCodeException.StatusCode;
+            await context.Response.WriteAsJsonAsync(problemDetails);
         }
         catch (Exception exception)
         {

@@ -5,6 +5,7 @@ using PersonDetection.Backend.Application;
 using PersonDetection.Backend.Infrastructure;
 using PersonDetection.Backend.Web.Common;
 using PersonDetection.Backend.Web.Endpoints;
+using PersonDetection.Backend.Web.Hubs;
 using PersonDetection.Backend.Web.Middlewares;
 
 namespace PersonDetection.Backend.Web.Configurations;
@@ -35,9 +36,13 @@ public static class ProgramConfiguration
             .AddTransient<GlobalExceptionHandlerMiddleware>()
             .AddProblemDetails()
             .AddApplication(builder.Configuration)
-            .AddInfrastructure(builder.Configuration);
-
-        builder.Services.AddAuthorization();
+            .AddInfrastructure(builder.Configuration)
+            .AddAuthorization()
+            .AddSignalR(options =>
+            {
+                options.EnableDetailedErrors = true;
+                options.MaximumReceiveMessageSize = 1024 * 1024 * 10;
+            });
 
         return builder;
     }
@@ -48,13 +53,8 @@ public static class ProgramConfiguration
         app.UseCors(_allowFrontendPolicyName);
         app.UseAuthentication();
         app.UseAuthorization();
-        
-        app.MapGet("identify", IdentifyEndpoint.Handler);
-        app.MapPost("login", LoginEndpoint.Handler);
-        app.MapPost("logout", LogoutEndpoint.Handler).RequireAuthorization();
-        app.MapPost("register", RegisterEndpoint.HandlerAsync);
-        
-        app.MapPost("photo", PhotoEndpoint.HandlerAsync);
+        app.MapHub<VideoHub>("/video");
+        app.MapEndpoints();
         
         return app;
     }
@@ -77,6 +77,17 @@ public static class ProgramConfiguration
             Console.WriteLine(ex);
         }
         
+        return app;
+    }
+
+    private static WebApplication MapEndpoints(this WebApplication app)
+    {
+        app.MapGet("identify", IdentifyEndpoint.Handler);
+        app.MapPost("login", LoginEndpoint.Handler);
+        app.MapPost("logout", LogoutEndpoint.Handler).RequireAuthorization();
+        app.MapPost("register", RegisterEndpoint.HandlerAsync);
+        app.MapPost("photo", PhotoEndpoint.HandlerAsync);
+
         return app;
     }
     

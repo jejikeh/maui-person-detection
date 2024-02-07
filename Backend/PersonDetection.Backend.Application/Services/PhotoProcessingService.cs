@@ -15,7 +15,7 @@ public class PhotoProcessingService(YoloImageProcessing imageProcessing)
             throw new InvalidPhotoException();
         }
 
-        var processedPhoto = await imageProcessing.Predict(photo.Content);
+        var processedPhoto = await imageProcessing.PredictAsync(photo.Content);
 
         if (processedPhoto is null)
         {
