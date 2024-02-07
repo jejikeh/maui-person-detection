@@ -26,6 +26,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{3312AB32
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersonDetection.Backend.Application.Tests", "Backend\tests\PersonDetection.Backend.Application.Tests\PersonDetection.Backend.Application.Tests.csproj", "{00F11423-D07A-4A05-9892-EBC9B472CB86}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deploy", "Deploy", "{37BC8D71-5CF1-4073-B087-8BA1DD16800E}"
+	ProjectSection(SolutionItems) = preProject
+		Backend\Deploy\docker-compose.yml = Backend\Deploy\docker-compose.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -80,5 +85,6 @@ Global
 		{7F50D738-CC12-45CA-8B2E-0EFF11E47282} = {9BD70682-5AF0-4489-AB1F-2F0E803E5396}
 		{3312AB32-5E5A-44F2-8DF1-71A3DB5E48C2} = {9BD70682-5AF0-4489-AB1F-2F0E803E5396}
 		{00F11423-D07A-4A05-9892-EBC9B472CB86} = {3312AB32-5E5A-44F2-8DF1-71A3DB5E48C2}
+		{37BC8D71-5CF1-4073-B087-8BA1DD16800E} = {9BD70682-5AF0-4489-AB1F-2F0E803E5396}
 	EndGlobalSection
 EndGlobal

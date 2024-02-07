@@ -4,5 +4,4 @@ public record LoginTokens(
     string RefreshToken,
     string JwtToken,
     string UserName,
-    string Email,
-    Guid Id);
+    string Email);

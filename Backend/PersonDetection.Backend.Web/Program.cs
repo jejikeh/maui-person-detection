@@ -1,20 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
-using PersonDetection.Backend.Application;
-using PersonDetection.Backend.Application.Models;
-using PersonDetection.Backend.Application.Services;
-using PersonDetection.Backend.Infrastructure;
+using PersonDetection.Backend.Web.Configurations;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args).Configure();
+var app = builder.Build().Configure();
 
-builder.Services
-    .AddApplication(builder.Configuration)
-    .AddInfrastructure();
-    
-var app = builder.Build();
-
-app.MapPost("photo", async ([FromBody] Photo photo,[FromServices] PhotoProcessingService photoProcessingService) =>
-{
-    return Results.Ok(await photoProcessingService.ProcessPhotoAsync(photo));
-});
-
-app.Run();
+await app.RunAppAsync();

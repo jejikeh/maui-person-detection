@@ -1,8 +1,8 @@
+using System.Reflection;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using PersonDetection.Backend.Application.Common.Models.Requests;
-using PersonDetection.Backend.Application.Common.Models.Requests.Validations;
+using Microsoft.Extensions.Options;
 using PersonDetection.Backend.Application.Services;
 using PersonDetection.ImageProcessing;
 
@@ -14,12 +14,27 @@ public static class ApplicationInjection
     {
         return serviceCollection
             .AddYoloImageProcessing(configuration)
-            .AddSingleton<PhotoProcessingService>();
+            .AddScoped<IAuthorizationService, AuthorizationService>()
+            .AddSingleton<PhotoProcessingService>()
+            .AddValidations();
     }
 
     private static IServiceCollection AddValidations(this IServiceCollection serviceCollection)
     {
-        return serviceCollection
-            .AddScoped<IValidator<RegisterRequest>, LoginRequestValidator>();
+        return serviceCollection.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+    }
+    
+    private static IServiceCollection ConfigureOptions<T>(this IServiceCollection serviceCollection, IConfiguration configuration) where T : class
+    {
+        return serviceCollection.Configure<T>(configuration.GetSection(typeof(T).Name));
+    }
+    
+    private static T GetConfigureOptions<T>(this IServiceCollection serviceCollection, IConfiguration configuration) where T : class, new()
+    {
+        var options = new T();
+        configuration.GetSection(typeof(T).Name).Bind(options);
+        serviceCollection.AddSingleton(Options.Create(options));
+
+        return options;
     }
 }
