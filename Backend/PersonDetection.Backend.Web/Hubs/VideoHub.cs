@@ -1,27 +1,19 @@
-using System.Text.Json.Serialization;
+using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
+using System.Threading.Channels;
 using Microsoft.AspNetCore.SignalR;
+using PersonDetection.Backend.Web.Services;
 using PersonDetection.ImageProcessing;
+using PersonDetection.ImageProcessing.Model;
 
 namespace PersonDetection.Backend.Web.Hubs;
 
-[method: JsonConstructor]
-public class VideoData(int index, string data)
+public class VideoHub(VideoPredictionsChannelService predictionsChannelService) : Hub
 {
-    public int Index { get; set; } = index;
-    public string Data { get; set; } = data;
-}
-
-public class VideoHub(YoloImageProcessing imageProcessing) : Hub
-{
-    public override Task OnConnectedAsync()
+    public async Task<ChannelReader<string>> ReceiveVideoData(string data, CancellationToken cancellationToken)
     {
-        Console.WriteLine("Connected: " + Context.ConnectionId);
+        _ = predictionsChannelService.WriteItemsAsync(data, cancellationToken);
         
-        return base.OnConnectedAsync();
-    }
-
-    public async Task SendVideoData(VideoData data)
-    {
-        await Clients.All.SendAsync("ReceiveVideoData", new VideoData(0, await imageProcessing.PredictAsync(data.Data)));
+        return predictionsChannelService.GetReader();
     }
 }

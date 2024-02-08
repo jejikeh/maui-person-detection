@@ -11,7 +11,7 @@ import { environment } from '../../environments/environment';
 import * as signalR from '@aspnet/signalr';
 import * as base64 from 'base64-js';
 import { SimpleChannel } from './simple-channel';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { VideoData } from './video-data.model';
 
 @Component({
@@ -23,13 +23,34 @@ import { VideoData } from './video-data.model';
       <h2>Angular Webcam Capture Image from Camera</h2>
       <button class="btn btn-primary" (click)="startStream()">Start</button>
       <p class="video-description">Local:</p>
-      <video #local_video [autoplay]="true" [muted]="true"></video>
       <p class="video-description">Remote:</p>
       <video #received_video [autoplay]="true"></video>
-      <img [src]="receivedImage" alt="Red dot" />
+      <div class="layered-image">
+        <video
+          class="image-base"
+          #local_video
+          [autoplay]="true"
+          [muted]="true"
+        ></video>
+        <img class="image-overlay" [src]="receivedOverlay" alt="" />
+      </div>
+      <button class="btn btn-primary" (click)="getStream()">Reconnect</button>
     </div>
   `,
-  styles: ``,
+  styles: `
+  .layered-image {
+  position: relative;
+}
+.layered-image img {
+  width: 640px;
+  height: 480px;
+}
+.image-overlay {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  opacity: .8
+}`,
 })
 export class HomeComponent implements AfterViewInit {
   mediaConstraints = {
@@ -45,6 +66,7 @@ export class HomeComponent implements AfterViewInit {
   private _receivedStream: MediaStream | undefined;
 
   public receivedImage: string = '';
+  public receivedOverlay: string = '';
 
   private _connection: signalR.HubConnection | undefined;
   private _getConnection: signalR.HubConnection | undefined;
@@ -77,10 +99,32 @@ export class HomeComponent implements AfterViewInit {
     this._connection?.start().then(async () => {
       await navigator.mediaDevices
         .getUserMedia(this.mediaConstraints)
-        .then((stream) => {
+        .then(async (stream) => {
           this._localStream = stream;
           this._mediaRecorder = new MediaRecorder(stream, {
             mimeType: 'video/webm',
+          });
+
+          let subject = new BehaviorSubject<string>('');
+          subject.subscribe((d) => {
+            if (d.length == 0) {
+              return;
+            }
+
+            this._connection?.stream('ReceiveVideoData', d).subscribe({
+              next: (r) => {
+                console.log(r);
+                const ab = base64.toByteArray(r);
+                this.receivedOverlay =
+                  'data:image/png;base64, ' + base64.fromByteArray(ab);
+              },
+              error: function (err: any): void {
+                throw new Error('Function not implemented.');
+              },
+              complete: function (): void {
+                console.log('complete');
+              },
+            });
           });
 
           this._mediaRecorder.ondataavailable = async (event) => {
@@ -95,10 +139,12 @@ export class HomeComponent implements AfterViewInit {
               .toDataURL('image/png')
               .replace(/^data:image\/(png|jpg);base64,/, '');
 
-            this._connection?.invoke('SendVideoData', {
-              index: 0,
-              data: base64,
-            });
+            // this._connection?.send('SendVideoData', {
+            //   index: 0,
+            //   data: base64,
+            // });
+
+            subject.next(base64);
           };
 
           this._mediaRecorder.start();
@@ -107,7 +153,7 @@ export class HomeComponent implements AfterViewInit {
             if (this._mediaRecorder?.state == 'recording') {
               this._mediaRecorder?.requestData();
             }
-          }, 1);
+          }, 500);
         });
 
       this._localStream?.getTracks().forEach((track) => {
@@ -126,19 +172,17 @@ export class HomeComponent implements AfterViewInit {
   }
 
   public getStream() {
-    if (this._getConnection == undefined) {
-      this._getConnection = new signalR.HubConnectionBuilder()
-        .withUrl(environment.webrtcBackend)
-        .build();
-    }
+    this._getConnection = new signalR.HubConnectionBuilder()
+      .withUrl(environment.webrtcBackend)
+      .build();
 
     this.receivedVideo!.nativeElement.autoplay = true;
     this.receivedVideo!.nativeElement.muted = true;
     this.receivedVideo!.nativeElement.controls = false;
 
     this._getConnection?.start().then(async () => {
-      this._getConnection?.on('ReceiveVideoData', (r: VideoData) => {
-        const ab = base64.toByteArray(r.data);
+      this._getConnection?.on('ReceiveVideoData', (r) => {
+        const ab = base64.toByteArray(r);
         this.receivedImage =
           'data:image/png;base64, ' + base64.fromByteArray(ab);
       });

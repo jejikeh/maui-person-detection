@@ -7,6 +7,7 @@ using PersonDetection.Backend.Web.Common;
 using PersonDetection.Backend.Web.Endpoints;
 using PersonDetection.Backend.Web.Hubs;
 using PersonDetection.Backend.Web.Middlewares;
+using PersonDetection.Backend.Web.Services;
 
 namespace PersonDetection.Backend.Web.Configurations;
 
@@ -34,6 +35,7 @@ public static class ProgramConfiguration
 
         builder.Services
             .AddTransient<GlobalExceptionHandlerMiddleware>()
+            .AddSingleton<VideoPredictionsChannelService>()
             .AddProblemDetails()
             .AddApplication(builder.Configuration)
             .AddInfrastructure(builder.Configuration)

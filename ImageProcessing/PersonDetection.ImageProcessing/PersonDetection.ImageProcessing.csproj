@@ -13,6 +13,7 @@
         <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0" />
         <PackageReference Include="Microsoft.Maui.Essentials" Version="8.0.3" />
         <PackageReference Condition="'$(TargetFramework)' != 'net8.0-maccatalyst'" Include="Microsoft.ML.OnnxRuntime" Version="1.16.1" />
+        <PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.17.0" />
         <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.1" />
     </ItemGroup>
 
