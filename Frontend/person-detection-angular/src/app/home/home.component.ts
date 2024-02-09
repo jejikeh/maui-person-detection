@@ -22,8 +22,6 @@ import { VideoData } from './video-data.model';
     <div class="container mt-5">
       <h2>Angular Webcam Capture Image from Camera</h2>
       <button class="btn btn-primary" (click)="startStream()">Start</button>
-      <p class="video-description">Local:</p>
-      <p class="video-description">Remote:</p>
       <video #received_video [autoplay]="true"></video>
       <div class="layered-image">
         <video
@@ -34,7 +32,8 @@ import { VideoData } from './video-data.model';
         ></video>
         <img class="image-overlay" [src]="receivedOverlay" alt="" />
       </div>
-      <button class="btn btn-primary" (click)="getStream()">Reconnect</button>
+      <img class="layered-image" [src]="receivedImage" alt="" />
+      <button class="btn btn-primary" (click)="toggleYolo()">toggleYolo</button>
     </div>
   `,
   styles: `
@@ -73,6 +72,8 @@ export class HomeComponent implements AfterViewInit {
 
   private _mediaRecorder: MediaRecorder | undefined;
 
+  public switchYolo = true;
+
   constructor(private ngZone: NgZone) {}
 
   ngOnInit() {
@@ -86,6 +87,10 @@ export class HomeComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.startStream();
     this.getStream();
+  }
+
+  public toggleYolo() {
+    this.switchYolo = !this.switchYolo;
   }
 
   public async startStream() {
@@ -144,7 +149,9 @@ export class HomeComponent implements AfterViewInit {
             //   data: base64,
             // });
 
-            subject.next(base64);
+            if (this.switchYolo) {
+              subject.next(base64);
+            }
           };
 
           this._mediaRecorder.start();
@@ -182,9 +189,11 @@ export class HomeComponent implements AfterViewInit {
 
     this._getConnection?.start().then(async () => {
       this._getConnection?.on('ReceiveVideoData', (r) => {
-        const ab = base64.toByteArray(r);
-        this.receivedImage =
-          'data:image/png;base64, ' + base64.fromByteArray(ab);
+        if (!this.switchYolo) {
+          const ab = base64.toByteArray(r);
+          this.receivedImage =
+            'data:image/png;base64, ' + base64.fromByteArray(ab);
+        }
       });
     });
   }

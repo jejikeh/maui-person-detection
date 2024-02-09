@@ -16,4 +16,9 @@ public class VideoHub(VideoPredictionsChannelService predictionsChannelService) 
         
         return predictionsChannelService.GetReader();
     }
+
+    public async Task SendVideoData(string data)
+    {
+        await Clients.All.SendAsync("ReceiveVideoData", data);
+    }
 }
