@@ -1,5 +1,5 @@
-﻿using Compunet.YoloV8.Parsers;
-using Microsoft.ML.OnnxRuntime.Tensors;
+﻿using Microsoft.ML.OnnxRuntime.Tensors;
+using PersonDetection.ImageSegmentation.Model.Data.Output;
 using SixLabors.ImageSharp;
 
 namespace PersonDetection.ImageSegmentation.Model;

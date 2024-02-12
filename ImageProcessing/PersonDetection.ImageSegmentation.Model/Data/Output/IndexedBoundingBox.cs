@@ -1,7 +1,6 @@
-﻿using PersonDetection.ImageSegmentation.Model.Data;
-using SixLabors.ImageSharp;
+﻿using SixLabors.ImageSharp;
 
-namespace Compunet.YoloV8.Parsers;
+namespace PersonDetection.ImageSegmentation.Model.Data.Output;
 
 internal readonly struct IndexedBoundingBox : IComparable<IndexedBoundingBox>
 {
