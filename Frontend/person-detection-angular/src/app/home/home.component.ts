@@ -21,7 +21,7 @@ import { VideoData } from './video-data.model';
   template: `
     <div class="container mt-5">
       <h2>Angular Webcam Capture Image from Camera</h2>
-      <button class="btn btn-primary" (click)="startStream()">Start</button>
+      <button class="btn btn-primary" (click)="requestPhoto()">Start</button>
       <video #received_video [autoplay]="true"></video>
       <div class="layered-image">
         <video
@@ -33,7 +33,7 @@ import { VideoData } from './video-data.model';
         <img class="image-overlay" [src]="receivedOverlay" alt="" />
       </div>
       <img class="layered-image" [src]="receivedImage" alt="" />
-      <button class="btn btn-primary" (click)="toggleYolo()">toggleYolo</button>
+      <p>{{ modelPerformance }}</p>
     </div>
   `,
   styles: `
@@ -48,7 +48,7 @@ import { VideoData } from './video-data.model';
   position: absolute;
   top: 0px;
   left: 0px;
-  opacity: .8
+  opacity: .7
 }`,
 })
 export class HomeComponent implements AfterViewInit {
@@ -72,7 +72,7 @@ export class HomeComponent implements AfterViewInit {
 
   private _mediaRecorder: MediaRecorder | undefined;
 
-  public switchYolo = true;
+  public modelPerformance: string = '';
 
   constructor(private ngZone: NgZone) {}
 
@@ -89,8 +89,10 @@ export class HomeComponent implements AfterViewInit {
     this.getStream();
   }
 
-  public toggleYolo() {
-    this.switchYolo = !this.switchYolo;
+  public requestPhoto() {
+    if (this._mediaRecorder?.state == 'recording') {
+      this._mediaRecorder?.requestData();
+    }
   }
 
   public async startStream() {
@@ -118,10 +120,12 @@ export class HomeComponent implements AfterViewInit {
 
             this._connection?.stream('ReceiveVideoData', d).subscribe({
               next: (r) => {
-                console.log(r);
+                console.log('Send video data');
                 const ab = base64.toByteArray(r);
                 this.receivedOverlay =
                   'data:image/png;base64, ' + base64.fromByteArray(ab);
+
+                this._mediaRecorder?.requestData();
               },
               error: function (err: any): void {
                 throw new Error('Function not implemented.');
@@ -149,18 +153,16 @@ export class HomeComponent implements AfterViewInit {
             //   data: base64,
             // });
 
-            if (this.switchYolo) {
-              subject.next(base64);
-            }
+            subject.next(base64);
           };
 
           this._mediaRecorder.start();
 
-          setInterval(() => {
-            if (this._mediaRecorder?.state == 'recording') {
-              this._mediaRecorder?.requestData();
-            }
-          }, 500);
+          // setInterval(() => {
+          //   if (this._mediaRecorder?.state == 'recording') {
+          //     this._mediaRecorder?.requestData();
+          //   }
+          // }, 10000);
         });
 
       this._localStream?.getTracks().forEach((track) => {
@@ -188,12 +190,8 @@ export class HomeComponent implements AfterViewInit {
     this.receivedVideo!.nativeElement.controls = false;
 
     this._getConnection?.start().then(async () => {
-      this._getConnection?.on('ReceiveVideoData', (r) => {
-        if (!this.switchYolo) {
-          const ab = base64.toByteArray(r);
-          this.receivedImage =
-            'data:image/png;base64, ' + base64.fromByteArray(ab);
-        }
+      this._getConnection?.on('SendModelPerformance', (r) => {
+        this.modelPerformance = r;
       });
     });
   }

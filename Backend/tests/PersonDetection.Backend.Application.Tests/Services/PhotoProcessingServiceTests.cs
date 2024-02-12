@@ -7,6 +7,7 @@ using PersonDetection.Backend.Application.Services;
 using PersonDetection.Backend.Infrastructure.Services;
 using PersonDetection.ImageProcessing;
 using PersonDetection.ImageProcessing.Options;
+using PersonDetection.ImageSegmentation.ModelConverter;
 using SixLabors.ImageSharp;
 
 namespace PersonDetection.Backend.Application.Tests.Services;
@@ -15,7 +16,7 @@ public class PhotoProcessingServiceTests
 {
     private readonly Mock<IOptions<YoloImageProcessingOptions>> _imageProcessingOptions;
     private readonly CoreFileSystemStreamProvider _fileSystemStream = new CoreFileSystemStreamProvider(); 
-    private YoloImageProcessing _yoloImageProcessing;
+    private YoloImageSegmentation _yoloImageProcessing;
     
     public PhotoProcessingServiceTests()
     {
@@ -27,7 +28,7 @@ public class PhotoProcessingServiceTests
             FontSize = 12
         });
         
-        _yoloImageProcessing = new YoloImageProcessing(_imageProcessingOptions.Object, _fileSystemStream);
+        _yoloImageProcessing = new YoloImageSegmentation();
     }
 
     [Theory]
@@ -42,6 +43,26 @@ public class PhotoProcessingServiceTests
 
         // Act
         var act = async () => await service.ProcessPhotoAsync(new Photo
+        {
+            Content = photoContent
+        });
+        
+        // Assert
+        await act.Should().ThrowAsync<InvalidPhotoException>();
+    }
+    
+    [Theory]
+    [InlineData("")]
+    [InlineData(null)]
+    [InlineData(" ")]
+    [InlineData("this string is not a base64 image")]
+    public async Task GivenInvalidPhoto_WhenProcessPhotoTransparentAsync_ThenThrowsInvalidPhotoExceptions(string photoContent)
+    {
+        // Arrange
+        var service = new PhotoProcessingService(_yoloImageProcessing);
+
+        // Act
+        var act = async () => await service.ProcessPhotoTransparentAsync(new Photo
         {
             Content = photoContent
         });
@@ -78,6 +99,33 @@ public class PhotoProcessingServiceTests
     }
     
     [Theory]
+    [InlineData("TestData/Images/Invalid/1.jpg.broken.jpg")]
+    [InlineData("TestData/Images/Invalid/2.jpg.broken.jpg")]
+    [InlineData("TestData/Images/Invalid/3.jpg.broken.jpg")]
+    [InlineData("TestData/Images/Invalid/4.jpg.broken.jpg")]
+    [InlineData("TestData/Images/Invalid/5.jpg.broken.jpg")]
+    [InlineData("TestData/Images/Invalid/6.jpg.broken.jpg")]
+    [InlineData("TestData/Images/Invalid/7.jpg.broken.jpg")]
+    [InlineData("TestData/Images/Invalid/8.jpg.broken.jpg")]
+    [InlineData("TestData/Images/Invalid/9.jpg.broken.jpg")]
+    [InlineData("TestData/Images/Invalid/10.jpg.broken.jpg")]
+    public void GivenInvalidPhotoFile_WhenProcessPhotoTransparentAsync_ThenThrowsInvalidImageContentExceptions(string path)
+    {
+        // Arrange
+        var image = Convert.ToBase64String(File.ReadAllBytes(path));
+        var service = new PhotoProcessingService(_yoloImageProcessing);
+
+        // Act
+        var act = async () => await service.ProcessPhotoTransparentAsync(new Photo
+        {
+            Content = image
+        });
+        
+        // Assert
+        act.Should().ThrowAsync<InvalidImageContentException>();
+    }
+    
+    [Theory]
     [InlineData("no_exist", "no_exist", "TestData/Images/Invalid/6.jpg.broken.jpg")]
     public void GivenNonExistingModelPath_WhenProcessPhotoAsync_ThenThrowsFileNotFoundException(string path, string file, string imagePath)
     {
@@ -90,7 +138,6 @@ public class PhotoProcessingServiceTests
             FontSize = 12
         });
         
-        _yoloImageProcessing = new YoloImageProcessing(_imageProcessingOptions.Object, _fileSystemStream);
         var service = new PhotoProcessingService(_yoloImageProcessing);
         
         // Act

@@ -2,12 +2,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using PersonDetection.Backend.Application;
+using PersonDetection.Backend.Application.Services;
 using PersonDetection.Backend.Infrastructure;
 using PersonDetection.Backend.Web.Common;
 using PersonDetection.Backend.Web.Endpoints;
 using PersonDetection.Backend.Web.Hubs;
 using PersonDetection.Backend.Web.Middlewares;
-using PersonDetection.Backend.Web.Services;
 
 namespace PersonDetection.Backend.Web.Configurations;
 
