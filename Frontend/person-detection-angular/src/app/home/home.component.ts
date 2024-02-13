@@ -10,9 +10,8 @@ import { AuthService } from '../auth/auth.service';
 import { environment } from '../../environments/environment';
 import * as signalR from '@aspnet/signalr';
 import * as base64 from 'base64-js';
-import { SimpleChannel } from './simple-channel';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { VideoData } from './video-data.model';
+import { SignalRService } from '../signalr.service';
 
 @Component({
   selector: 'app-home',
@@ -21,7 +20,7 @@ import { VideoData } from './video-data.model';
   template: `
     <div class="container mt-5">
       <h2>Angular Webcam Capture Image from Camera</h2>
-      <button class="btn btn-primary" (click)="requestPhoto()">Start</button>
+      <button class="btn btn-primary" (click)="start()">Start</button>
       <video #received_video [autoplay]="true"></video>
       <div class="layered-image">
         <video
@@ -30,7 +29,6 @@ import { VideoData } from './video-data.model';
           [autoplay]="true"
           [muted]="true"
         ></video>
-        <img class="image-overlay" [src]="receivedOverlay" alt="" />
       </div>
       <img class="layered-image" [src]="receivedImage" alt="" />
       <p>{{ modelPerformance }}</p>
@@ -57,24 +55,19 @@ export class HomeComponent implements AfterViewInit {
   };
 
   private _authService: AuthService = inject(AuthService);
+  private _signalR: SignalRService = inject(SignalRService);
 
   @ViewChild('local_video') localVideo: ElementRef | undefined;
   private _localStream: MediaStream | undefined;
 
-  @ViewChild('received_video') receivedVideo: ElementRef | undefined;
-  private _receivedStream: MediaStream | undefined;
-
   public receivedImage: string = '';
   public receivedOverlay: string = '';
 
-  private _connection: signalR.HubConnection | undefined;
   private _getConnection: signalR.HubConnection | undefined;
 
   private _mediaRecorder: MediaRecorder | undefined;
 
   public modelPerformance: string = '';
-
-  constructor(private ngZone: NgZone) {}
 
   ngOnInit() {
     this._authService.identify().add(() => {
@@ -85,114 +78,21 @@ export class HomeComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.startStream();
-    this.getStream();
-  }
+    this._signalR.startConnectionAndStream(
+      this.mediaConstraints,
+      this.localVideo!
+    );
 
-  public requestPhoto() {
-    if (this._mediaRecorder?.state == 'recording') {
-      this._mediaRecorder?.requestData();
-    }
-  }
+    this._signalR.OnModelPerformance.subscribe((data) => {
+      this.modelPerformance = data;
+    });
 
-  public async startStream() {
-    if (this._connection == undefined) {
-      this._connection = new signalR.HubConnectionBuilder()
-        .withUrl(environment.webrtcBackend)
-        .configureLogging(signalR.LogLevel.Error)
-        .build();
-    }
-
-    this._connection?.start().then(async () => {
-      await navigator.mediaDevices
-        .getUserMedia(this.mediaConstraints)
-        .then(async (stream) => {
-          this._localStream = stream;
-          this._mediaRecorder = new MediaRecorder(stream, {
-            mimeType: 'video/webm',
-          });
-
-          let subject = new BehaviorSubject<string>('');
-          subject.subscribe((d) => {
-            if (d.length == 0) {
-              return;
-            }
-
-            this._connection?.stream('ReceiveVideoData', d).subscribe({
-              next: (r) => {
-                console.log('Send video data');
-                const ab = base64.toByteArray(r);
-                this.receivedOverlay =
-                  'data:image/png;base64, ' + base64.fromByteArray(ab);
-
-                this._mediaRecorder?.requestData();
-              },
-              error: function (err: any): void {
-                throw new Error('Function not implemented.');
-              },
-              complete: function (): void {
-                console.log('complete');
-              },
-            });
-          });
-
-          this._mediaRecorder.ondataavailable = async (event) => {
-            var canvas = document.createElement('canvas');
-            canvas.width = 640;
-            canvas.height = 480;
-            canvas
-              .getContext('2d')
-              ?.drawImage(this.localVideo!.nativeElement, 0, 0);
-
-            var base64 = canvas
-              .toDataURL('image/png')
-              .replace(/^data:image\/(png|jpg);base64,/, '');
-
-            // this._connection?.send('SendVideoData', {
-            //   index: 0,
-            //   data: base64,
-            // });
-
-            subject.next(base64);
-          };
-
-          this._mediaRecorder.start();
-
-          // setInterval(() => {
-          //   if (this._mediaRecorder?.state == 'recording') {
-          //     this._mediaRecorder?.requestData();
-          //   }
-          // }, 10000);
-        });
-
-      this._localStream?.getTracks().forEach((track) => {
-        track.enabled = true;
-      });
-
-      this.localVideo!.nativeElement.srcObject = this._localStream;
-
-      this._connection?.onclose(() => {
-        this._localStream?.getTracks().forEach((track) => {
-          track.enabled = false;
-        });
-        this._mediaRecorder?.stop();
-      });
+    this._signalR.OnReceivedMask.subscribe((data) => {
+      this.receivedImage = data;
     });
   }
 
-  public getStream() {
-    this._getConnection = new signalR.HubConnectionBuilder()
-      .withUrl(environment.webrtcBackend)
-      .build();
-
-    this.receivedVideo!.nativeElement.autoplay = true;
-    this.receivedVideo!.nativeElement.muted = true;
-    this.receivedVideo!.nativeElement.controls = false;
-
-    this._getConnection?.start().then(async () => {
-      this._getConnection?.on('SendModelPerformance', (r) => {
-        this.modelPerformance = r;
-      });
-    });
+  public start() {
+    this._signalR.requestData();
   }
 }
