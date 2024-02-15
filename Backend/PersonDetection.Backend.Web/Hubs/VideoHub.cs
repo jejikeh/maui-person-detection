@@ -1,11 +1,11 @@
 using System.Diagnostics;
 using System.Threading.Channels;
 using Microsoft.AspNetCore.SignalR;
-using PersonDetection.Backend.Application.Services;
+using PersonDetection.Backend.Web.Services;
 
 namespace PersonDetection.Backend.Web.Hubs;
 
-public class VideoHub(VideoPredictionsChannelService predictionsChannelService) : Hub
+public class VideoHub(IVideoPredictionsChannelService _predictionsChannelService) : Hub
 {
     private readonly Stopwatch _stopwatch = new();
     
@@ -13,13 +13,13 @@ public class VideoHub(VideoPredictionsChannelService predictionsChannelService) 
     {
         _stopwatch.Start();
        
-        _ = predictionsChannelService.StreamTransparentPhotoAsync(data);
+        _ = _predictionsChannelService.StreamTransparentPhotoAsync(data);
        
         _stopwatch.Stop();
         await SendModelPerformance(_stopwatch.ElapsedMilliseconds.ToString());
         _stopwatch.Reset();
         
-        return predictionsChannelService.GetReader();
+        return _predictionsChannelService.GetReader();
     }
 
     public async Task SendModelPerformance(string data)

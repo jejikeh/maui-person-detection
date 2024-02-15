@@ -12,13 +12,12 @@ public class PhotoGallery : IPhotoGallery
 {
     private readonly SQLiteAsyncConnection _dbConnection;
     private readonly PhotoSaverService _fileSaver;
-    
-    private const SQLiteOpenFlags SqLiteOpenFlags = SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.SharedCache;
+    private static readonly SQLiteOpenFlags _sqLiteOpenFlags = SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.SharedCache;
     
     public PhotoGallery(IOptions<PhotoGalleryOptions> options, PhotoSaverService fileSaver)
     {
         _fileSaver = fileSaver;
-        _dbConnection = new SQLiteAsyncConnection(options.Value.DatabasePath, SqLiteOpenFlags);
+        _dbConnection = new SQLiteAsyncConnection(options.Value.DatabasePath, _sqLiteOpenFlags);
         _dbConnection.CreateTableAsync<Photo>().Wait();
         _dbConnection.CreateTableAsync<PhotoPair>().Wait();
     }

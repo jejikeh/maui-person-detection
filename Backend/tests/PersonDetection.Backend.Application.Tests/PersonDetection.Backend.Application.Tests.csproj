@@ -121,6 +121,12 @@
     <AdditionalFiles Include="TestData\Images\Invalid\10.jpg.broken.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </AdditionalFiles>
+    <None Update="TestData\Weights\yolov8n-seg-quantize.onnx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\Weights\yolov8n-seg-unquantize.onnx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

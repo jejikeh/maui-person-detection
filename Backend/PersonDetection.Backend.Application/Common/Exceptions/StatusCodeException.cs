@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace PersonDetection.Backend.Application.Common.Exceptions;
 
-public class StatusCodeException(string message, int statusCode) : Exception(message)
+public class StatusCodeException(string _message, int _statusCode) : Exception(_message)
 {
-    public int StatusCode { get; set; } = statusCode;
+    public int StatusCode { get; set; } = _statusCode;
 }

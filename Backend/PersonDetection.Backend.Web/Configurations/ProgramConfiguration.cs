@@ -8,6 +8,8 @@ using PersonDetection.Backend.Web.Common;
 using PersonDetection.Backend.Web.Endpoints;
 using PersonDetection.Backend.Web.Hubs;
 using PersonDetection.Backend.Web.Middlewares;
+using PersonDetection.Backend.Web.Services;
+using PersonDetection.Backend.Web.Services.Implementations;
 
 namespace PersonDetection.Backend.Web.Configurations;
 
@@ -34,8 +36,9 @@ public static class ProgramConfiguration
         });
 
         builder.Services
+            .AddOptions()
             .AddTransient<GlobalExceptionHandlerMiddleware>()
-            .AddSingleton<VideoPredictionsChannelService>()
+            .AddSingleton<IVideoPredictionsChannelService, VideoPredictionsChannelService>()
             .AddProblemDetails()
             .AddApplication(builder.Configuration)
             .AddInfrastructure(builder.Configuration)
@@ -89,6 +92,7 @@ public static class ProgramConfiguration
         app.MapPost("logout", LogoutEndpoint.Handler).RequireAuthorization();
         app.MapPost("register", RegisterEndpoint.HandlerAsync);
         app.MapPost("photo", PhotoEndpoint.HandlerAsync);
+        app.MapPost("model/switch", SwitchModelTypeEndpoint.HandlerAsync);
 
         return app;
     }

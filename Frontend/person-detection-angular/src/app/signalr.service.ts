@@ -8,7 +8,7 @@ import { environment } from '../environments/environment';
   providedIn: 'root',
 })
 export class SignalRService {
-  private _connection: signalR.HubConnection | undefined;
+  private _connection: signalR.HubConnection;
   private _mediaRecorder: MediaRecorder | undefined;
 
   private _localStream: MediaStream | undefined;
@@ -22,16 +22,19 @@ export class SignalRService {
   public StreamImageData = 'ReceiveVideoData';
   public ModelPerformanceData = 'SendModelPerformance';
 
-  public startConnectionAndStream(
-    mediaConstraints: MediaStreamConstraints,
-    localVideoStreamElement: ElementRef
-  ): void {
+  constructor(localVideoStreamElement: ElementRef) {
+    this._localVideoStreamElement = localVideoStreamElement;
+
     this._connection = new HubConnectionBuilder()
       .withUrl(environment.webrtcBackend)
       .configureLogging(LogLevel.Error)
       .build();
+  }
 
-    this._localVideoStreamElement = localVideoStreamElement;
+  public startConnectionAndStream(
+    mediaConstraints: MediaStreamConstraints
+  ): void {
+    console.log(this._connection);
 
     this._connection.start().then(async () => {
       this._localStream = await navigator.mediaDevices.getUserMedia(
@@ -42,7 +45,9 @@ export class SignalRService {
         mimeType: 'video/webm',
       });
 
-      this._onMediaData.subscribe(this.handleMediaData);
+      this._onMediaData.subscribe((data) => {
+        this.handleMediaData(this._connection, data);
+      });
       this.setupStream();
       this._mediaRecorder.start();
 
@@ -53,9 +58,8 @@ export class SignalRService {
       this._localVideoStreamElement!.nativeElement.srcObject =
         this._localStream;
 
-      this._connection?.on(
-        this.ModelPerformanceData,
-        this.handleModelPerformance
+      this._connection?.on(this.ModelPerformanceData, (data: string) =>
+        this.OnModelPerformance.next(data)
       );
     });
 
@@ -69,29 +73,33 @@ export class SignalRService {
   }
 
   public requestData() {
+    if (
+      this._mediaRecorder?.state == 'inactive' ||
+      this._mediaRecorder?.state == 'paused'
+    ) {
+      this._mediaRecorder.start();
+    }
     this._mediaRecorder?.requestData();
   }
 
-  private handleModelPerformance(data: string) {
-    this.OnModelPerformance.next(data);
+  public stop() {
+    this._mediaRecorder?.stop();
   }
 
-  private handleMediaData(data: string) {
+  private handleMediaData(hub: signalR.HubConnection, data: string) {
     if (data.length == 0) {
       return;
     }
 
-    this._connection?.stream(this.StreamImageData, data).subscribe({
+    console.log(hub);
+
+    hub.stream(this.StreamImageData, data).subscribe({
       next: (request) => {
         this.OnReceivedMask.next('data:image/png;base64, ' + request);
         this._mediaRecorder?.requestData();
       },
-      error: function (err: any): void {
-        throw new Error('Function not implemented.');
-      },
-      complete: function (): void {
-        throw new Error('Function not implemented.');
-      },
+      error: function (err: any): void {},
+      complete: function (): void {},
     });
   }
 

@@ -6,16 +6,7 @@ namespace PersonDetection.ImageSegmentation.Model;
 
 internal readonly struct IndexedBoundingBoxParser
 {
-    public IndexedBoundingBox[] Parse(Tensor<float> output, Size originSize)
-    {
-        var reductionRatio = Math.Min(YoloSegmentationOptions.Width / (float)originSize.Width, YoloSegmentationOptions.Height / (float)originSize.Height);
-        var xPadding = (int)((YoloSegmentationOptions.Width - originSize.Width * reductionRatio) / 2);
-        var yPadding = (int)((YoloSegmentationOptions.Height - originSize.Height * reductionRatio) / 2);
-
-        return Parse(output, originSize, xPadding, yPadding);
-    }
-
-    public IndexedBoundingBox[] Parse(Tensor<float> output, Size originSize, int xPadding, int yPadding)
+    public static IndexedBoundingBox[] Parse(Tensor<float> output, Size originSize, int xPadding, int yPadding)
     {
         var xRatio = (float)originSize.Width / YoloSegmentationOptions.Width;
         var yRatio = (float)originSize.Height / YoloSegmentationOptions.Height;
@@ -28,13 +19,13 @@ internal readonly struct IndexedBoundingBoxParser
         return Parse(output, originSize, xPadding, yPadding, xRatio, yRatio);
     }
 
-    private IndexedBoundingBox[] Parse(Tensor<float> output, Size originSize, int xPadding, int yPadding, float xRatio, float yRatio)
+    private static IndexedBoundingBox[] Parse(Tensor<float> output, Size originSize, int xPadding, int yPadding, float xRatio, float yRatio)
     {
         var boxes = new IndexedBoundingBox[output.Dimensions[2]];
 
         Parallel.For(0, output.Dimensions[2], i =>
         {
-            for (int j = 0; j < YoloSegmentationOptions.Classes.Length; j++)
+            for (var j = 0; j < YoloSegmentationOptions.Classes.Length; j++)
             {
                 var confidence = output[0, j + 4, i];
 
@@ -70,9 +61,7 @@ internal readonly struct IndexedBoundingBoxParser
         });
 
         var count = boxes.Count(t => t.IsEmpty == false);
-
         var topBoxes = new IndexedBoundingBox[count];
-
         var topIndex = 0;
 
         foreach (var box in boxes)
@@ -105,7 +94,6 @@ internal readonly struct IndexedBoundingBoxParser
             }
 
             var boxA = boxes[i];
-
             selected.Add(boxA);
 
             for (var j = i + 1; j < boxCount; j++)
@@ -137,7 +125,7 @@ internal readonly struct IndexedBoundingBoxParser
             }
         }
 
-        return [.. selected];
+        return [..selected];
     }
 
     private static float CalculateIoU(Rectangle rectA, Rectangle rectB)

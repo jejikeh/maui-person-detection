@@ -4,14 +4,14 @@ public class Result<TValue, TError>
 {
     private readonly TValue? _value;
     private readonly TError? _error;
-    
-    protected Result(TValue value)
+
+    private Result(TValue value)
     {
         _value = value;
         _error = default;
     }
 
-    protected Result(TError? error)
+    private Result(TError? error)
     {
         _value = default;
         _error = error;

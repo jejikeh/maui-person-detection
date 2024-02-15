@@ -2,10 +2,8 @@ using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Moq;
 using PersonDetection.Backend.Application.Common.Exceptions;
-using PersonDetection.Backend.Application.Models;
 using PersonDetection.Backend.Application.Services;
-using PersonDetection.Backend.Infrastructure.Services;
-using PersonDetection.ImageProcessing;
+using PersonDetection.Backend.Application.Services.Implementations;
 using PersonDetection.ImageProcessing.Options;
 using PersonDetection.ImageSegmentation.ModelConverter;
 using SixLabors.ImageSharp;
@@ -15,8 +13,8 @@ namespace PersonDetection.Backend.Application.Tests.Services;
 public class PhotoProcessingServiceTests
 {
     private readonly Mock<IOptions<YoloImageProcessingOptions>> _imageProcessingOptions;
-    private readonly CoreFileSystemStreamProvider _fileSystemStream = new CoreFileSystemStreamProvider(); 
-    private YoloImageSegmentation _yoloImageProcessing;
+    private readonly YoloImageSegmentation _yoloImageProcessing;
+    private readonly ModelTypeProvider _modelTypeProvider;
     
     public PhotoProcessingServiceTests()
     {
@@ -27,8 +25,16 @@ public class PhotoProcessingServiceTests
             WeightFile = "yolov5n",
             FontSize = 12
         });
+
+        Mock<IOptions<ModelLoaderOptions>> modelLoaderOptions = new();
+        modelLoaderOptions.Setup(options => options.Value).Returns(new ModelLoaderOptions
+        {
+            UnQuantizedModelPath = "TestData/Weights/yolov8n-seg-unquantize.onnx",
+            QuantizedModelPath = "TestData/Weights/yolov8n-seg-quantize.onnx"
+        });
         
-        _yoloImageProcessing = new YoloImageSegmentation();
+        _yoloImageProcessing = new YoloImageSegmentation(modelLoaderOptions.Object);
+        _modelTypeProvider = new ModelTypeProvider();
     }
 
     [Theory]
@@ -39,13 +45,10 @@ public class PhotoProcessingServiceTests
     public async Task GivenInvalidPhoto_WhenProcessPhotoAsync_ThenThrowsInvalidPhotoExceptions(string photoContent)
     {
         // Arrange
-        var service = new PhotoProcessingService(_yoloImageProcessing);
+        var service = new PhotoProcessingService(_yoloImageProcessing, new ModelTypeProvider());
 
         // Act
-        var act = async () => await service.ProcessPhotoAsync(new Photo
-        {
-            Content = photoContent
-        });
+        var act = async () => await service.ProcessPhotoAsync(photoContent);
         
         // Assert
         await act.Should().ThrowAsync<InvalidPhotoException>();
@@ -59,13 +62,10 @@ public class PhotoProcessingServiceTests
     public async Task GivenInvalidPhoto_WhenProcessPhotoTransparentAsync_ThenThrowsInvalidPhotoExceptions(string photoContent)
     {
         // Arrange
-        var service = new PhotoProcessingService(_yoloImageProcessing);
+        var service = new PhotoProcessingService(_yoloImageProcessing, _modelTypeProvider);
 
         // Act
-        var act = async () => await service.ProcessPhotoTransparentAsync(new Photo
-        {
-            Content = photoContent
-        });
+        var act = async () => await service.ProcessPhotoTransparentAsync(photoContent);
         
         // Assert
         await act.Should().ThrowAsync<InvalidPhotoException>();
@@ -86,13 +86,10 @@ public class PhotoProcessingServiceTests
     {
         // Arrange
         var image = Convert.ToBase64String(File.ReadAllBytes(path));
-        var service = new PhotoProcessingService(_yoloImageProcessing);
+        var service = new PhotoProcessingService(_yoloImageProcessing, _modelTypeProvider);
 
         // Act
-        var act = async () => await service.ProcessPhotoAsync(new Photo
-        {
-            Content = image
-        });
+        var act = async () => await service.ProcessPhotoAsync(image);
         
         // Assert
         act.Should().ThrowAsync<InvalidImageContentException>();
@@ -113,13 +110,10 @@ public class PhotoProcessingServiceTests
     {
         // Arrange
         var image = Convert.ToBase64String(File.ReadAllBytes(path));
-        var service = new PhotoProcessingService(_yoloImageProcessing);
+        var service = new PhotoProcessingService(_yoloImageProcessing, _modelTypeProvider);
 
         // Act
-        var act = async () => await service.ProcessPhotoTransparentAsync(new Photo
-        {
-            Content = image
-        });
+        var act = async () => await service.ProcessPhotoTransparentAsync(image);
         
         // Assert
         act.Should().ThrowAsync<InvalidImageContentException>();
@@ -138,13 +132,10 @@ public class PhotoProcessingServiceTests
             FontSize = 12
         });
         
-        var service = new PhotoProcessingService(_yoloImageProcessing);
+        var service = new PhotoProcessingService(_yoloImageProcessing, _modelTypeProvider);
         
         // Act
-        var act = async () => await service.ProcessPhotoAsync(new Photo
-        {
-            Content = image
-        });
+        var act = async () => await service.ProcessPhotoAsync(image);
         
         // Assert
         act.Should().ThrowAsync<FileNotFoundException>();
@@ -165,13 +156,10 @@ public class PhotoProcessingServiceTests
     {
         // Arrange
         var image = Convert.ToBase64String(await File.ReadAllBytesAsync(path));
-        var service = new PhotoProcessingService(_yoloImageProcessing);
+        var service = new PhotoProcessingService(_yoloImageProcessing, _modelTypeProvider);
         
         // Act
-        var act = async () => await service.ProcessPhotoAsync(new Photo
-        {
-            Content = image
-        });
+        var act = async () => await service.ProcessPhotoAsync(image);
         
         // Assert
         await act.Should().NotThrowAsync();
@@ -192,17 +180,11 @@ public class PhotoProcessingServiceTests
     {
         // Arrange
         var image = Convert.ToBase64String(await File.ReadAllBytesAsync(path));
-        var service = new PhotoProcessingService(_yoloImageProcessing);
-        var processedPhoto = await service.ProcessPhotoAsync(new Photo
-        {
-            Content = image
-        });
+        var service = new PhotoProcessingService(_yoloImageProcessing, _modelTypeProvider);
+        var processedPhoto = await service.ProcessPhotoAsync(image);
         
         // Act
-        var act = async () => await service.ProcessPhotoAsync(new Photo()
-        {
-            Content = processedPhoto.Content
-        });
+        var act = async () => await service.ProcessPhotoAsync(processedPhoto);
         
         // Assert
         act

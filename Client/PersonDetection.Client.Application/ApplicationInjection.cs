@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using PersonDetection.Client.Application.Services;
+using PersonDetection.Client.Application.Services.Implementations;
 
 namespace PersonDetection.Client.Application;
 

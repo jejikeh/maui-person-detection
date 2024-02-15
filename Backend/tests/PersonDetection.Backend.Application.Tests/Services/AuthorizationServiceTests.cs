@@ -8,6 +8,7 @@ using PersonDetection.Backend.Application.Common.Exceptions;
 using PersonDetection.Backend.Application.Common.Models.Requests.Login;
 using PersonDetection.Backend.Application.Common.Models.Requests.Register;
 using PersonDetection.Backend.Application.Services;
+using PersonDetection.Backend.Application.Services.Implementations;
 using PersonDetection.Backend.Application.Tests.Fakes;
 using PersonDetection.Backend.Infrastructure.Common.Options;
 using LoginRequest = PersonDetection.Backend.Application.Common.Models.Requests.Login.LoginRequest;

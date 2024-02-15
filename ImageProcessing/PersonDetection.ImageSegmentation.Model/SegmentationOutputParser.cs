@@ -16,17 +16,13 @@ internal readonly struct SegmentationOutputParser
         var yPadding = (int)((YoloSegmentationOptions.Height - originSize.Height * reductionRatio) / 2);
 
         var maskChannelCount = boxesOutput.Dimensions[1] - 4 - YoloSegmentationOptions.Classes.Length;
-
-        var boxes = new IndexedBoundingBoxParser().Parse(boxesOutput, originSize, xPadding, yPadding);
-
+        var boxes = IndexedBoundingBoxParser.Parse(boxesOutput, originSize, xPadding, yPadding);
         var result = new SegmentationBoundingBox[boxes.Length];
 
-        for (int index = 0; index < boxes.Length; index++)
+        for (var index = 0; index < boxes.Length; index++)
         {
             var box = boxes[index];
-
             var maskWeights = ExtractMaskWeights(boxesOutput, box.Index, maskChannelCount, YoloSegmentationOptions.Classes.Length + 4);
-
             var mask = ProcessMask(maskPrototypes, maskWeights, box.Bounds, originSize, YoloSegmentationOptions.ImageSize, xPadding, yPadding);
 
             result[index] = new SegmentationBoundingBox
@@ -41,8 +37,9 @@ internal readonly struct SegmentationOutputParser
         return result;
     }
 
-    private static SegmentationMask ProcessMask(Tensor<float> maskPrototypes,
-        float[] maskWeights,
+    private static SegmentationMask ProcessMask(
+        Tensor<float> maskPrototypes,
+        IReadOnlyList<float> maskWeights,
         Rectangle bounds,
         Size originSize,
         Size modelSize,
@@ -52,17 +49,21 @@ internal readonly struct SegmentationOutputParser
         var maskChannels = maskPrototypes.Dimensions[1];
         var maskHeight = maskPrototypes.Dimensions[2];
         var maskWidth = maskPrototypes.Dimensions[3];
-
-        if (maskChannels != maskWeights.Length)
+        
+        if (maskChannels != maskWeights.Count)
+        {
             throw new InvalidOperationException();
+        }
 
         using var bitmap = new Image<L8>(maskWidth, maskHeight);
 
+        var pixel = new L8(0);
+        
         for (var y = 0; y < maskHeight; y++)
         {
             for (var x = 0; x < maskWidth; x++)
             {
-                var value = 0F;
+                var value = 0f;
 
                 for (var i = 0; i < maskChannels; i++)
                 {
@@ -70,9 +71,7 @@ internal readonly struct SegmentationOutputParser
                 }
 
                 value = Sigmoid(value);
-
-                var color = GetLuminance(value);
-                var pixel = new L8(color);
+                pixel.PackedValue = GetLuminance(value);
 
                 bitmap[x, y] = pixel;
             }
@@ -123,6 +122,7 @@ internal readonly struct SegmentationOutputParser
     private static float Sigmoid(float value)
     {
         var k = MathF.Exp(value);
+        
         return k / (1.0f + k);
     }
 
@@ -133,7 +133,7 @@ internal readonly struct SegmentationOutputParser
 
     private static float GetConfidence(byte luminance)
     {
-        return (luminance - 255) * -1 / 255F;
+        return (luminance - 255) * -1 / 255f;
     }
     
     private static void EnumeratePixels<TPixel>(Image<TPixel> image, Action<Point, TPixel> iterator) where TPixel : unmanaged, IPixel<TPixel>

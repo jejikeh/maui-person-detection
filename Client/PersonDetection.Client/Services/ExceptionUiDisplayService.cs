@@ -8,9 +8,9 @@ using MauiApplication = Microsoft.Maui.Controls.Application;
 
 namespace PersonDetection.Client.Services;
 
-public class ExceptionUiDisplayService(IOptions<ClientOptions> options) : IExceptionHandler
+public class ExceptionUiDisplayService(IOptions<ClientOptions> _clientOptions) : IExceptionHandler
 {
-    private readonly bool _displayAlerts = options.Value.DisplayExceptionDetails;
+    private readonly bool _displayAlerts = _clientOptions.Value.DisplayExceptionDetails;
     
     public void OnException(object sender, FirstChanceExceptionEventArgs firstChanceExceptionEventArgs)
     {

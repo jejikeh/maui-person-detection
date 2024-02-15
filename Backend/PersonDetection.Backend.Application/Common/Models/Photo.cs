@@ -1,6 +1,6 @@
-namespace PersonDetection.Backend.Application.Models;
+namespace PersonDetection.Backend.Application.Common.Models;
 
 public class Photo
 {
-    public required string Content { get; set; }
+    public required string Content { get; init; }
 }

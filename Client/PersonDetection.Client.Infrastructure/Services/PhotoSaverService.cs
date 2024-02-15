@@ -6,13 +6,13 @@ using PersonDetection.Client.Infrastructure.Common.Options;
 
 namespace PersonDetection.Client.Infrastructure.Services;
 
-public class PhotoSaverService(IFileSaver fileSaver, IOptions<PhotoSaverOptions> options)
+public class PhotoSaverService(IFileSaver _fileSaver, IOptions<PhotoSaverOptions> _options)
 {
     public async Task UserSavePhotoAsync(Photo photo)
     {
         var decodedImage = Convert.FromBase64String(photo.Content);
         using var stream = new MemoryStream(decodedImage);
-        var fileSaverResult = await fileSaver.SaveAsync("image.png", stream);
+        var fileSaverResult = await _fileSaver.SaveAsync("image.png", stream);
         
         if (!fileSaverResult.IsSuccessful)
         {
@@ -27,7 +27,7 @@ public class PhotoSaverService(IFileSaver fileSaver, IOptions<PhotoSaverOptions>
     public async Task CachePhotoAsync(Photo photo)
     {
         var decodedImage = Convert.FromBase64String(photo.Content);
-        var filePath = options.Value.ImageCacheDirectory + Guid.NewGuid();
+        var filePath = _options.Value.ImageCacheDirectory + Guid.NewGuid();
         
         using var stream = new MemoryStream(decodedImage);
         await using var file = new FileStream(filePath, FileMode.Create, FileAccess.Write);

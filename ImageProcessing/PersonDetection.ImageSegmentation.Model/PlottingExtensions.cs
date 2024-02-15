@@ -11,11 +11,10 @@ public static class PlottingExtensions
     public static Image PlotImage(this Segmentation result, Image originImage)
     {
         var size = originImage.Size;
-
         using var masksLayer = new Image<Rgba32>(size.Width, size.Height);
+        
         foreach (var box in result.Boxes)
         {
-            var color = Color.Red;
             using var mask = new Image<Rgba32>(box.Bounds.Width, box.Bounds.Height);
 
             for (var x = 0; x < box.Mask.Width; x++)
@@ -24,9 +23,9 @@ public static class PlottingExtensions
                 {
                     var value = box.Mask[x, y];
 
-                    if (value > 0.65)
+                    if (value > 0.65f)
                     {
-                        mask[x, y] = color;
+                        mask[x, y] = Color.Red;
                     }
                 }
             }
@@ -34,7 +33,7 @@ public static class PlottingExtensions
             masksLayer.Mutate(x => x.DrawImage(mask, box.Bounds.Location, 1F));
         }
 
-        originImage.Mutate(x => x.DrawImage(masksLayer, .4F));
+        originImage.Mutate(x => x.DrawImage(masksLayer, 0.4F));
         
         return originImage;
     }

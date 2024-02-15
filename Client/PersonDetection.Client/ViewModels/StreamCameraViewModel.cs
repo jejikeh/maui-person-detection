@@ -4,13 +4,14 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PersonDetection.Client.Application.Models;
 using PersonDetection.Client.Application.Services;
+using PersonDetection.Client.Application.Services.Implementations;
 using PersonDetection.Client.Extensions;
 using PersonDetection.Client.Models;
 using PersonDetection.Client.Services;
 
 namespace PersonDetection.Client.ViewModels;
 
-public partial class StreamCameraViewModel(PhotoService photoService, IPlatformImageSourceLoader imageSourceLoader) : ObservableObject
+public partial class StreamCameraViewModel(PhotoService _photoService, IPlatformImageSourceLoader _imageSourceLoader) : ObservableObject
 {
     [ObservableProperty]
     private ViewPhotoPair _viewPhotoPair = default!;
@@ -63,7 +64,7 @@ public partial class StreamCameraViewModel(PhotoService photoService, IPlatformI
 
         await Task.Run(async () =>
         {
-            var processPhotoToGallery = await photoService.ProcessPhotoToGalleryAsync(photo);
+            var processPhotoToGallery = await _photoService.ProcessPhotoToGalleryAsync(photo);
             CanSnapShot = true;
             
             if (processPhotoToGallery.IsError)
@@ -74,7 +75,7 @@ public partial class StreamCameraViewModel(PhotoService photoService, IPlatformI
             }
 
             var photoTuple = processPhotoToGallery.GetValue();
-            ViewPhotoPair = imageSourceLoader.LoadViewPhotoPair(photoTuple.Original, photoTuple.Processed);
+            ViewPhotoPair = _imageSourceLoader.LoadViewPhotoPair(photoTuple.Original, photoTuple.Processed);
         });
     }
 

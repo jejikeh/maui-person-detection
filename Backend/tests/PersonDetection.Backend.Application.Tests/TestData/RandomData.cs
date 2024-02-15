@@ -1,6 +1,5 @@
 using Bogus;
 using Microsoft.AspNetCore.Identity;
-using PersonDetection.Backend.Infrastructure.Models.Identity;
 
 namespace PersonDetection.Backend.Application.Tests.TestData;
 

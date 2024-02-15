@@ -9,7 +9,7 @@ using PersonDetection.Client.Models;
 namespace PersonDetection.Client.ViewModels;
 
 [QueryProperty(nameof(ViewPhotoPair), "ViewPhotoPair")]
-public partial class PhotoViewModel(IPhotoGallery photoGallery, PhotoSaverService photoSaverService) : ObservableObject
+public partial class PhotoViewModel(IPhotoGallery _photoGallery, PhotoSaverService _photoSaverService) : ObservableObject
 {
     [ObservableProperty]
     private ViewPhotoPair _viewPhotoPair = default!;
@@ -21,7 +21,7 @@ public partial class PhotoViewModel(IPhotoGallery photoGallery, PhotoSaverServic
     [RelayCommand]
     private async Task Delete()
     {
-        var getPhotosResult = await photoGallery.GetPhotosByIdAsync(ViewPhotoPair.Id);
+        var getPhotosResult = await _photoGallery.GetPhotosByIdAsync(ViewPhotoPair.Id);
         
         if (getPhotosResult.IsError)
         {
@@ -30,7 +30,7 @@ public partial class PhotoViewModel(IPhotoGallery photoGallery, PhotoSaverServic
         }
 
         var photo = getPhotosResult.GetValue();
-        var deletePairResult = await photoGallery.DeletePairAsync(photo.Original);
+        var deletePairResult = await _photoGallery.DeletePairAsync(photo.Original);
         
         if (deletePairResult.IsError)
         {
@@ -47,7 +47,7 @@ public partial class PhotoViewModel(IPhotoGallery photoGallery, PhotoSaverServic
     [RelayCommand]
     private async Task Save()
     {
-        var result = await photoGallery.GetPhotosByIdAsync(ViewPhotoPair.Id);
+        var result = await _photoGallery.GetPhotosByIdAsync(ViewPhotoPair.Id);
         
         if (result.IsError)
         {
@@ -56,6 +56,6 @@ public partial class PhotoViewModel(IPhotoGallery photoGallery, PhotoSaverServic
             return;
         }
         
-        await photoSaverService.UserSavePhotoAsync(result.GetValue().Processed);
+        await _photoSaverService.UserSavePhotoAsync(result.GetValue().Processed);
     }
 }

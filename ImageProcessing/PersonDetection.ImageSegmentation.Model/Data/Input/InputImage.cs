@@ -17,8 +17,7 @@ public static class InputImage
         return input;
     }
     
-    // @Cleanup: remove batch
-    private static void ProcessToTensor(Image<Rgb24> input, DenseTensor<float> target, int batch = 0)
+    private static void ProcessToTensor(Image<Rgb24> input, DenseTensor<float> target)
     {
         var options = new ResizeOptions()
         {
@@ -34,17 +33,14 @@ public static class InputImage
         var width = input.Width;
         var height = input.Height;
 
-        // Pre-calculate strides for performance
-        var strideBatchR = target.Strides[0] * batch + target.Strides[1] * 0;
-        var strideBatchG = target.Strides[0] * batch + target.Strides[1] * 1;
-        var strideBatchB = target.Strides[0] * batch + target.Strides[1] * 2;
+        var strideBatchR = target.Strides[1] * 0;
+        var strideBatchG = target.Strides[1] * 1;
+        var strideBatchB = target.Strides[1] * 2;
         var strideY = target.Strides[2];
         var strideX = target.Strides[3];
 
-        // Get a span of the whole tensor for fast access
         var tensorSpan = target.Buffer;
 
-        // Try get continuous memory block of the entire image data
         if (input.DangerousTryGetSinglePixelMemory(out var memory))
         {
             Parallel.For(0, width * height, index =>

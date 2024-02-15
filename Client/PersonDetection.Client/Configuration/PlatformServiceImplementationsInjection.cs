@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using PersonDetection.Client.Application.Services;
 using PersonDetection.Client.Common;
-using PersonDetection.Client.Common.Options;
 using PersonDetection.Client.Infrastructure;
 using PersonDetection.Client.Services;
 

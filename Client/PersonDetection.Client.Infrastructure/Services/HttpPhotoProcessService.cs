@@ -7,12 +7,12 @@ using PersonDetection.Client.Infrastructure.Dto;
 
 namespace PersonDetection.Client.Infrastructure.Services;
 
-public class HttpPhotoProcessService(CacheHttpClientService httpClient, IOptions<HttpPhotoProcessOptions> options) : IPhotoProcessService
+public class HttpPhotoProcessService(CacheHttpClientService _httpClient, IOptions<HttpPhotoProcessOptions> _options) : IPhotoProcessService
 {
     public async Task<Result<Photo, Error>> ProcessPhotoAsync(Photo originalPhoto, CancellationToken cancellationToken = default)
     {
-        var result = await httpClient.PostAsync(
-            options.Value.PhotoProcessUrl,
+        var result = await _httpClient.PostAsync(
+            _options.Value.PhotoProcessUrl,
             new PhotoProcessResultDto
             {
                 Content = originalPhoto.Content

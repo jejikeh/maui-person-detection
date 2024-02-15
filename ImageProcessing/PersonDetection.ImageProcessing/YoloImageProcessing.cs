@@ -17,7 +17,7 @@ namespace PersonDetection.ImageProcessing;
 // @Note: Original source code - https://github.com/techwingslab/yolov5-net
 // This version is a fix of YoloV5-net.
 // Some of method were outdated and not cross-platform.
-public class YoloImageProcessing(IOptions<YoloImageProcessingOptions> options, IFileSystemStreamProvider fileSystemStreamProvider) : IDisposable
+public class YoloImageProcessing(IOptions<YoloImageProcessingOptions> _options, IFileSystemStreamProvider _fileSystemStreamProvider) : IDisposable
 {
     private YoloScorer _scorer;
     private Font _font;
@@ -120,7 +120,7 @@ public class YoloImageProcessing(IOptions<YoloImageProcessingOptions> options, I
     
     private async Task InitializeAsync()
     {
-        var stream = await fileSystemStreamProvider.GetFileStream(options.Value.WeightsPath);
+        var stream = await _fileSystemStreamProvider.GetFileStream(_options.Value.WeightsPath);
         _scorer ??= await YoloScorer.CreateAsync(stream);
         
         // I cant just iterate over SystemFonts.Families and pick random one.
@@ -131,6 +131,6 @@ public class YoloImageProcessing(IOptions<YoloImageProcessingOptions> options, I
             fontFamily = SystemFonts.Get("Arial");
         }
         
-        _font ??= fontFamily.CreateFont(options.Value.FontSize);
+        _font ??= fontFamily.CreateFont(_options.Value.FontSize);
     }
 }

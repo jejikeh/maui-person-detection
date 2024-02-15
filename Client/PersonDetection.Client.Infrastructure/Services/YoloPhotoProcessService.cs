@@ -6,11 +6,11 @@ using PersonDetection.ImageProcessing;
 
 namespace PersonDetection.Client.Infrastructure.Services;
 
-public class YoloPhotoProcessService(YoloImageProcessing yoloImageProcessing) : IPhotoProcessService
+public class YoloPhotoProcessService(YoloImageProcessing _yoloImageProcessing) : IPhotoProcessService
 {
     public async Task<Result<Photo, Error>> ProcessPhotoAsync(Photo originalPhoto, CancellationToken cancellationToken = default)
     {
-        var predictedPhoto = await yoloImageProcessing.PredictAsync(originalPhoto.Content);
+        var predictedPhoto = await _yoloImageProcessing.PredictAsync(originalPhoto.Content);
         
         if (predictedPhoto is null)
         {

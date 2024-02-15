@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MvvmHelpers;
 using PersonDetection.Client.Application.Services;
+using PersonDetection.Client.Application.Services.Implementations;
 using PersonDetection.Client.Extensions;
 using PersonDetection.Client.Models;
 using PersonDetection.Client.Pages;
@@ -12,9 +13,9 @@ using ObservableObject = CommunityToolkit.Mvvm.ComponentModel.ObservableObject;
 namespace PersonDetection.Client.ViewModels;
 
 public partial class ChoosePhotoViewModel(
-    PhotoService photoService, 
-    IPhotoGallery photoGallery,
-    IPlatformImageSourceLoader imageSourceLoader) : ObservableObject
+    PhotoService _photoService, 
+    IPhotoGallery _photoGallery,
+    IPlatformImageSourceLoader _imageSourceLoader) : ObservableObject
 {
     [ObservableProperty]
     private ObservableRangeCollection<ViewPhotoPair> _photos = new();
@@ -37,7 +38,7 @@ public partial class ChoosePhotoViewModel(
         
         CanAddPhoto = false;
         
-        var result = await Task.Run(async () => await photoService.NewPhotoToGalleryAsync());
+        var result = await Task.Run(async () => await _photoService.NewPhotoToGalleryAsync());
         CanAddPhoto = true;
 
         if (result.IsError)
@@ -48,7 +49,7 @@ public partial class ChoosePhotoViewModel(
         }
         
         var photo = result.GetValue();
-        Photos.Add(imageSourceLoader.LoadViewPhotoPair(
+        Photos.Add(_imageSourceLoader.LoadViewPhotoPair(
             photo.Original,
             photo.Processed
         ));
@@ -63,7 +64,7 @@ public partial class ChoosePhotoViewModel(
     [RelayCommand]
     private async Task SelectPhotoCommand(int id)
     {
-        var result = await photoGallery.GetPhotosByIdAsync(id);
+        var result = await _photoGallery.GetPhotosByIdAsync(id);
         
         if (result.IsError)
         {
@@ -77,7 +78,7 @@ public partial class ChoosePhotoViewModel(
         await Shell.Current.GoToAsync(nameof(PhotoPage), true, new Dictionary<string, object>()
         {
             {
-                "ViewPhotoPair", imageSourceLoader.LoadViewPhotoPair(photo.Original, photo.Processed)
+                "ViewPhotoPair", _imageSourceLoader.LoadViewPhotoPair(photo.Original, photo.Processed)
             }
         });
     }
@@ -85,11 +86,11 @@ public partial class ChoosePhotoViewModel(
     public async Task LoadPhotosAsync()
     {
         Photos.Clear();
-        var photoPairs = await photoGallery.GetPhotoPairsAsync();
+        var photoPairs = await _photoGallery.GetPhotoPairsAsync();
         
         foreach (var photoPair in photoPairs)
         {
-            var result = await photoGallery.GetPhotosAsync(photoPair);
+            var result = await _photoGallery.GetPhotosAsync(photoPair);
             
             if (result.IsError)
             {
@@ -99,7 +100,7 @@ public partial class ChoosePhotoViewModel(
             }
 
             var photo = result.GetValue();
-            var viewPhoto = imageSourceLoader.LoadViewPhotoPair(
+            var viewPhoto = _imageSourceLoader.LoadViewPhotoPair(
                 photo.Original,
                 photo.Processed);
             

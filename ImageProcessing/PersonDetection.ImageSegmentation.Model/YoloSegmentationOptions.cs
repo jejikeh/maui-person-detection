@@ -4,8 +4,6 @@ namespace PersonDetection.ImageSegmentation.Model;
 
 public static class YoloSegmentationOptions
 {
-    public const string ModelPath = "Weights/yolov8n-seg.onnx";
-
     public const int Width = 640;
     public const int Height = 640;
 

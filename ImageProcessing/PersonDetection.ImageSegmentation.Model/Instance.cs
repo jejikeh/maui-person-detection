@@ -12,9 +12,9 @@ public class Instance
     private readonly InferenceSession _inferenceSession;
     private readonly string[] _inputNames;
 
-    public Instance()
+    public Instance(string modelPath)
     {
-        _inferenceSession = new InferenceSession(File.ReadAllBytes(YoloSegmentationOptions.ModelPath), new SessionOptions());
+        _inferenceSession = new InferenceSession(File.ReadAllBytes(modelPath), new SessionOptions());
         _inputNames = _inferenceSession.InputMetadata.Keys.ToArray();
     }
 

@@ -8,15 +8,19 @@ import { AuthService } from './auth/auth.service';
   standalone: true,
   imports: [CommonModule, RouterOutlet],
   template: `
-    <section>
-      <div class="navbar">
-        <p>{{ userName }}</p>
-        <button (click)="logout()">Logout</button>
-      </div>
+    <header>
+      <nav>
+        <ul>
+          <li>
+            <p>{{ userName }}</p>
+          </li>
+          <li><button (click)="logout()">Logout</button></li>
+        </ul>
+      </nav>
       <div class="container">
         <router-outlet></router-outlet>
       </div>
-    </section>
+    </header>
   `,
 })
 export class AppComponent {
