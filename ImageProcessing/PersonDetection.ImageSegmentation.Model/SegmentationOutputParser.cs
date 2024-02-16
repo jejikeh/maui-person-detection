@@ -184,6 +184,7 @@ internal readonly struct SegmentationOutputParser
     
     private static void EnumeratePixels<TPixel>(Image<TPixel> image, Action<Point, TPixel> iterator) where TPixel : unmanaged, IPixel<TPixel>
     {
+        // @Incomplete
         var width = image.Width;
         var height = image.Height;
 

@@ -35,7 +35,7 @@ internal readonly struct IndexedBoundingBoxParser
 
                 var areaBox = Rectangle.FromTensor(output, detectedArea);
                 var bounds = ClampedBoundArea
-                    .FromAreaInsideMaxRatio(areaBox, maxRatio, originSize)
+                    .FromAreaInsideMaxRatio(areaBox, maxRatio, originSize, padding)
                     .ToRectangle();
 
                 var name = YoloSegmentationOptions.Classes[detectedClass];

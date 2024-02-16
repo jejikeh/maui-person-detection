@@ -9,9 +9,9 @@ public class ClampedBoundArea
     public int MinX { get; set; }
     public int MinY { get; set; }
 
-    public static ClampedBoundArea FromAreaInsideMaxRatio(Rectangle rectangle, float maxRatio, Size originSize)
+    public static ClampedBoundArea FromAreaInsideMaxRatio(Rectangle rectangle, float maxRatio, Size originSize, Padding padding)
     {
-        var clampedBoundArea = CalculateNonClampedValues(maxRatio, rectangle);
+        var clampedBoundArea = CalculateNonClampedValues(maxRatio, rectangle, padding);
         clampedBoundArea.ClampToOrigin(originSize);
 
         return clampedBoundArea;
@@ -30,14 +30,14 @@ public class ClampedBoundArea
         MaxY = Math.Clamp(MaxY, 0, origin.Height);
     }
 
-    private static ClampedBoundArea CalculateNonClampedValues(float maxRatio, Rectangle rectangle)
+    private static ClampedBoundArea CalculateNonClampedValues(float maxRatio, Rectangle rectangle, Padding padding)
     {
         return new ClampedBoundArea()
         {
-            MinX = (int)((rectangle.X - rectangle.Width / 2 - rectangle.X) * maxRatio),
-            MinY = (int)((rectangle.Y - rectangle.Height / 2 - rectangle.Y) * maxRatio),
-            MaxX = (int)((rectangle.X + rectangle.Width / 2 - rectangle.X) * maxRatio),
-            MaxY = (int)((rectangle.Y + rectangle.Height / 2 - rectangle.Y) * maxRatio),
+            MinX = (int)((rectangle.X - rectangle.Width / 2 - padding.X) * maxRatio),
+            MinY = (int)((rectangle.Y - rectangle.Height / 2 - padding.Y) * maxRatio),
+            MaxX = (int)((rectangle.X + rectangle.Width / 2 - padding.X) * maxRatio),
+            MaxY = (int)((rectangle.Y + rectangle.Height / 2 - padding.Y) * maxRatio),
         };
     }
 }
