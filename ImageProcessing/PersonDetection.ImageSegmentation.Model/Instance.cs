@@ -11,11 +11,13 @@ public class Instance
 {
     private readonly InferenceSession _inferenceSession;
     private readonly string[] _inputNames;
+    private bool _quantized;
 
-    public Instance(string modelPath)
+    public Instance(string modelPath, bool quantized)
     {
         _inferenceSession = new InferenceSession(File.ReadAllBytes(modelPath), new SessionOptions());
         _inputNames = _inferenceSession.InputMetadata.Keys.ToArray();
+        _quantized = quantized;
     }
 
     public Segmentation Predict(Image<Rgb24> image)
@@ -31,7 +33,7 @@ public class Instance
         var boxesOutput = modelOnnxOutput[0].AsTensor<float>();
         var maskPrototypes = modelOnnxOutput[1].AsTensor<float>();
 
-        var boxes = SegmentationOutputParser.Parse(boxesOutput, maskPrototypes, originSize);
+        var boxes = SegmentationOutputParser.Parse(boxesOutput, maskPrototypes, originSize, _quantized);
 
         return new Segmentation
         {

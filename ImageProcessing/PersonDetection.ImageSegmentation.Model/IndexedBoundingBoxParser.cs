@@ -49,7 +49,7 @@ internal readonly struct IndexedBoundingBoxParser
 
                 var name = YoloSegmentationOptions.Classes[j];
                 var bounds = Rectangle.FromLTRB(xMin, yMin, xMax, yMax);
-
+                
                 boxes[i] = new IndexedBoundingBox
                 {
                     Index = i,

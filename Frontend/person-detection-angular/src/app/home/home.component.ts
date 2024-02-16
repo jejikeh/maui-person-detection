@@ -2,7 +2,9 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  Inject,
   NgZone,
+  Renderer2,
   ViewChild,
   inject,
 } from '@angular/core';
@@ -10,6 +12,8 @@ import { AuthService } from '../auth/auth.service';
 import { SignalRService } from '../signalr.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { DOCUMENT } from '@angular/common';
+import { ScriptService } from '../script.service';
 
 @Component({
   selector: 'app-home',
@@ -46,10 +50,12 @@ import { environment } from '../../environments/environment';
       </div>
     </div>
     <div>
-      <h1>Un-Quantized ML.NET Yolo Segmentation Model</h1>
-    </div>
-    <div>
       <h1>MediaPipe JS Segmentation Model</h1>
+      <div class="container">
+        <video class="input_video" hidden="true"></video>
+        <canvas class="output_canvas" width="640px" height="480px"></canvas>
+      </div>
+      <button (click)="startMediapipe()">Start</button>
     </div>
   `,
   styles: `
@@ -64,7 +70,7 @@ import { environment } from '../../environments/environment';
   position: absolute;
   top: 0px;
   left: 0px;
-  opacity: .7
+  opacity: 0.87
 }
   `,
 })
@@ -76,6 +82,10 @@ export class HomeComponent implements AfterViewInit {
   private _http: HttpClient = inject(HttpClient);
   private _authService: AuthService = inject(AuthService);
   private _signalR: SignalRService | undefined;
+  private _scriptService: ScriptService = inject(ScriptService);
+
+  private _sumPerformance: number = 0;
+  private _numReceivedPerformanceTimes: number = 0;
 
   @ViewChild('local_video') localVideo: ElementRef | undefined;
 
@@ -85,10 +95,7 @@ export class HomeComponent implements AfterViewInit {
   public modelPerformance: string = '';
   public AverageModelPerformance: string = '';
 
-  private _sumPerformance: number = 0;
-  private _numReceivedPerformanceTimes: number = 0;
-
-  public CurrentModel = '';
+  public CurrentModel = 'UnQuantized';
 
   ngOnInit() {
     this._authService.identify().add(() => {
@@ -136,5 +143,9 @@ export class HomeComponent implements AfterViewInit {
       .subscribe((response) => {
         this.CurrentModel = response;
       });
+  }
+
+  public startMediapipe() {
+    this._scriptService.load('mediapipe');
   }
 }

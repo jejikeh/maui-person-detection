@@ -9,7 +9,7 @@ namespace PersonDetection.ImageSegmentation.Model;
 
 internal readonly struct SegmentationOutputParser
 {
-    public static SegmentationBoundingBox[] Parse(Tensor<float> boxesOutput, Tensor<float> maskPrototypes, Size originSize)
+    public static SegmentationBoundingBox[] Parse(Tensor<float> boxesOutput, Tensor<float> maskPrototypes, Size originSize, bool quantize)
     {
         var reductionRatio = Math.Min(YoloSegmentationOptions.Width / (float)originSize.Width, YoloSegmentationOptions.Height / (float)originSize.Height);
         var xPadding = (int)((YoloSegmentationOptions.Width - originSize.Width * reductionRatio) / 2);
@@ -22,8 +22,9 @@ internal readonly struct SegmentationOutputParser
         for (var index = 0; index < boxes.Length; index++)
         {
             var box = boxes[index];
+
             var maskWeights = ExtractMaskWeights(boxesOutput, box.Index, maskChannelCount, YoloSegmentationOptions.Classes.Length + 4);
-            var mask = ProcessMask(maskPrototypes, maskWeights, box.Bounds, originSize, YoloSegmentationOptions.ImageSize, xPadding, yPadding);
+            var mask = ProcessMask(maskPrototypes, maskWeights, box.Bounds, originSize, YoloSegmentationOptions.ImageSize, xPadding, yPadding, quantize);
 
             result[index] = new SegmentationBoundingBox
             {
@@ -44,17 +45,14 @@ internal readonly struct SegmentationOutputParser
         Size originSize,
         Size modelSize,
         int xPadding,
-        int yPadding)
+        int yPadding,
+        bool quantize)
     {
-        var maskChannels = maskPrototypes.Dimensions[1];
+        var modelRatio = quantize ? 2 : 1;
+        var maskChannels = maskPrototypes.Dimensions[1] / modelRatio;
         var maskHeight = maskPrototypes.Dimensions[2];
         var maskWidth = maskPrototypes.Dimensions[3];
         
-        if (maskChannels != maskWeights.Count)
-        {
-            throw new InvalidOperationException();
-        }
-
         using var bitmap = new Image<L8>(maskWidth, maskHeight);
 
         var pixel = new L8(0);
@@ -64,7 +62,7 @@ internal readonly struct SegmentationOutputParser
             for (var x = 0; x < maskWidth; x++)
             {
                 var value = 0f;
-
+                
                 for (var i = 0; i < maskChannels; i++)
                 {
                     value += maskPrototypes[0, i, y, x] * maskWeights[i];

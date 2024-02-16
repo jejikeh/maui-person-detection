@@ -11,11 +11,16 @@ public static class PlottingExtensions
     public static Image PlotImage(this Segmentation result, Image originImage)
     {
         var size = originImage.Size;
-        using var masksLayer = new Image<Rgba32>(size.Width, size.Height);
+        using var masksLayer = new Image<Rgba32>(size.Width, size.Height, new Rgba32(0,0,0,0));
         
         foreach (var box in result.Boxes)
         {
-            using var mask = new Image<Rgba32>(box.Bounds.Width, box.Bounds.Height);
+            if (box.Class != "person")
+            {
+                continue;
+            }
+            
+            using var mask = new Image<Rgba32>(box.Bounds.Width, box.Bounds.Height, new Rgba32(0,0,0,0));
 
             for (var x = 0; x < box.Mask.Width; x++)
             {
@@ -23,17 +28,17 @@ public static class PlottingExtensions
                 {
                     var value = box.Mask[x, y];
 
-                    if (value > 0.65f)
+                    if (value > 0.74f)
                     {
-                        mask[x, y] = Color.Red;
+                        mask[x, y] = Color.LightGreen;
                     }
                 }
             }
 
-            masksLayer.Mutate(x => x.DrawImage(mask, box.Bounds.Location, 1F));
+            masksLayer.Mutate(x => x.DrawImage(mask, box.Bounds.Location, 1f));
         }
 
-        originImage.Mutate(x => x.DrawImage(masksLayer, 0.4F));
+        originImage.Mutate(x => x.DrawImage(masksLayer, 1f));
         
         return originImage;
     }

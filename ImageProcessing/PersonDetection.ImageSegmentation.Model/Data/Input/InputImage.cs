@@ -8,25 +8,17 @@ namespace PersonDetection.ImageSegmentation.Model.Data.Input;
 
 public static class InputImage
 {
+    private static readonly DenseTensor<float> _input = new DenseTensor<float>(YoloSegmentationOptions.Dimensions);
 
     public static Tensor<float> ToTensor(this Image<Rgb24> image)
     {
-        var input = new DenseTensor<float>(YoloSegmentationOptions.Dimensions);
-        ProcessToTensor(image, input);
+        ProcessToTensor(image, _input);
         
-        return input;
+        return _input;
     }
     
     private static void ProcessToTensor(Image<Rgb24> input, DenseTensor<float> target)
     {
-        var options = new ResizeOptions()
-        {
-            Size = YoloSegmentationOptions.ImageSize,
-            Mode = ResizeMode.Max,
-        };
-
-        input.Mutate(x => x.Resize(options));
-
         var xPadding = (YoloSegmentationOptions.ImageSize.Width - input.Width) / 2;
         var yPadding = (YoloSegmentationOptions.ImageSize.Height - input.Height) / 2;
 

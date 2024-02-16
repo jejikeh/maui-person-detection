@@ -6,14 +6,11 @@ public static class YoloSegmentationOptions
 {
     public const int Width = 640;
     public const int Height = 640;
-
     public const float ConfidenceThreshold = 0.3f;
-
     public static Size ImageSize = new(Width, Height);
     public static readonly int[] Dimensions = [1, 3, Width, Height];
-
     public static readonly string[] Classes =
-    {
+    [
         "person",
         "bicycle",
         "car",
@@ -94,5 +91,5 @@ public static class YoloSegmentationOptions
         "teddy bear",
         "hair drier",
         "toothbrush"
-    };
+    ];
 }

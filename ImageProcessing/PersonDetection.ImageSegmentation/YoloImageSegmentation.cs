@@ -8,8 +8,8 @@ namespace PersonDetection.ImageSegmentation.ModelConverter;
 
 public class YoloImageSegmentation(IOptions<ModelLoaderOptions> _options)
 {
-    private readonly Instance _quantizedInstance = new Instance(_options.Value.QuantizedModelPath);
-    private readonly Instance _unquantizedInstance = new Instance(_options.Value.UnQuantizedModelPath);
+    private readonly Instance _quantizedInstance = new Instance(_options.Value.QuantizedModelPath, true);
+    private readonly Instance _unquantizedInstance = new Instance(_options.Value.UnQuantizedModelPath, false);
     
     public async Task<string> SegmentAsync(string base64Image, ModelType modelType)
     {
@@ -35,7 +35,7 @@ public class YoloImageSegmentation(IOptions<ModelLoaderOptions> _options)
 
     public async Task<string> DrawSegmentationAsync(Segmentation segmentation)
     {
-        var image = new Image<Rgb24>(640, 480);
+        var image = new Image<Rgba32>(640, 480, new Rgba32(0,0,0,0));
         var output = segmentation.PlotImage(image);
         
         var stream = new MemoryStream();
@@ -45,7 +45,7 @@ public class YoloImageSegmentation(IOptions<ModelLoaderOptions> _options)
         return base64;
     }
 
-    public Instance ProperInstance(ModelType modelType)
+    private Instance ProperInstance(ModelType modelType)
     {
         return modelType switch
         {
