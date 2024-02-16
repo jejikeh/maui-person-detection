@@ -14,9 +14,9 @@ public class YoloImageSegmentation(IOptions<ModelLoaderOptions> _options)
     public async Task<string> SegmentAsync(string base64Image, ModelType modelType)
     {
         var image = Image.Load<Rgb24>(Convert.FromBase64String(base64Image));
-        
         var segmentation = ProperInstance(modelType).Predict(image);
-        var output = segmentation.PlotImage(image);
+        
+        using var output = segmentation.DrawSegmentations(image);
         
         var stream = new MemoryStream();
         await output.SaveAsPngAsync(stream);
@@ -36,7 +36,8 @@ public class YoloImageSegmentation(IOptions<ModelLoaderOptions> _options)
     public async Task<string> DrawSegmentationAsync(Segmentation segmentation)
     {
         var image = new Image<Rgba32>(640, 480, new Rgba32(0,0,0,0));
-        var output = segmentation.PlotImage(image);
+        
+        using var output = segmentation.DrawSegmentations(image);
         
         var stream = new MemoryStream();
         await output.SaveAsPngAsync(stream);

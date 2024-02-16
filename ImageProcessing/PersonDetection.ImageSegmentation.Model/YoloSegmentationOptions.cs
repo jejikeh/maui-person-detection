@@ -9,9 +9,11 @@ public static class YoloSegmentationOptions
     public const float ConfidenceThreshold = 0.3f;
     public static Size ImageSize = new(Width, Height);
     public static readonly int[] Dimensions = [1, 3, Width, Height];
+    
+    public static readonly string PersonClass = "person";
     public static readonly string[] Classes =
     [
-        "person",
+        PersonClass,
         "bicycle",
         "car",
         "motorcycle",

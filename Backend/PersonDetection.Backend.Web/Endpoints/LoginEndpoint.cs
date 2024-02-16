@@ -7,7 +7,7 @@ namespace PersonDetection.Backend.Web.Endpoints;
 
 public static class LoginEndpoint
 {
-    public static async Task<IResult> Handler(
+    public static async Task<IResult> HandlerAsync(
         [FromBody] LoginRequest loginRequest, 
         [FromServices] IAuthorizationService authorizationService, 
         [FromServices] IValidator<LoginRequest> validator)

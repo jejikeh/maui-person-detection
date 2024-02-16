@@ -1,45 +1,63 @@
-﻿using PersonDetection.ImageSegmentation.Model.Data.Input;
+﻿using PersonDetection.ImageSegmentation.Model.Data;
 using PersonDetection.ImageSegmentation.Model.Data.Output;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using Rectangle = SixLabors.ImageSharp.Rectangle;
 
 namespace PersonDetection.ImageSegmentation.Model;
 
 public static class PlottingExtensions
 {
-    public static Image PlotImage(this Segmentation result, Image originImage)
+    public static Image DrawSegmentations(this Segmentation result, Image originImage)
     {
         var size = originImage.Size;
-        using var masksLayer = new Image<Rgba32>(size.Width, size.Height, new Rgba32(0,0,0,0));
+        var masksImageLayer = CreateTransparentImage(size);
         
         foreach (var box in result.Boxes)
         {
-            if (box.Class != "person")
+            if (!box.Class.Equals(YoloSegmentationOptions.PersonClass))
             {
                 continue;
             }
-            
-            using var mask = new Image<Rgba32>(box.Bounds.Width, box.Bounds.Height, new Rgba32(0,0,0,0));
 
-            for (var x = 0; x < box.Mask.Width; x++)
-            {
-                for (var y = 0; y < box.Mask.Height; y++)
-                {
-                    var value = box.Mask[x, y];
-
-                    if (value > 0.74f)
-                    {
-                        mask[x, y] = Color.LightGreen;
-                    }
-                }
-            }
-
-            masksLayer.Mutate(x => x.DrawImage(mask, box.Bounds.Location, 1f));
+            masksImageLayer = FillMaskImageDetectionLayer(box);
         }
 
-        originImage.Mutate(x => x.DrawImage(masksLayer, 1f));
+        originImage.Mutate(x => x.DrawImage(masksImageLayer, 1f));
         
         return originImage;
+    }
+
+    private static Image<Rgba32> FillMaskImageDetectionLayer(SegmentationBoundingBox box)
+    {
+        var detectionMask = CreateTransparentImage(box.Bounds);
+
+        for (var x = 0; x < box.Mask.Width; x++)
+        {
+            for (var y = 0; y < box.Mask.Height; y++)
+            {
+                var value = box.Mask[x, y];
+
+                if (value > 0.74f)
+                {
+                    detectionMask[x, y] = Color.LightGreen;
+                }
+            }
+        }
+        
+        detectionMask.Mutate(x => x.DrawImage(detectionMask, box.Bounds.Location, 1f));
+
+        return detectionMask;
+    }
+
+    private static Image<Rgba32> CreateTransparentImage(Size size)
+    {
+        return new Image<Rgba32>(size.Width, size.Height, ColorPalette.Transparent);
+    }
+
+    private static Image<Rgba32> CreateTransparentImage(Rectangle rectangle)
+    {
+        return new Image<Rgba32>(rectangle.Width, rectangle.Height, ColorPalette.Transparent);
     }
 }

@@ -88,7 +88,7 @@ public static class ProgramConfiguration
     private static WebApplication MapEndpoints(this WebApplication app)
     {
         app.MapGet("identify", IdentifyEndpoint.Handler);
-        app.MapPost("login", LoginEndpoint.Handler);
+        app.MapPost("login", LoginEndpoint.HandlerAsync);
         app.MapPost("logout", LogoutEndpoint.Handler).RequireAuthorization();
         app.MapPost("register", RegisterEndpoint.HandlerAsync);
         app.MapPost("photo", PhotoEndpoint.HandlerAsync);

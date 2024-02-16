@@ -1,30 +1,55 @@
 using Microsoft.ML.OnnxRuntime.Tensors;
+using PersonDetection.ImageSegmentation.Model.Data;
 using PersonDetection.ImageSegmentation.Model.Data.Output;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using Rectangle = SixLabors.ImageSharp.Rectangle;
 
 namespace PersonDetection.ImageSegmentation.Model;
 
 internal readonly struct SegmentationOutputParser
 {
+    private static readonly int _classLengthOffset = 4;
+    private static readonly int _ignoredLayer = 0;
+
     public static SegmentationBoundingBox[] Parse(Tensor<float> boxesOutput, Tensor<float> maskPrototypes, Size originSize, bool quantize)
     {
-        var reductionRatio = Math.Min(YoloSegmentationOptions.Width / (float)originSize.Width, YoloSegmentationOptions.Height / (float)originSize.Height);
-        var xPadding = (int)((YoloSegmentationOptions.Width - originSize.Width * reductionRatio) / 2);
-        var yPadding = (int)((YoloSegmentationOptions.Height - originSize.Height * reductionRatio) / 2);
+        var reductionRatio = CalculateReductionRatio(originSize);
+        var padding = new Padding(originSize, reductionRatio);
+        
+        var classTensor = boxesOutput.Dimensions[1];
+        var maskChannelCount = classTensor - _classLengthOffset - YoloSegmentationOptions.Classes.Length;
+        var boxes = IndexedBoundingBoxParser.Parse(boxesOutput, originSize, padding);
 
-        var maskChannelCount = boxesOutput.Dimensions[1] - 4 - YoloSegmentationOptions.Classes.Length;
-        var boxes = IndexedBoundingBoxParser.Parse(boxesOutput, originSize, xPadding, yPadding);
-        var result = new SegmentationBoundingBox[boxes.Length];
+        return FillMaskResult(boxesOutput, maskPrototypes, originSize, quantize, boxes, maskChannelCount, padding);
+    }
 
-        for (var index = 0; index < boxes.Length; index++)
+    private static SegmentationBoundingBox[] FillMaskResult(
+        Tensor<float> boxesOutput, 
+        Tensor<float> maskPrototypes,
+        Size originSize, 
+        bool quantize,
+        IReadOnlyList<IndexedBoundingBox> boxes, 
+        int maskChannelCount, 
+        Padding padding)
+    {
+        var result = new SegmentationBoundingBox[boxes.Count];
+
+        for (var index = 0; index < boxes.Count; index++)
         {
             var box = boxes[index];
 
             var maskWeights = ExtractMaskWeights(boxesOutput, box.Index, maskChannelCount, YoloSegmentationOptions.Classes.Length + 4);
-            var mask = ProcessMask(maskPrototypes, maskWeights, box.Bounds, originSize, YoloSegmentationOptions.ImageSize, xPadding, yPadding, quantize);
+            var mask = ProcessMask(
+                maskPrototypes, 
+                maskWeights, 
+                box.Bounds, 
+                originSize, 
+                YoloSegmentationOptions.ImageSize, 
+                padding, 
+                quantize);
 
             result[index] = new SegmentationBoundingBox
             {
@@ -38,51 +63,33 @@ internal readonly struct SegmentationOutputParser
         return result;
     }
 
+    private static float CalculateReductionRatio(Size originSize)
+    {
+        return Math.Min(
+            YoloSegmentationOptions.Width / (float)originSize.Width, 
+            YoloSegmentationOptions.Height / (float)originSize.Height);
+    }
+
     private static SegmentationMask ProcessMask(
         Tensor<float> maskPrototypes,
         IReadOnlyList<float> maskWeights,
         Rectangle bounds,
         Size originSize,
         Size modelSize,
-        int xPadding,
-        int yPadding,
+        Padding padding,
         bool quantize)
     {
-        var modelRatio = quantize ? 2 : 1;
-        var maskChannels = maskPrototypes.Dimensions[1] / modelRatio;
-        var maskHeight = maskPrototypes.Dimensions[2];
-        var maskWidth = maskPrototypes.Dimensions[3];
-        
-        using var bitmap = new Image<L8>(maskWidth, maskHeight);
+        var dimensions = CalculateMaskDimensions(maskPrototypes, quantize);
+        using var bitmap = FillMaskBitmap(maskPrototypes, maskWeights, dimensions);
 
-        var pixel = new L8(0);
-        
-        for (var y = 0; y < maskHeight; y++)
-        {
-            for (var x = 0; x < maskWidth; x++)
-            {
-                var value = 0f;
-                
-                for (var i = 0; i < maskChannels; i++)
-                {
-                    value += maskPrototypes[0, i, y, x] * maskWeights[i];
-                }
-
-                value = Sigmoid(value);
-                pixel.PackedValue = GetLuminance(value);
-
-                bitmap[x, y] = pixel;
-            }
-        }
-
-        var xPad = xPadding * maskWidth / modelSize.Width;
-        var yPad = yPadding * maskHeight / modelSize.Height;
+        var xPad = padding.X * dimensions.Width / modelSize.Width;
+        var yPad = padding.Y * dimensions.Height / modelSize.Height;
 
         var paddingCropRectangle = new Rectangle(
             xPad,
             yPad,
-            maskWidth - xPad * 2, 
-            maskHeight - yPad * 2);
+            dimensions.Width - xPad * 2, 
+            dimensions.Height - yPad * 2);
 
         bitmap.Mutate(x =>
         {
@@ -102,6 +109,47 @@ internal readonly struct SegmentationOutputParser
         return new SegmentationMask
         {
             Mask = final
+        };
+    }
+
+    private static Image<L8> FillMaskBitmap(
+        Tensor<float> maskPrototypes, 
+        IReadOnlyList<float> maskWeights, 
+        MaskDimensions dimensions)
+    {
+        var bitmap = new Image<L8>(dimensions.Width, dimensions.Height);
+        var pixel = new L8(0);
+        
+        for (var y = 0; y < dimensions.Height; y++)
+        {
+            for (var x = 0; x < dimensions.Width; x++)
+            {
+                var value = 0f;
+                
+                for (var channel = 0; channel < dimensions.Channels; channel++)
+                {
+                    value += maskPrototypes[_ignoredLayer, channel, y, x] * maskWeights[channel];
+                }
+
+                value = Sigmoid(value);
+                pixel.PackedValue = GetLuminance(value);
+
+                bitmap[x, y] = pixel;
+            }
+        }
+
+        return bitmap;
+    }
+
+    private static MaskDimensions CalculateMaskDimensions(Tensor<float> maskPrototypes, bool quantize)
+    {
+        var modelRatio = quantize ? 2 : 1;
+
+        return new MaskDimensions
+        {
+            Width = maskPrototypes.Dimensions[2],
+            Height = maskPrototypes.Dimensions[3],
+            Channels = maskPrototypes.Dimensions[1] / modelRatio,
         };
     }
 
