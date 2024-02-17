@@ -5,5 +5,5 @@ namespace PersonDetection.ImageProcessing.Services;
 
 public interface IFileSystemStreamProvider
 {
-    public Task<Stream> GetFileStream(string path);
+    public Task<Stream> GetFileStreamAsync(string path);
 }

@@ -120,7 +120,7 @@ public class YoloImageProcessing(IOptions<YoloImageProcessingOptions> _options, 
     
     private async Task InitializeAsync()
     {
-        var stream = await _fileSystemStreamProvider.GetFileStream(_options.Value.WeightsPath);
+        var stream = await _fileSystemStreamProvider.GetFileStreamAsync(_options.Value.WeightsPath);
         _scorer ??= await YoloScorer.CreateAsync(stream);
         
         // I cant just iterate over SystemFonts.Families and pick random one.

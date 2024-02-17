@@ -4,7 +4,7 @@ namespace PersonDetection.Backend.Infrastructure.Services;
 
 public class CoreFileSystemStreamProvider : IFileSystemStreamProvider
 {
-    public Task<Stream> GetFileStream(string path)
+    public Task<Stream> GetFileStreamAsync(string path)
     {
         var stream = File.OpenRead(path);
         
