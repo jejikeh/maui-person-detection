@@ -5,8 +5,9 @@ namespace Neural.Defaults.Services;
 
 public class MemoryStreamModelProvider : IModelProvider
 {
-    public async Task<IModel> InitializeAsync<TModel>(IFileSystemProvider fileSystemProvider, string modelPath)
-        where TModel : class, IModel
+    public async Task<IModel> InitializeAsync<TModel, TModelTask>(IFileSystemProvider fileSystemProvider, string modelPath)
+        where TModel : class, IModel<TModelTask> 
+        where TModelTask : IModelTask
     {
         using var modelStream = new MemoryStream();
         
@@ -14,14 +15,15 @@ public class MemoryStreamModelProvider : IModelProvider
         
         await stream.CopyToAsync(modelStream);
         
-        var model = ModelFromStream<TModel>(modelStream);
+        var model = ModelFromStream<TModel, TModelTask>(modelStream);
         
-        return model;
+        return model as IModel ?? throw new InvalidOperationException();
     }
     
-    public async Task<IModel> InitializeAsync<TModel, TOptions>(IFileSystemProvider fileSystemProvider, TOptions modelOptions) 
-        where TModel : class, IModel<TOptions>
+    public async Task<IModel> InitializeAsync<TModel, TModelTask, TOptions>(IFileSystemProvider fileSystemProvider, TOptions modelOptions) 
+        where TModel : class, IModel<TModelTask, TOptions>
         where TOptions : IModelOptions
+        where TModelTask : IModelTask
     {
         using var modelStream = new MemoryStream();
 
@@ -29,27 +31,29 @@ public class MemoryStreamModelProvider : IModelProvider
 
         await stream.CopyToAsync(modelStream);
         
-        var model = ModelFromStream<TModel, TOptions>(modelStream, modelOptions);
-
-        return model;
+        var model = ModelFromStream<TModel, TModelTask, TOptions>(modelStream, modelOptions);
+        
+        return model as IModel ?? throw new InvalidOperationException();
     }
     
-    private static TModel ModelFromStream<TModel>(MemoryStream modelStream)
-        where TModel : class, IModel
+    private static TModel ModelFromStream<TModel, TModelTask>(MemoryStream modelStream)
+        where TModel : class, IModel<TModelTask> 
+        where TModelTask : IModelTask
     {
         var model = Activator.CreateInstance<TModel>();
         model.Initialize(modelStream);
         
-        return model;
+        return model ?? throw new InvalidOperationException();
     }
 
-    private static TModel ModelFromStream<TModel, TOptions>(MemoryStream modelStream, TOptions modelOptions)
-        where TModel : class, IModel<TOptions>
+    private static TModel ModelFromStream<TModel, TModelTask, TOptions>(MemoryStream modelStream, TOptions modelOptions)
+        where TModel : class, IModel<TModelTask, TOptions>
         where TOptions : IModelOptions
+        where TModelTask : IModelTask
     {
-        var modelWithOptions = Activator.CreateInstance<TModel>();
-        modelWithOptions.Initialize(modelStream, modelOptions);
+        var model = Activator.CreateInstance<TModel>();
+        model.Initialize(modelStream, modelOptions);
         
-        return modelWithOptions ?? throw new InvalidOperationException();
+        return model ?? throw new InvalidOperationException();
     }
 }

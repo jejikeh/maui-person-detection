@@ -36,6 +36,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Neural.Core\Neural.Core.csproj" />
       <ProjectReference Include="..\..\Neural.Defaults\Neural.Defaults.csproj" />
+      <ProjectReference Include="..\Neural.Tests.Common\Neural.Tests.Common.csproj" />
     </ItemGroup>
 
     <ItemGroup>

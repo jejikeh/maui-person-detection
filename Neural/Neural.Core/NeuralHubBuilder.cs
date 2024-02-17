@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Neural.Core.Models;
 using Neural.Core.Services;
 
@@ -6,32 +7,38 @@ namespace Neural.Core;
 public class NeuralHubBuilder(IFileSystemProvider _fileSystemProvider, IModelProvider _modelProvider)
 {
     private readonly NeuralHub _neuralHub = new NeuralHub();
-    private readonly HashSet<Func<Task<IModel>>> _modelProviders = new HashSet<Func<Task<IModel>>>();
+    private readonly List<Func<Task<IModel>>> _modelProviders = new List<Func<Task<IModel>>>();
     
-    public NeuralHubBuilder AddModel<TModel>(string modelPath) 
-        where TModel : class, IModel
+    public NeuralHubBuilder AddModel<TModel, TModelTask>(string modelPath) 
+        where TModel : class, IModel<TModelTask> 
+        where TModelTask : IModelTask
     {
-        _modelProviders.Add(async () => await _modelProvider.InitializeAsync<TModel>(_fileSystemProvider, modelPath));
+        _modelProviders.Add(async () => await _modelProvider.InitializeAsync<TModel, TModelTask>(_fileSystemProvider, modelPath));
         
         return this;
     }
 
-    public NeuralHubBuilder AddModel<TModel, TOptions>(TOptions options) 
-        where TModel : class, IModel<TOptions> 
+    public NeuralHubBuilder AddModel<TModel, TModelTask, TOptions>(TOptions options) 
+        where TModel : class, IModel<TModelTask, TOptions> 
         where TOptions : class, IModelOptions
+        where TModelTask : IModelTask
     {
-        _modelProviders.Add(() => _modelProvider.InitializeAsync<TModel, TOptions>(_fileSystemProvider, options));
+        _modelProviders.Add(() => _modelProvider.InitializeAsync<TModel, TModelTask, TOptions>(_fileSystemProvider, options));
         
         return this;
     }
     
-    public async Task<NeuralHub> BuildAsync()
+    public NeuralHub Build()
     {
-        await Parallel.ForEachAsync(_modelProviders, async (modelProvider, _) =>
+        var concurrentBagOfModels = new ConcurrentBag<IModel>();
+        
+        Parallel.ForEach(_modelProviders, modelProvider =>
         {
-            var model = await modelProvider();
-            _neuralHub.Models.Add(model);
+            var model = modelProvider().Result;
+            concurrentBagOfModels.Add(model);
         });
+        
+        _neuralHub.Models.AddRange(concurrentBagOfModels);
         
         return _neuralHub;
     }

@@ -4,11 +4,13 @@ namespace Neural.Core.Services;
 
 public interface IModelProvider
 {
-    public Task<IModel> InitializeAsync<TModel>(IFileSystemProvider fileSystemProvider, string modelPath) 
-        where TModel : class, IModel;
+    public Task<IModel> InitializeAsync<TModel, TModelTask>(IFileSystemProvider fileSystemProvider, string modelPath) 
+        where TModel : class, IModel<TModelTask>
+        where TModelTask : IModelTask;
 
-    public Task<IModel> InitializeAsync<TModel, TOptions>(IFileSystemProvider fileSystemProvider,
+    public Task<IModel> InitializeAsync<TModel, TModelTask, TOptions>(IFileSystemProvider fileSystemProvider,
         TOptions modelOptions)
-        where TModel : class, IModel<TOptions>
-        where TOptions : IModelOptions;
+        where TModel : class, IModel<TModelTask, TOptions>
+        where TOptions : IModelOptions
+        where TModelTask : IModelTask;
 }

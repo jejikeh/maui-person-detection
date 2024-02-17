@@ -10,7 +10,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="FluentAssertions" Version="7.0.0-alpha.3" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0"/>
+        <PackageReference Include="Moq" Version="4.20.70" />
         <PackageReference Include="xunit" Version="2.4.2"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -23,7 +25,31 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Mocks\" />
       <Folder Include="Services\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Neural.Defaults\Neural.Defaults.csproj" />
+      <ProjectReference Include="..\Neural.Tests.Common\Neural.Tests.Common.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="TestingData\Models\Yolo8\yolov8n-seg-quantize.onnx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="TestingData\Models\Yolo8\yolov8n-seg-unquantize.onnx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="TestingData\Models\Yolo5\yolov5n.onnx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </AdditionalFiles>
+      <AdditionalFiles Include="TestingData\Models\Yolo5\yolov5s.onnx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </AdditionalFiles>
     </ItemGroup>
 
 </Project>
