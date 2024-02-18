@@ -12,6 +12,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neural.Defaults.Tests", "te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neural.Tests.Common", "tests\Neural.Tests.Common\Neural.Tests.Common.csproj", "{4AE1495D-10E8-4C43-BF72-C2DFAE520576}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{32C8F289-225F-4736-B7AE-627AB9B86704}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neural.BackgroundHelloWorld", "Samples\Neural.BackgroundHelloWorld\Neural.BackgroundHelloWorld.csproj", "{C0E9C26B-DB83-480D-8081-874CF65D87BC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,10 +42,15 @@ Global
 		{4AE1495D-10E8-4C43-BF72-C2DFAE520576}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4AE1495D-10E8-4C43-BF72-C2DFAE520576}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4AE1495D-10E8-4C43-BF72-C2DFAE520576}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0E9C26B-DB83-480D-8081-874CF65D87BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0E9C26B-DB83-480D-8081-874CF65D87BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0E9C26B-DB83-480D-8081-874CF65D87BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0E9C26B-DB83-480D-8081-874CF65D87BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A5AE9DCB-EBDC-4ED4-BEFD-8A29F16A48A6} = {5D5DAD5B-9A40-4785-844D-16E04761B8EF}
 		{11D2F477-82CD-40E5-9440-9747026B4357} = {5D5DAD5B-9A40-4785-844D-16E04761B8EF}
 		{4AE1495D-10E8-4C43-BF72-C2DFAE520576} = {5D5DAD5B-9A40-4785-844D-16E04761B8EF}
+		{C0E9C26B-DB83-480D-8081-874CF65D87BC} = {32C8F289-225F-4736-B7AE-627AB9B86704}
 	EndGlobalSection
 EndGlobal

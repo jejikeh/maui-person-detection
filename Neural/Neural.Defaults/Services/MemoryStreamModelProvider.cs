@@ -56,4 +56,9 @@ public class MemoryStreamModelProvider : IModelProvider
         
         return model ?? throw new InvalidOperationException();
     }
+
+    public Task<IModel> InitializeAsync<TModel>(IFileSystemProvider fileSystemProvider, IModelOptions modelOptions) where TModel : class, IModel
+    {
+        throw new NotImplementedException();
+    }
 }

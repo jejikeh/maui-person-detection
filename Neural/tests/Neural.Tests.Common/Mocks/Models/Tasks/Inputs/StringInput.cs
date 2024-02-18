@@ -2,7 +2,7 @@ using Neural.Core.Models;
 
 namespace Neural.Tests.Common.Mocks.Models.Tasks.Inputs;
 
-public class StringInput : IModelInput
+public class StringInput(string _value) : IModelInput
 {
-    public string Value { get; set; }
+    public string Value { get; set; } = _value;
 }

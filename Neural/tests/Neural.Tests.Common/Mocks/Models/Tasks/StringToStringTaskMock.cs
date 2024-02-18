@@ -4,8 +4,18 @@ using Neural.Tests.Common.Mocks.Models.Tasks.Outputs;
 
 namespace Neural.Tests.Common.Mocks.Models.Tasks;
 
-public class StringToStringTaskMock : IModelTask
+public class StringToStringTaskMock(string _input) : IModelTask
 {
-    public IModelInput Input { get; } = new StringInput();
+    public event Action<StringToStringTaskMock>? OnModelTaskCompleted;
+
+    public IModelInput Input { get; set; } = new StringInput(_input);
     public IModelOutput Output { get; set; } = new StringOutput();
+    
+    public StringOutput StringOutput => (StringOutput) Output;
+    
+    public void SetOutput(object value)
+    {
+        Output.Set(value);
+        OnModelTaskCompleted?.Invoke(this);
+    }
 }

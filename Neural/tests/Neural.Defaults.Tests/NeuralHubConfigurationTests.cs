@@ -1,6 +1,5 @@
 using FluentAssertions;
 using Moq;
-using Neural.Core.Models;
 using Neural.Core.Services;
 using Neural.Defaults.Services;
 using Neural.Tests.Common.Mocks.Models.Tasks;

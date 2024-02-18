@@ -30,16 +30,23 @@ public class NeuralHubBuilder(IFileSystemProvider _fileSystemProvider, IModelPro
     
     public NeuralHub Build()
     {
-        var concurrentBagOfModels = new ConcurrentBag<IModel>();
+        var models = InitializeModels();
+
+        _neuralHub.Models.AddRange(models);
         
+        return _neuralHub;
+    }
+
+    private ConcurrentBag<IModel> InitializeModels()
+    {
+        var concurrentBagOfModels = new ConcurrentBag<IModel>();
+
         Parallel.ForEach(_modelProviders, modelProvider =>
         {
             var model = modelProvider().Result;
             concurrentBagOfModels.Add(model);
         });
         
-        _neuralHub.Models.AddRange(concurrentBagOfModels);
-        
-        return _neuralHub;
+        return concurrentBagOfModels;
     }
 }
