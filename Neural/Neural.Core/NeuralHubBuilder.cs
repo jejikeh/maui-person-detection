@@ -4,9 +4,12 @@ using Neural.Core.Services;
 
 namespace Neural.Core;
 
-public class NeuralHubBuilder(IFileSystemProvider _fileSystemProvider, IModelProvider _modelProvider)
+public class NeuralHubBuilder(
+    IFileSystemProvider _fileSystemProvider, 
+    IModelProvider _modelProvider, 
+    IClusterProvider _clusterProvider)
 {
-    private readonly NeuralHub _neuralHub = new NeuralHub();
+    private readonly NeuralHub _neuralHub = new NeuralHub(_clusterProvider);
     private readonly List<Func<Task<IModel>>> _modelProviders = new List<Func<Task<IModel>>>();
     
     public NeuralHubBuilder AddModel<TModel, TModelTask>(string modelPath) 

@@ -1,8 +1,9 @@
 using Neural.Core.Models;
+using Neural.Core.Services;
 
 namespace Neural.Core;
 
-public class NeuralHub
+public class NeuralHub(IClusterProvider _clusterProvider)
 {
     public List<IModel> Models { get; } = new List<IModel>();
 
@@ -25,6 +26,12 @@ public class NeuralHub
         }
 
         return await model.RunAsync(input);
+    }
+    
+    public ICluster<TModel> ShapeCluster<TModel>() 
+        where TModel : IModel
+    {
+        return _clusterProvider.GetCluster(GetModels<TModel>());
     }
 
     public async Task<TModelTask?> RunAsync<TModelTask>(TModelTask input) 

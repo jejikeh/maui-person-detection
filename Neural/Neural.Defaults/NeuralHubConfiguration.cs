@@ -6,11 +6,15 @@ namespace Neural.Defaults;
 
 public static class NeuralHubConfiguration
 {
-    public static NeuralHubBuilder FromDefaults(IFileSystemProvider? fileSystemProvider = null, IModelProvider? modelProvider = null)
+    public static NeuralHubBuilder FromDefaults(
+        IFileSystemProvider? fileSystemProvider = null, 
+        IModelProvider? modelProvider = null,
+        IClusterProvider? clusterProvider = null)
     {
         fileSystemProvider ??= new OpenReadFileSystemProvider();
         modelProvider ??= new MemoryStreamModelProvider();
+        clusterProvider ??= new ClusterProvider();
         
-        return new NeuralHubBuilder(fileSystemProvider, modelProvider);
+        return new NeuralHubBuilder(fileSystemProvider, modelProvider, clusterProvider);
     }
 }

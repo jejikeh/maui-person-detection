@@ -9,5 +9,7 @@ public static class FakeData
     
     public static string FilePath() => _faker.System.FilePath();
     
+    public static int IntFromSmallRange() => _faker.Random.Int(5, 20);
+    
     public static StringToStringTaskMock StringToStringTaskMock => new StringToStringTaskMock(_faker.System.FileName());
 }

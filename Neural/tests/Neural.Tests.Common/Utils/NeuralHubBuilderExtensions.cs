@@ -8,6 +8,16 @@ namespace Neural.Tests.Common.Utils;
 
 public static class NeuralHubBuilderExtensions
 {
+    public static NeuralHubBuilder AddYolo5Models(this NeuralHubBuilder builder, int count)
+    {
+        for (var i = 0; i < count; i++)
+        {
+            builder.AddYolo5Model();
+        }
+        
+        return builder;
+    }
+    
     public static NeuralHubBuilder AddYolo5Model(this NeuralHubBuilder builder)
     {
         return builder

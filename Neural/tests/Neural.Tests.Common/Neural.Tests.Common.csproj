@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <PackageReference Include="Bogus" Version="35.4.0" />
+      <PackageReference Include="FluentAssertions" Version="7.0.0-alpha.3" />
     </ItemGroup>
 
     <ItemGroup>
