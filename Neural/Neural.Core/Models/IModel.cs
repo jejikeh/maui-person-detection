@@ -4,6 +4,7 @@ namespace Neural.Core.Models;
 
 public interface IModel
 {
+    public string Name { get; set; }
     public ModelStatus Status { get; set; }
     public InferenceSession? InferenceSession { get; set; }
     

@@ -17,11 +17,11 @@ public class StringToStringTask(string _input) : IModelTask
         return (StringOutput)Output;
     }
     
-    public void SetOutput(object value)
+    public void SetOutput(string modelName, object value)
     {
         Output.Set(value);
-        OnModelOutput?.Invoke(StringOutput());
+        OnModelOutput?.Invoke((modelName, StringOutput()));
     }
     
-    public event Action<StringOutput>? OnModelOutput;
+    public event Action<(string ModelName, StringOutput Output)>? OnModelOutput;
 }

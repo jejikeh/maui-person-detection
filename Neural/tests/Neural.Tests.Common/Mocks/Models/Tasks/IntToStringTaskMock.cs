@@ -9,7 +9,7 @@ public class IntToStringTaskMock(int _value) : IModelTask
     public IModelInput Input { get; set; } = new IntInput(_value);
     public IModelOutput Output { get; set; } = new StringOutput();
 
-    public void SetOutput(object value)
+    public void SetOutput(string _, object value)
     {
         Output.Set(value);
         OnModelTaskCompleted?.Invoke(this);

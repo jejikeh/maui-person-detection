@@ -8,7 +8,8 @@ public class Yolo8ModelMock : IModel<IntToStringTaskMock>
 {
     public const string MockedOutput = "I`m a mocked output";
     public const string MockedBackgroundOutput = "I`m a mocked background output";
-    
+
+    public string Name { get; set; } = Guid.NewGuid().ToString();
     public ModelStatus Status { get; set; } = ModelStatus.Inactive;
     public InferenceSession? InferenceSession { get; set; }
 

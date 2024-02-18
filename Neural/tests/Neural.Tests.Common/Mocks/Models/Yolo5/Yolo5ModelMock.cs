@@ -8,7 +8,8 @@ public class Yolo5ModelMock : IModel<StringToStringTaskMock>
 {
     public const string MockedOutput = "I`m a mock";
     public const string MockedBackgroundOutput = "I`m a mocked background output";
-    
+
+    public string Name { get; set; } = Guid.NewGuid().ToString();
     public ModelStatus Status { get; set; } = ModelStatus.Inactive;
     public InferenceSession? InferenceSession { get; set; }
     
@@ -18,7 +19,7 @@ public class Yolo5ModelMock : IModel<StringToStringTaskMock>
         
         await Task.Delay(100);
 
-        input.SetOutput(MockedOutput);
+        input.SetOutput(Name, MockedOutput);
         
         Status = ModelStatus.Inactive;
         
@@ -36,7 +37,7 @@ public class Yolo5ModelMock : IModel<StringToStringTaskMock>
         {
             await Task.Delay(100);
 
-            input.SetOutput(MockedBackgroundOutput);
+            input.SetOutput(Name, MockedBackgroundOutput);
 
             Status = ModelStatus.Inactive;
         });

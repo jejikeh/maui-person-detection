@@ -23,9 +23,15 @@ foreach (var i in Enumerable.Range(0, loopIterations))
         return;
     }
 
-    helloOutput.OnModelOutput += output => { Console.WriteLine($"Output from model: {output.Value}"); };
-
-    byeOutput.OnModelOutput += output => { Console.WriteLine($"Output from model: {output.Value}"); };
+    helloOutput.OnModelOutput += output =>
+    {
+        Console.WriteLine($"Output from model {output.ModelName}: {output.Output.Value}");
+    };
+    
+    byeOutput.OnModelOutput += output =>
+    {
+        Console.WriteLine($"Output from model {output.ModelName}: {output.Output.Value}");
+    };
 }
 
 Console.ReadLine();

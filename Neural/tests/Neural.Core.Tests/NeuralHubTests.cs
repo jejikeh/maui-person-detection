@@ -92,20 +92,20 @@ public class NeuralHubTests
     [Fact]
     public async void GivenModelTaskWhichDoesntContainInHub_WhenHubRunAsync_ThenReturnNull()
     {
-        // Arrange
-        var modelInputs = FakeData.StringToStringTaskMock;
+        // In this test we load the Yolo8Model with input task InputToStringTaskMock.
+        // However, in RunAsync we load the StringToStringTaskModelMock, which is not any model in the hub a accepts.
         
+        // Arrange
         var neuralHub = NeuralHubConfiguration
             .FromDefaults()
             .AddModel<Yolo8ModelMock, IntToStringTaskMock>(Yolo5Options.ModelPath)
             .Build();
         
         // Act
-        var hubOutputs = await neuralHub.RunAsync(modelInputs);
+        var hubOutputs = await neuralHub.RunAsync(FakeData.StringToStringTaskMock);
         
         // Assert
         hubOutputs.Should().BeNull();
-        hubOutputs!.StringOutput.Value.Should().Be(Yolo5ModelMock.MockedOutput);
     }
 
     [Fact]

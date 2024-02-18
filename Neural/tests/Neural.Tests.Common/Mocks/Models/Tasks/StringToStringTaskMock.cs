@@ -13,7 +13,7 @@ public class StringToStringTaskMock(string _input) : IModelTask
     
     public StringOutput StringOutput => (StringOutput) Output;
     
-    public void SetOutput(object value)
+    public void SetOutput(string _, object value)
     {
         Output.Set(value);
         OnModelTaskCompleted?.Invoke(this);

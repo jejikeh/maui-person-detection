@@ -7,6 +7,7 @@ namespace Neural.BackgroundHelloWorld.Models;
 
 public class Yolo5Model : IModel<StringToStringTask>
 {
+    public string Name { get; set; } = Guid.NewGuid().ToString();
     public ModelStatus Status { get; set; }
     public InferenceSession? InferenceSession { get; set; }
     
@@ -18,12 +19,12 @@ public class Yolo5Model : IModel<StringToStringTask>
         
         if (input.StringInput().Value!.Equals(Constants.HelloMessage))
         {
-            input.SetOutput("Hello, World!");
+            input.SetOutput(Name, "Hello, World!");
         }
         
         if (input.StringInput().Value!.Equals(Constants.ByeMessage))
         {
-            input.SetOutput("Bye, World!");
+            input.SetOutput(Name, "Bye, World!");
         }
         
         Status = ModelStatus.Inactive;
