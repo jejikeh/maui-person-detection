@@ -9,6 +9,8 @@ public interface IModel
     
     public bool CanProcess(IModelTask modelTask);
     public void Initialize();
+    
+    public event EventHandler<ModelStatusChangedEventArgs> StatusChanged; 
 }
 
 public interface IModel<TModelTask> : IModel

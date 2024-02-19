@@ -1,4 +1,4 @@
-namespace Neural.BackgroundHelloWorld.Common;
+namespace Neural.Samples.BackgroundHelloWorld.Common;
 
 public static class Constants
 {

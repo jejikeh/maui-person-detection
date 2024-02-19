@@ -1,16 +1,12 @@
-using System.Collections.Concurrent;
 using Neural.Core.Models;
 
 namespace Neural.Defaults.Models;
 
 public class Cluster<TModel, TModelTask> : ICluster<TModel, TModelTask> 
-    where TModel : IModel<TModelTask> 
+    where TModel : class, IModel<TModelTask> 
     where TModelTask : class, IModelTask
 {
     private readonly List<TModel> _models = [];
-    private readonly ConcurrentStack<TModel> _runningModels = new ConcurrentStack<TModel>();
-    
-    public event Action<TModelTask>? OnModelTaskCompleted;
     
     public void AddRange(IEnumerable<TModel> models)
     {
@@ -22,16 +18,63 @@ public class Cluster<TModel, TModelTask> : ICluster<TModel, TModelTask>
         return _models.FirstOrDefault(model => model.Status == status);
     }
 
-    public Task<TModelTask?> RunAsync(TModelTask input)
+    private async Task<TModel?> WaitUntilModelWithStatus(ModelStatus status)
     {
-        var model = GetModelWithStatus(ModelStatus.Inactive);
+        if (_models.Count == 0)
+        {
+            return null;
+        }
+        
+        var modelWithStatus = GetModelWithStatus(status);
+
+        if (modelWithStatus is not null)
+        {
+            return modelWithStatus;
+        }
+        
+        var taskCompletionSource = new TaskCompletionSource<TModel>();
+
+        EventHandler<ModelStatusChangedEventArgs> handler = null!;
+        handler = (sender, e) =>
+        {
+            if (e.NewStatus != status)
+            {
+                return;
+            }
+            
+            var model = sender as TModel ?? throw new InvalidOperationException();
+            model.StatusChanged -= handler;
+            taskCompletionSource.SetResult(model);
+        };
+
+        foreach (var model in _models)
+        {
+            model.StatusChanged += handler;
+        }
+
+        return await taskCompletionSource.Task;
+    }
+    
+    public async Task RunHandleAsync(IEnumerable<TModelTask> inputs, Action<TModelTask> handleModelCompleted)
+    {
+        await Parallel.ForEachAsync(inputs, async (input, _) =>
+        {
+            var output = await RunAsync(input);
+            
+            handleModelCompleted(output ?? throw new InvalidOperationException());
+        });
+    }
+
+    public async Task<TModelTask?> RunAsync(TModelTask input)
+    {
+        var model = await WaitUntilModelWithStatus(ModelStatus.Inactive);
 
         if (model is null)
         {
-            return Task.FromResult<TModelTask?>(null);
+            return null;
         }
         
-        return model.RunAsync(input)!;
+        return await model.RunAsync(input);
     }
 
     public int Count()
@@ -39,29 +82,12 @@ public class Cluster<TModel, TModelTask> : ICluster<TModel, TModelTask>
         return _models.Count;
     }
 
-    public TModelTask? RunInBackground(TModelTask input)
+    public async Task<TModelTask?> RunInBackgroundAsync(TModelTask input)
     {
-        var model = GetModelWithStatus(ModelStatus.Inactive);
+        var model = await WaitUntilModelWithStatus(ModelStatus.Inactive);
 
-        if (model is null)
-        {
-            return null;
-        }
-        
-        var modelTask = model.TryRunInBackground(input);
-        
-        _runningModels.Push(model);
+        var modelTask = model?.TryRunInBackground(input);
 
-        modelTask.OnModelTaskCompleted += (node, task) =>
-        {
-            _runningModels.TryPop(out _);
-
-            if (_runningModels.IsEmpty)
-            {
-                OnModelTaskCompleted?.Invoke(task as TModelTask ?? throw new InvalidOperationException());
-            }
-        };
-        
         return modelTask;
     }
 }

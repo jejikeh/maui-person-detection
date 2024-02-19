@@ -5,5 +5,4 @@ public interface IModelTask
     public IModelInput Input { get; set; }
     public IModelOutput Output { get; set; }
     public void SetOutput(IModel model, object value);
-    public event Action<IModel, IModelTask>? OnModelTaskCompleted;
 }

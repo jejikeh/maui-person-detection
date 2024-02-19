@@ -1,4 +1,4 @@
-namespace Neural.BackgroundHelloWorld.Services;
+namespace Neural.Samples.BackgroundHelloWorld.Services;
 
 public class ModelNameProvider
 {

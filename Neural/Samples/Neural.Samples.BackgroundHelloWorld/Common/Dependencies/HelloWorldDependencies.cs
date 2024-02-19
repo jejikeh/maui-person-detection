@@ -1,7 +1,7 @@
-using Neural.BackgroundHelloWorld.Services;
 using Neural.Core.Models;
+using Neural.Samples.BackgroundHelloWorld.Services;
 
-namespace Neural.BackgroundHelloWorld.Common.Dependencies;
+namespace Neural.Samples.BackgroundHelloWorld.Common.Dependencies;
 
 public class HelloWorldDependencies : IDependencyContainer
 {

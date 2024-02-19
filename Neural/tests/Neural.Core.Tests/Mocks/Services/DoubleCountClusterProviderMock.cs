@@ -6,9 +6,7 @@ namespace Neural.Core.Tests.Mocks.Services;
 
 public class DoubleCountClusterProviderMock : IClusterProvider
 {
-    public ICluster<TModel, TModelTask> GetCluster<TModel, TModelTask>(IEnumerable<TModel> models) 
-        where TModel : IModel<TModelTask> 
-        where TModelTask : class, IModelTask
+    public ICluster<TModel, TModelTask> GetCluster<TModel, TModelTask>(IEnumerable<TModel> models) where TModel : class, IModel<TModelTask> where TModelTask : class, IModelTask
     {
         var cluster = new ClusterMock<TModel, TModelTask>();
         

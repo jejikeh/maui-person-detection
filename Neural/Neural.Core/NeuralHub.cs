@@ -29,7 +29,7 @@ public class NeuralHub(IClusterProvider _clusterProvider)
     }
     
     public ICluster<TModel, TModelTask> ShapeCluster<TModel, TModelTask>() 
-        where TModel : IModel<TModelTask> 
+        where TModel : class, IModel<TModelTask> 
         where TModelTask : class, IModelTask
     {
         return _clusterProvider.GetCluster<TModel, TModelTask>(GetModels<TModel>());

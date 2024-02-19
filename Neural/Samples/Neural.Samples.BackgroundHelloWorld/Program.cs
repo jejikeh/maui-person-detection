@@ -1,7 +1,7 @@
-﻿using Neural.BackgroundHelloWorld.Common;
-using Neural.BackgroundHelloWorld.Configuration;
-using Neural.BackgroundHelloWorld.Services;
-using Neural.BackgroundHelloWorld.Tasks.StringToString;
+﻿using Neural.Samples.BackgroundHelloWorld.Common;
+using Neural.Samples.BackgroundHelloWorld.Configuration;
+using Neural.Samples.BackgroundHelloWorld.Services;
+using Neural.Samples.BackgroundHelloWorld.Tasks.StringToString;
 using Neural.Defaults;
 
 const int modelsCount = 10;
@@ -9,7 +9,7 @@ const int loopIterations = modelsCount / 2;
 
 var neuralHub = NeuralHubConfiguration
     .FromDefaults()
-    .AddYolo5Models(modelsCount)
+    .AddHelloWorldModels(modelsCount)
     .Build();
 
 foreach (var i in Enumerable.Range(0, loopIterations))

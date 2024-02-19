@@ -1,6 +1,6 @@
 using Neural.Core.Models;
 
-namespace Neural.BackgroundHelloWorld.Tasks.StringToString;
+namespace Neural.Samples.BackgroundHelloWorld.Tasks.StringToString;
 
 public class StringToStringTask(string _input) : IModelTask
 {

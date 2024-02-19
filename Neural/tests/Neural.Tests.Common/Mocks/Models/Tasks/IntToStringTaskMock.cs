@@ -10,10 +10,11 @@ public class IntToStringTaskMock(int _value) : IModelTask
     public IModelOutput Output { get; set; } = new StringOutput();
     
     public event Action<IModel, IModelTask>? OnModelTaskCompleted;
-
+    
     public void SetOutput(IModel model, object value)
     {
         Output.Set(value);
         OnModelTaskCompleted?.Invoke(model, this);
     }
+
 }

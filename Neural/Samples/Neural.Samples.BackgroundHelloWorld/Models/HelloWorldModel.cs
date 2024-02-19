@@ -1,13 +1,25 @@
-using Neural.BackgroundHelloWorld.Common;
-using Neural.BackgroundHelloWorld.Common.Dependencies;
-using Neural.BackgroundHelloWorld.Tasks.StringToString;
 using Neural.Core.Models;
+using Neural.Samples.BackgroundHelloWorld.Common;
+using Neural.Samples.BackgroundHelloWorld.Common.Dependencies;
+using Neural.Samples.BackgroundHelloWorld.Tasks.StringToString;
 
-namespace Neural.BackgroundHelloWorld.Models;
+namespace Neural.Samples.BackgroundHelloWorld.Models;
 
 public class HelloWorldModel : IModel<StringToStringTask, HelloWorldDependencies>
 {
-    public ModelStatus Status { get; set; }
+    private ModelStatus _status = ModelStatus.Inactive;
+
+    public ModelStatus Status
+    {
+        get => _status;
+        set
+        {
+            _status = value;
+            StatusChanged?.Invoke(this, new ModelStatusChangedEventArgs(value));
+        }
+    }
+    
+    public event EventHandler<ModelStatusChangedEventArgs>? StatusChanged;
     public string Name { get; set; } = string.Empty;
     public HelloWorldDependencies? DependencyContainer { get; set; }
 

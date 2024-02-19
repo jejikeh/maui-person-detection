@@ -2,6 +2,9 @@ using FluentAssertions;
 using Neural.Core.Models;
 using Neural.Tests.Common.Mocks.Models.Tasks;
 using Neural.Tests.Common.Mocks.Models.Yolo5;
+using Neural.Tests.Common.Mocks.Samples.SumOfNumbersCluster.Configuration;
+using Neural.Tests.Common.Mocks.Samples.SumOfNumbersCluster.Models;
+using Neural.Tests.Common.Mocks.Samples.SumOfNumbersCluster.Tasks.IntToInt;
 using Neural.Tests.Common.Utils;
 
 namespace Neural.Defaults.Tests.Services;
@@ -90,7 +93,7 @@ public class ClusterTests
         var cluster = neuralHub.ShapeCluster<Yolo5ModelStringToStringMock, StringToStringTaskMock>();
         
         // Act
-        var resultFirst = cluster.RunInBackground(FakeData.StringToStringTaskMock);
+        var resultFirst = await cluster.RunInBackgroundAsync(FakeData.StringToStringTaskMock);
         
         // Assert
         resultFirst.Should().NotBeNull();
@@ -121,30 +124,53 @@ public class ClusterTests
             .Build();
         
         var cluster = neuralHub.ShapeCluster<Yolo5ModelStringToStringMock, StringToStringTaskMock>();
+
+        var modelCompleted = 0;
         
         // Act
         for (var i = 0; i < clusterCount; i++)
         {
-            _ = cluster.RunInBackground(FakeData.StringToStringTaskMock);
+            var task = await cluster.RunInBackgroundAsync(FakeData.StringToStringTaskMock);
+            
+            task.OnModelTaskCompleted += (_, _) => { modelCompleted++; };
         }
         
         var clusterUnderLoad = cluster.IsAnyModelWithStatus(ModelStatus.Active);
         
         // Assert
         clusterUnderLoad.Should().BeTrue();
-
-        var clusterComplete = false;
-        
-        cluster.OnModelTaskCompleted += (_) =>
-        {
-            clusterComplete = true;
-        };
         
         await Task.Delay(Yolo5ModelStringToStringMock.BackgroundDelayMs * 2);
         
-        clusterComplete.Should().BeTrue();
+        modelCompleted.Should().Be(clusterCount);
         
         clusterUnderLoad = cluster.IsAnyModelWithStatus(ModelStatus.Active);
         clusterUnderLoad.Should().BeFalse();
+    }
+
+    [Fact]
+    public async void GivenModelInput_WhenRunHandleAsync_ThenCallHandleWithModelTask()
+    {
+        // Assert
+        var modelCount = FakeData.IntFromSmallRange();
+        var tasksCount = FakeData.IntFromSmallRange();
+        var handleCallTimes = 0;
+
+        var neuralHub = NeuralHubConfiguration
+            .FromDefaults()
+            .AddSumNumbersModels(modelCount)
+            .Build();
+        
+        var cluster = neuralHub.ShapeCluster<SumNumbersModel, IntsToIntTask>();
+        
+        
+        // Act
+        await cluster.RunHandleAsync(FakeData.IntsToIntTasks(tasksCount), _ =>
+        {
+            handleCallTimes++;
+        });
+        
+        // Assert
+        handleCallTimes.Should().Be(tasksCount);
     }
 }

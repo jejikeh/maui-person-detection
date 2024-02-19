@@ -11,7 +11,21 @@ public class Yolo5Model<TModelTask> : IModel<TModelTask, OnnxDependencies>
     public const int BackgroundDelayMs = 100;
     
     public string Name { get; set; } = "Yolo5";
-    public ModelStatus Status { get; set; } = ModelStatus.Inactive;
+    
+    private ModelStatus _status = ModelStatus.Inactive;
+
+    public ModelStatus Status
+    {
+        get => _status;
+        set
+        {
+            _status = value;
+            StatusChanged?.Invoke(this, new ModelStatusChangedEventArgs(value));
+        }
+    }
+
+    public event EventHandler<ModelStatusChangedEventArgs>? StatusChanged;
+    
     public OnnxDependencies? DependencyContainer { get; set; }
     
     public Task<TModelTask> RunAsync(TModelTask input)
