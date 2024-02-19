@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PersonDetection.Client.Pages.ChoosePhotoPage"
+             xmlns:viewModels="clr-namespace:PersonDetection.Client.ViewModels"
+             xmlns:models="clr-namespace:PersonDetection.Client.Models"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:DataType="viewModels:ChoosePhotoViewModel"
+             Shell.NavBarIsVisible="False">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <ContentPage.Content>
+        <StackLayout Padding="16" Spacing="16">
+            <ActivityIndicator IsRunning="{Binding CanAddPhoto, Converter={StaticResource InvertedBoolConverter}}" />
+            <ListView
+                HasUnevenRows="True"
+                ItemsSource="{Binding Photos}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:ViewPhotoPair">
+                        <ViewCell>
+                            <Border
+                                StrokeShape="RoundRectangle 16,16,16,16"
+                                HorizontalOptions="Center"
+                                Margin="0,0,0,0">
+                                <Image
+                                    Source="{Binding Processed}"
+                                    MinimumHeightRequest="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ChoosePhotoViewModel}}, Path=ImageHeight}">
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ChoosePhotoViewModel}}, Path=SelectPhotoCommandCommand}"
+                                            CommandParameter="{Binding Id}" />
+                                    </Image.GestureRecognizers>
+                                </Image>
+                            </Border>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Grid ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0"
+                        Command="{Binding AddNewPhotoCommand}"
+                        IsEnabled="{Binding CanAddPhoto}"
+                        Text="Upload" />
+                <Button Grid.Column="1"
+                        Command="{Binding StreamCameraCommand}"
+                        IsEnabled="{Binding CanAddPhoto}"
+                        Text="Stream" />
+            </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
