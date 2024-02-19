@@ -1,5 +1,3 @@
 namespace Neural.Core.Models;
 
-public class ModelTaskCompletedEventArgs() : EventArgs
-{
-}
+public class ModelTaskCompletedEventArgs : EventArgs;

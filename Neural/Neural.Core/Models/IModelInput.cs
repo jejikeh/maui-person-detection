@@ -1,6 +1,3 @@
 namespace Neural.Core.Models;
 
-public interface IModelInput
-{
-    
-}
+public interface IModelInput;
