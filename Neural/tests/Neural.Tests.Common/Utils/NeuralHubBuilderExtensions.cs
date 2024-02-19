@@ -9,31 +9,31 @@ namespace Neural.Tests.Common.Utils;
 
 public static class NeuralHubBuilderExtensions
 {
-    public static NeuralHubBuilder AddYolo5Models(this NeuralHubBuilder builder, int count)
+    public static NeuralHubBuilder AddYolo5ModelsStringToString(this NeuralHubBuilder builder, int count)
     {
         for (var i = 0; i < count; i++)
         {
-            builder.AddYolo5Model();
+            builder.AddYolo5ModelStringToString();
         }
         
         return builder;
     }
     
-    public static NeuralHubBuilder AddYolo5Model(this NeuralHubBuilder builder)
+    public static NeuralHubBuilder AddYolo5ModelStringToString(this NeuralHubBuilder builder)
     {
         return builder
             .AddModel<Yolo5ModelStringToStringMock, StringToStringTaskMock, OnnxDependencies>(
                 OnnxDependencies.FromBuilder(builder, Constants.Yolo5ModelPath));
     }
 
-    public static NeuralHubBuilder AddYolo8Model(this NeuralHubBuilder builder)
+    public static NeuralHubBuilder AddYolo8ModelIntToString(this NeuralHubBuilder builder)
     {
         return builder
             .AddModel<Yolo8ModelIntToStringMock, IntToStringTaskMock, OnnxDependencies>(
                 OnnxDependencies.FromBuilder(builder, Constants.Yolo8ModelPath));
     }
 
-    public static NeuralHubBuilder AddYolo8ModelWithOptions(this NeuralHubBuilder builder)
+    public static NeuralHubBuilder AddYolo8ModelStringToString(this NeuralHubBuilder builder)
     {
         return builder
             .AddModel<Yolo8ModelStringToStringMock, StringToStringTaskMock, OnnxDependencies>(

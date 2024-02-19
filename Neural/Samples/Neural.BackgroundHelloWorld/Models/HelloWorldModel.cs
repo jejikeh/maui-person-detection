@@ -28,12 +28,12 @@ public class HelloWorldModel : IModel<StringToStringTask, HelloWorldDependencies
         
         if (input.StringInput().Value!.Equals(Constants.HelloMessage))
         {
-            input.SetOutput(Name, await DependencyContainer.HelloWorldService.HelloAsync());
+            input.SetOutput(this, await DependencyContainer.HelloWorldService.HelloAsync());
         }
         
         if (input.StringInput().Value!.Equals(Constants.ByeMessage))
         {
-            input.SetOutput(Name, await DependencyContainer.HelloWorldService.ByeAsync());
+            input.SetOutput(this, await DependencyContainer.HelloWorldService.ByeAsync());
         }
         
         Status = ModelStatus.Inactive;

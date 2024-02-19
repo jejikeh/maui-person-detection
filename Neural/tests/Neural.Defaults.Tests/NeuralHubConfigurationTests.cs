@@ -32,7 +32,7 @@ public class NeuralHubConfigurationTests
         var builder = NeuralHubConfiguration.FromDefaults(
                 fileSystemProvider: fileProvider,
                 modelProvider: modelProviderMock.Object)
-            .AddYolo5Model()
+            .AddYolo5ModelStringToString()
             .Build();
         
         // Assert

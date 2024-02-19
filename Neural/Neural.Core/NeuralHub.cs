@@ -28,10 +28,11 @@ public class NeuralHub(IClusterProvider _clusterProvider)
         return await model.RunAsync(input);
     }
     
-    public ICluster<TModel> ShapeCluster<TModel>() 
-        where TModel : IModel
+    public ICluster<TModel, TModelTask> ShapeCluster<TModel, TModelTask>() 
+        where TModel : IModel<TModelTask> 
+        where TModelTask : class, IModelTask
     {
-        return _clusterProvider.GetCluster(GetModels<TModel>());
+        return _clusterProvider.GetCluster<TModel, TModelTask>(GetModels<TModel>());
     }
 
     public async Task<TModelTask?> RunAsync<TModelTask>(TModelTask input) 

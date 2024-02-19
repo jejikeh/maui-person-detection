@@ -55,7 +55,7 @@ public class NeuralHubBuilderTests
         // Arrange
         var neuralHubBuilder = NeuralHubConfiguration
             .FromDefaults()
-            .AddYolo5Models(2);
+            .AddYolo5ModelsStringToString(2);
         
         // Act
         var neuralHub = neuralHubBuilder.Build();

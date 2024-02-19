@@ -6,9 +6,11 @@ namespace Neural.Core.Tests.Mocks.Services;
 
 public class ClusterProviderMock : IClusterProvider
 {
-    public ICluster<TModel> GetCluster<TModel>(IEnumerable<TModel> models) where TModel : IModel
+    public ICluster<TModel, TModelTask> GetCluster<TModel, TModelTask>(IEnumerable<TModel> models) 
+        where TModel : IModel<TModelTask> 
+        where TModelTask : class, IModelTask
     {
-        var cluster = new ClusterMock<TModel>();
+        var cluster = new ClusterMock<TModel, TModelTask>();
         
         cluster.AddRange(models);
         

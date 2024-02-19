@@ -24,12 +24,12 @@ foreach (var i in Enumerable.Range(0, loopIterations))
         return;
     }
 
-    helloOutput.OnModelOutput += output =>
+    helloOutput.OnModelTaskTypedComplete += output =>
     {
         Console.WriteLine($"Output from model {output.ModelName}: {output.Output.Value}");
     };
     
-    byeOutput.OnModelOutput += output =>
+    byeOutput.OnModelTaskTypedComplete += output =>
     {
         Console.WriteLine($"Output from model {output.ModelName}: {output.Output.Value}");
     };

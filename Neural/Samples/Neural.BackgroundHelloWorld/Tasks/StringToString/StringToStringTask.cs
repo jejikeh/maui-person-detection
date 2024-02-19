@@ -6,6 +6,9 @@ public class StringToStringTask(string _input) : IModelTask
 {
     public IModelInput Input { get; set; } = new StringInput(_input);
     public IModelOutput Output { get; set; } = new StringOutput();
+    
+    public event Action<IModel, IModelTask>? OnModelTaskCompleted;
+    public event Action<(string ModelName, StringOutput Output)>? OnModelTaskTypedComplete;
 
     public StringInput StringInput()
     {
@@ -17,11 +20,12 @@ public class StringToStringTask(string _input) : IModelTask
         return (StringOutput)Output;
     }
     
-    public void SetOutput(string modelName, object value)
+    public void SetOutput(IModel model, object value)
     {
         Output.Set(value);
-        OnModelOutput?.Invoke((modelName, StringOutput()));
+        
+        OnModelTaskCompleted?.Invoke(model, this);
+
+        OnModelTaskTypedComplete?.Invoke((model.Name, StringOutput()));
     }
-    
-    public event Action<(string ModelName, StringOutput Output)>? OnModelOutput;
 }
