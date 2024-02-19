@@ -4,12 +4,12 @@ namespace Neural.Core.Services;
 
 public interface IModelProvider
 {
-    public Task<IModel> InitializeAsync<TModel, TModelTask, TWorkerOptions>(IDependencyProvider dependencyProvider, TWorkerOptions options) 
+    public IModel Initialize<TModel, TModelTask>() 
         where TModel : class, IModel<TModelTask>
         where TModelTask : IModelTask;
 
-    public Task<IModel> InitializeAsync<TModel, TModelTask, TOptions, TWorkerOptions>(IDependencyProvider dependencyProvider, TOptions modelOptions, TWorkerOptions workerOptions)
-        where TModel : class, IModel<TModelTask, TOptions>
-        where TOptions : IModelOptions
-        where TModelTask : IModelTask;
+    public IModel Initialize<TModel, TModelTask, TDependencyContainer>(TDependencyContainer dependencyContainer)
+        where TModel : class, IModel<TModelTask, TDependencyContainer>
+        where TModelTask : IModelTask
+        where TDependencyContainer : class, IDependencyContainer;
 }

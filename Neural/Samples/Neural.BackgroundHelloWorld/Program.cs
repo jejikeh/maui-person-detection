@@ -8,8 +8,7 @@ const int modelsCount = 10;
 const int loopIterations = modelsCount / 2;
 
 var neuralHub = NeuralHubConfiguration
-    .FromDefaults(
-        workerProvider: new HelloWorldDependencyProvider())
+    .FromDefaults()
     .AddYolo5Models(modelsCount)
     .Build();
 

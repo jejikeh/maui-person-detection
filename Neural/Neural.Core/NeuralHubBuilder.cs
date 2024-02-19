@@ -7,44 +7,30 @@ namespace Neural.Core;
 public class NeuralHubBuilder(
     IFileSystemProvider _fileSystemProvider, 
     IModelProvider _modelProvider, 
-    IClusterProvider _clusterProvider,
-    IDependencyProvider dependencyProvider)
+    IClusterProvider _clusterProvider)
 {
     private readonly NeuralHub _neuralHub = new NeuralHub(_clusterProvider);
-    private readonly List<Func<Task<IModel>>> _modelProviders = new List<Func<Task<IModel>>>();
+    private readonly List<Func<IModel>> _modelProviders = new List<Func<IModel>>();
     
     public IFileSystemProvider FileSystemProvider => _fileSystemProvider;
     public IModelProvider ModelProvider => _modelProvider;
     public IClusterProvider ClusterProvider => _clusterProvider;
-    public IDependencyProvider DependencyProvider => dependencyProvider;
     
-    public NeuralHubBuilder AddModel<TModel, TModelTask, TWorkerOptions>(TWorkerOptions modelPath) 
-        where TModel : class, IModel<TModelTask> 
+    public NeuralHubBuilder AddModel<TModel, TModelTask, TDependencyContainer>(TDependencyContainer dependencyContainer) 
+        where TModel : class, IModel<TModelTask, TDependencyContainer> 
         where TModelTask : IModelTask
+        where TDependencyContainer : class, IDependencyContainer
     {
-        _modelProviders.Add(async () => await _modelProvider.InitializeAsync<TModel, TModelTask, TWorkerOptions>(dependencyProvider, modelPath));
+        _modelProviders.Add(() => _modelProvider.Initialize<TModel, TModelTask, TDependencyContainer>(dependencyContainer));
         
         return this;
     }
     
-    public NeuralHubBuilder AddModel<TModel, TModelTask, TOptions>(IModelOptions options) 
-        where TModel : class, IModel<TModelTask, TOptions>
-        where TOptions : class, IModelOptions
+    public NeuralHubBuilder AddModel<TModel, TModelTask>() 
+        where TModel : class, IModel<TModelTask>
         where TModelTask : IModelTask
     {
-        _modelProviders.Add(() => _modelProvider.InitializeAsync<TModel, TModelTask, TOptions>(
-            dependencyProvider, 
-            options as TOptions ?? throw new InvalidOperationException($"{nameof(AddModel)} can only be used with {nameof(IModelOptions)}")));
-        
-        return this;
-    }
-
-    public NeuralHubBuilder AddModel<TModel, TModelTask, TOptions, TWorkerOptions>(TOptions options, TWorkerOptions workerOptions) 
-        where TModel : class, IModel<TModelTask, TOptions>
-        where TOptions : class, IModelOptions
-        where TModelTask : IModelTask
-    {
-        _modelProviders.Add(() => _modelProvider.InitializeAsync<TModel, TModelTask, TOptions, TWorkerOptions>(dependencyProvider, options, workerOptions));
+        _modelProviders.Add(_modelProvider.Initialize<TModel, TModelTask>);
         
         return this;
     }
@@ -64,7 +50,7 @@ public class NeuralHubBuilder(
 
         Parallel.ForEach(_modelProviders, modelProvider =>
         {
-            var model = modelProvider().Result;
+            var model = modelProvider();
             concurrentBagOfModels.Add(model);
         });
         

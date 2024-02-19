@@ -19,10 +19,23 @@ public class ClusterTests
             .Build();
         
         // Act
-        var yolo5Cluster = neuralHub.ShapeCluster<Yolo5ModelMock>();
+        var yolo5Cluster = neuralHub.ShapeCluster<Yolo5ModelStringToStringMock>();
         
         // Assert
         yolo5Cluster.Should().NotBeNull();
         yolo5Cluster.Count().Should().Be(modelsCount);
+    }
+
+    [Fact]
+    public void GivenMultipleTaskInput_WhenRunInBackground_ThenShouldGiveTasksToCorrectModel()
+    {
+        var neuralHub = NeuralHubConfiguration
+            .FromDefaults()
+            .AddYolo5Model()
+            .Build();
+        
+        var cluster = neuralHub.ShapeCluster<Yolo5ModelStringToStringMock>();
+        
+        // Act
     }
 }

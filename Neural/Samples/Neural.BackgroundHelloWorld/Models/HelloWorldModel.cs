@@ -1,32 +1,39 @@
 using Neural.BackgroundHelloWorld.Common;
-using Neural.BackgroundHelloWorld.Services;
+using Neural.BackgroundHelloWorld.Common.Dependencies;
 using Neural.BackgroundHelloWorld.Tasks.StringToString;
 using Neural.Core.Models;
 
 namespace Neural.BackgroundHelloWorld.Models;
 
-public class HelloWorldModel : IModel<StringToStringTask>
+public class HelloWorldModel : IModel<StringToStringTask, HelloWorldDependencies>
 {
-    public string Name { get; set; } = Guid.NewGuid().ToString();
     public ModelStatus Status { get; set; }
-    public IDependencyContainer? DependencyContainer { get; set; }
-    
-    public HelloWorldService HelloWorldService => DependencyContainer!.CastToDependency<HelloWorldService>();
-    
+    public string Name { get; set; } = string.Empty;
+    public HelloWorldDependencies? DependencyContainer { get; set; }
+
+    void IModel<StringToStringTask, HelloWorldDependencies>.Initialize(HelloWorldDependencies dependencyContainer)
+    {
+        DependencyContainer = dependencyContainer;
+        Name = dependencyContainer.ModelNameProvider.GetModelName();
+    }
+
     public async Task<StringToStringTask> RunAsync(StringToStringTask input)
     {
-        Status = ModelStatus.Active;
+        if (DependencyContainer is null)
+        {
+            throw new NullReferenceException(nameof(DependencyContainer));
+        }
         
-        await Task.Delay(1000);
+        Status = ModelStatus.Active;
         
         if (input.StringInput().Value!.Equals(Constants.HelloMessage))
         {
-            input.SetOutput(Name, HelloWorldService.Hello());
+            input.SetOutput(Name, await DependencyContainer.HelloWorldService.HelloAsync());
         }
         
         if (input.StringInput().Value!.Equals(Constants.ByeMessage))
         {
-            input.SetOutput(Name, HelloWorldService.Bye());
+            input.SetOutput(Name, await DependencyContainer.HelloWorldService.ByeAsync());
         }
         
         Status = ModelStatus.Inactive;

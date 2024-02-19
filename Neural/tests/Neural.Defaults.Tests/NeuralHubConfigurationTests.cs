@@ -1,11 +1,10 @@
 using FluentAssertions;
 using Moq;
 using Neural.Core.Services;
-using Neural.Defaults.Common.Options;
+using Neural.Defaults.Common.Dependencies;
 using Neural.Defaults.Services;
 using Neural.Tests.Common.Mocks.Models.Tasks;
 using Neural.Tests.Common.Mocks.Models.Yolo5;
-using Neural.Tests.Common.Mocks.Options;
 using Neural.Tests.Common.Utils;
 
 namespace Neural.Defaults.Tests;
@@ -37,6 +36,6 @@ public class NeuralHubConfigurationTests
             .Build();
         
         // Assert
-        modelProviderMock.Verify(m => m.InitializeAsync<Yolo5ModelMock, StringToStringTaskMock, OnnxOptions>(It.IsAny<IDependencyProvider>(), It.IsAny<OnnxOptions>()), Times.Once);
+        modelProviderMock.Verify(m => m.Initialize<Yolo5ModelStringToStringMock, StringToStringTaskMock, OnnxDependencies>(It.IsAny<OnnxDependencies>()), Times.Once);
     }
 }

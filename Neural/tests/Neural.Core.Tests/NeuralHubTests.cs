@@ -22,10 +22,10 @@ public class NeuralHubTests
             .Build();
         
         // Act
-        var model = neuralHub.GetModels<Yolo5ModelMock>().First();
+        var model = neuralHub.GetModels<Yolo5ModelStringToStringMock>().First();
         
         // Assert
-        model.Should().BeOfType<Yolo5ModelMock>();
+        model.Should().BeOfType<Yolo5ModelStringToStringMock>();
     }
 
     [Fact]
@@ -41,9 +41,9 @@ public class NeuralHubTests
             .Build();
         
         // Act
-        var yolo5Model = neuralHub.GetModels<Yolo5ModelMock>();
-        var yolo8WithOptionsModel = neuralHub.GetModels<Yolo8ModelWithOptionsMock>();
-        var yolo8Model = neuralHub.GetModels<Yolo8ModelMock>();
+        var yolo5Model = neuralHub.GetModels<Yolo5ModelStringToStringMock>();
+        var yolo8WithOptionsModel = neuralHub.GetModels<Yolo8ModelStringToStringMock>();
+        var yolo8Model = neuralHub.GetModels<Yolo8ModelIntToStringMock>();
         
         // Assert
         yolo5Model.Should().HaveCount(1);
@@ -62,13 +62,13 @@ public class NeuralHubTests
             .AddYolo5Model()
             .Build();
         
-        var yolo5Model = neuralHub.GetModels<Yolo5ModelMock>().First();
+        var yolo5Model = neuralHub.GetModels<Yolo5ModelStringToStringMock>().First();
 
         // Act
         var modelOutputs = await yolo5Model.RunAsync(modelInputs);
         
         // Assert
-        modelOutputs.StringOutput.Value.Should().Be(Yolo5ModelMock.MockedOutput);
+        modelOutputs.StringOutput.Value.Should().Be(Yolo5ModelStringToStringMock.MockedOutput);
     }
 
     [Fact]
@@ -87,7 +87,7 @@ public class NeuralHubTests
         
         // Assert
         hubOutputs.Should().NotBeNull();
-        hubOutputs!.StringOutput.Value.Should().Be(Yolo5ModelMock.MockedOutput);
+        hubOutputs!.StringOutput.Value.Should().Be(Yolo5ModelStringToStringMock.MockedOutput);
     }
     
     [Fact]
@@ -116,28 +116,18 @@ public class NeuralHubTests
         var neuralHub = NeuralHubConfiguration
             .FromDefaults()
             .AddYolo5Model()
-            .AddYolo5ModelWithOptions()
             .Build();
         
         // Act
         var yolo5ModelOutputs = await neuralHub
-            .RunAsync<Yolo5ModelMock, StringToStringTaskMock>(FakeData.StringToStringTaskMock);
-        
-        var yolo5ModelWithOptionsOutputs = await neuralHub
-            .RunAsync<Yolo5ModelWithOptionsMock, StringToStringTaskMock>(FakeData.StringToStringTaskMock);
+            .RunAsync<Yolo5ModelStringToStringMock, StringToStringTaskMock>(FakeData.StringToStringTaskMock);
         
         // Assert
-        var yolo5Model = neuralHub.GetModels<Yolo5ModelMock>().First();
+        var yolo5Model = neuralHub.GetModels<Yolo5ModelStringToStringMock>().First();
         yolo5Model.Status.Should().Be(ModelStatus.Inactive);
         
-        var yolo5ModelWithOptions = neuralHub.GetModels<Yolo5ModelWithOptionsMock>().First();
-        yolo5ModelWithOptions.Status.Should().Be(ModelStatus.Inactive);
-        
         yolo5ModelOutputs.Should().NotBeNull();
-        yolo5ModelOutputs!.StringOutput.Value.Should().Be(Yolo5ModelMock.MockedOutput);
-        
-        yolo5ModelWithOptionsOutputs.Should().NotBeNull();
-        yolo5ModelWithOptionsOutputs!.StringOutput.Value.Should().Be(Yolo5ModelWithOptionsMock.MockedOutput);
+        yolo5ModelOutputs!.StringOutput.Value.Should().Be(Yolo5ModelStringToStringMock.MockedOutput);
     }
     
     [Fact]
@@ -149,27 +139,15 @@ public class NeuralHubTests
         var neuralHub = NeuralHubConfiguration
             .FromDefaults()
             .AddYolo5Model()
-            .AddYolo5ModelWithOptions()
             .Build();
         
         // Act
         var yolo5ModelOutputs = await neuralHub
-            .RunAsync<Yolo5ModelMock, StringToStringTaskMock>(modelsInput);
+            .RunAsync<Yolo5ModelStringToStringMock, StringToStringTaskMock>(modelsInput);
         
         // Assert
         yolo5ModelOutputs.Should().NotBeNull();
-        yolo5ModelOutputs!.StringOutput.Value.Should().Be(Yolo5ModelMock.MockedOutput);
-        
-        // Act
-        var yolo5ModelWithOptionsOutputs = await neuralHub
-            .RunAsync<Yolo5ModelWithOptionsMock, StringToStringTaskMock>(modelsInput);
-        
-        // Assert
-        yolo5ModelOutputs.Should().NotBeNull();
-        yolo5ModelOutputs.StringOutput.Value.Should().Be(Yolo5ModelWithOptionsMock.MockedOutput);
-        
-        yolo5ModelWithOptionsOutputs.Should().NotBeNull();
-        yolo5ModelWithOptionsOutputs!.StringOutput.Value.Should().Be(Yolo5ModelWithOptionsMock.MockedOutput);
+        yolo5ModelOutputs!.StringOutput.Value.Should().Be(Yolo5ModelStringToStringMock.MockedOutput);
     }
     
     [Fact]
@@ -189,7 +167,7 @@ public class NeuralHubTests
         // Assert
         modelOutput.Should().NotBeNull();
 
-        var yolo5Model = neuralHub.GetModels<Yolo5ModelMock>().FirstOrDefault();
+        var yolo5Model = neuralHub.GetModels<Yolo5ModelStringToStringMock>().FirstOrDefault();
         yolo5Model!.Status.Should().Be(ModelStatus.Active);
         
         var eventInvoked = false;
@@ -205,7 +183,7 @@ public class NeuralHubTests
         
         eventInvoked.Should().BeTrue();
         
-        modelOutput.StringOutput.Value.Should().Be(Yolo5ModelMock.MockedBackgroundOutput);
+        modelOutput.StringOutput.Value.Should().Be(Yolo5ModelStringToStringMock.MockedBackgroundOutput);
     }
     
     [Fact]
@@ -230,7 +208,7 @@ public class NeuralHubTests
         // Added only 2 StringToString type models, so all them should be active
         modelEventThird.Should().BeNull();
         
-        var models = neuralHub.GetModels<Yolo5ModelMock>().ToArray();
+        var models = neuralHub.GetModels<Yolo5ModelStringToStringMock>().ToArray();
         models.Length.Should().Be(2);
         
         models.ShouldHaveState(ModelStatus.Active);
@@ -253,11 +231,11 @@ public class NeuralHubTests
             .Build();
         
         // Act
-        var cluster = neuralHub.ShapeCluster<Yolo5ModelMock>();
+        var cluster = neuralHub.ShapeCluster<Yolo5ModelStringToStringMock>();
         
         // Assert
-        cluster.Should().BeOfType<ClusterMock<Yolo5ModelMock>>();
-        cluster!.Count().Should().Be(modelCount);
+        cluster.Should().BeOfType<ClusterMock<Yolo5ModelStringToStringMock>>();
+        cluster.Count().Should().Be(modelCount);
     }
     
     [Fact]
@@ -275,10 +253,10 @@ public class NeuralHubTests
             .Build();
         
         // Act
-        var cluster = neuralHub.ShapeCluster<Yolo5ModelMock>();
+        var cluster = neuralHub.ShapeCluster<Yolo5ModelStringToStringMock>();
         
         // Assert
-        cluster.Should().BeOfType<ClusterMock<Yolo5ModelMock>>();
-        cluster!.Count().Should().Be(modelCount * 2);
+        cluster.Should().BeOfType<ClusterMock<Yolo5ModelStringToStringMock>>();
+        cluster.Count().Should().Be(modelCount * 2);
     }
 }

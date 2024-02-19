@@ -5,44 +5,42 @@ namespace Neural.Defaults.Services;
 
 public class WorkerModelProvider : IModelProvider
 {
-    public async Task<IModel> InitializeAsync<TModel, TModelTask, TWorkerOptions>(IDependencyProvider dependencyProvider, TWorkerOptions modelOptions)
+    public IModel Initialize<TModel, TModelTask>() 
         where TModel : class, IModel<TModelTask> 
         where TModelTask : IModelTask
     {
-        var model = InitializeModelInstance<TModel, TModelTask>(await dependencyProvider.CreateContainerAsync(modelOptions));
+        var model = InitializeModelInstance<TModel, TModelTask>();
         
         return model as IModel ?? throw new InvalidOperationException();
     }
-    
-    public async Task<IModel> InitializeAsync<TModel, TModelTask, TOptions, TWorkerOptions>(IDependencyProvider dependencyProvider, TOptions modelOptions, TWorkerOptions modelWorkerOptions) 
-        where TModel : class, IModel<TModelTask, TOptions>
-        where TOptions : IModelOptions
-        where TModelTask : IModelTask
+
+    public IModel Initialize<TModel, TModelTask, TDependencyContainer>(TDependencyContainer dependencyContainer) 
+        where TModel : class, IModel<TModelTask, TDependencyContainer> 
+        where TModelTask : IModelTask 
+        where TDependencyContainer : class, IDependencyContainer
     {
-        var model = InitializeModelInstance<TModel, TModelTask, TOptions>(
-            await dependencyProvider.CreateContainerAsync(modelWorkerOptions), 
-            modelOptions);
+        var model = InitializeModelInstanceWithDependency<TModel, TModelTask, TDependencyContainer>(dependencyContainer);
         
         return model as IModel ?? throw new InvalidOperationException();
     }
     
-    private static TModel InitializeModelInstance<TModel, TModelTask>(IDependencyContainer dependencyContainer)
+    private static TModel InitializeModelInstance<TModel, TModelTask>()
         where TModel : class, IModel<TModelTask> 
         where TModelTask : IModelTask
     {
         var model = Activator.CreateInstance<TModel>();
-        model.Initialize(dependencyContainer);
+        model.Initialize();
         
         return model ?? throw new InvalidOperationException();
     }
 
-    private static TModel InitializeModelInstance<TModel, TModelTask, TOptions>(IDependencyContainer dependencyContainer, TOptions modelOptions)
-        where TModel : class, IModel<TModelTask, TOptions>
-        where TOptions : IModelOptions
+    private static TModel InitializeModelInstanceWithDependency<TModel, TModelTask, TDependencyContainer>(TDependencyContainer dependencyContainer)
+        where TModel : class, IModel<TModelTask, TDependencyContainer>
         where TModelTask : IModelTask
+        where TDependencyContainer : class, IDependencyContainer
     {
         var model = Activator.CreateInstance<TModel>();
-        model.Initialize(dependencyContainer, modelOptions);
+        model.Initialize(dependencyContainer);
         
         return model ?? throw new InvalidOperationException();
     }

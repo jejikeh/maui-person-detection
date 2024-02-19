@@ -1,16 +1,14 @@
+using Neural.Core.Common;
+
 namespace Neural.Core.Models;
 
 public interface IModel
 {
     public string Name { get; set; }
     public ModelStatus Status { get; set; }
-    public IDependencyContainer? DependencyContainer { get; set; }
+    
     public bool CanProcess(IModelTask modelTask);
-
-    public void Initialize(IDependencyContainer dependencyContainer)
-    {
-        DependencyContainer = dependencyContainer;
-    }
+    public void Initialize();
 }
 
 public interface IModel<TModelTask> : IModel
@@ -25,15 +23,19 @@ public interface IModel<TModelTask> : IModel
     }
 }
 
-public interface IModel<TModelTask, TOptions> : IModel<TModelTask> 
-    where TOptions : IModelOptions 
+public interface IModel<TModelTask, TDependencyContainer> : IModel<TModelTask> 
+    where TDependencyContainer : class, IDependencyContainer 
     where TModelTask : IModelTask
 {
-    public TOptions? Options { get; set; }
-    
-    public void Initialize(IDependencyContainer dependencyContainer, TOptions options)
+    public TDependencyContainer? DependencyContainer { get; set; }
+
+    public void Initialize(TDependencyContainer dependencyContainer)
     {
-        Initialize(dependencyContainer);
-        Options = options;
+        DependencyContainer = dependencyContainer;
+    }
+
+    void IModel.Initialize()
+    {
+        throw new InvalidModelInitializationException($"Model {Name} cannot be initialized directly. (Without dependency container)");
     }
 }
