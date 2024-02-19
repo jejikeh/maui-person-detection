@@ -6,7 +6,6 @@ using Neural.Defaults;
 using Neural.Tests.Common.Mocks.Models.Tasks;
 using Neural.Tests.Common.Mocks.Models.Yolo5;
 using Neural.Tests.Common.Mocks.Models.Yolo8;
-using Neural.Tests.Common.Mocks.Options;
 using Neural.Tests.Common.Utils;
 
 namespace Neural.Core.Tests;
@@ -19,7 +18,7 @@ public class NeuralHubTests
         // Arrange
         var neuralHub = NeuralHubConfiguration
             .FromDefaults()
-            .AddModel<Yolo5ModelMock, StringToStringTaskMock>(Yolo5Options.ModelPath)
+            .AddYolo5Model()
             .Build();
         
         // Act
@@ -60,7 +59,7 @@ public class NeuralHubTests
         
         var neuralHub = NeuralHubConfiguration
             .FromDefaults()
-            .AddModel<Yolo5ModelMock, StringToStringTaskMock>(Yolo5Options.ModelPath)
+            .AddYolo5Model()
             .Build();
         
         var yolo5Model = neuralHub.GetModels<Yolo5ModelMock>().First();
@@ -80,7 +79,7 @@ public class NeuralHubTests
         
         var neuralHub = NeuralHubConfiguration
             .FromDefaults()
-            .AddModel<Yolo5ModelMock, StringToStringTaskMock>(Yolo5Options.ModelPath)
+            .AddYolo5Model()
             .Build();
         
         // Act
@@ -100,7 +99,7 @@ public class NeuralHubTests
         // Arrange
         var neuralHub = NeuralHubConfiguration
             .FromDefaults()
-            .AddModel<Yolo8ModelMock, IntToStringTaskMock>(Yolo5Options.ModelPath)
+            .AddYolo8Model()
             .Build();
         
         // Act

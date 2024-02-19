@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Neural.Defaults;
+using Neural.Defaults.Common.Options;
 using Neural.Tests.Common.Mocks.Exceptions;
 using Neural.Tests.Common.Mocks.Models.Tasks;
 using Neural.Tests.Common.Mocks.Models.Yolo5;
@@ -16,11 +17,16 @@ public class NeuralHubBuilderTests
     public void GivenModelProviders_WhenBuildHub_ThenLoadNeuralHub()
     {
         // Arrange
-        var neuralHubBuilder = NeuralHubConfiguration
-            .FromDefaults()
-            .AddModel<Yolo5ModelWithOptionsMock, StringToStringTaskMock, Yolo5Options>(new Yolo5Options())
-            .AddModel<Yolo5ModelMock, StringToStringTaskMock>(Yolo5Options.ModelPath)
-            .AddModel<Yolo8ModelWithOptionsMock, StringToStringTaskMock, Yolo8QuantizedOptions>(new Yolo8QuantizedOptions());
+        var neuralHubBuilder = NeuralHubConfiguration.FromDefaults();
+            
+        neuralHubBuilder.AddModel<Yolo5ModelWithOptionsMock, StringToStringTaskMock, Yolo5Options, OnnxOptions>(
+                new Yolo5Options(), OnnxOptions.FromBuilder(neuralHubBuilder, Yolo5Options.ModelPath));
+            
+        neuralHubBuilder.AddModel<Yolo5ModelMock, StringToStringTaskMock, OnnxOptions>(
+                OnnxOptions.FromBuilder(neuralHubBuilder, Yolo5Options.ModelPath));
+            
+        neuralHubBuilder.AddModel<Yolo8ModelWithOptionsMock, StringToStringTaskMock, Yolo8QuantizedOptions, OnnxOptions>(
+            new Yolo8QuantizedOptions(), OnnxOptions.FromBuilder(neuralHubBuilder, Yolo8QuantizedOptions.ModelPath));
 
         // Act
         var neuralHub = neuralHubBuilder.Build();
@@ -49,8 +55,8 @@ public class NeuralHubBuilderTests
         // Arrange
         var neuralHubBuilder = NeuralHubConfiguration
             .FromDefaults()
-            .AddModel<Yolo5ModelWithOptionsMock, StringToStringTaskMock, Yolo5Options>(new Yolo5Options())
-            .AddModel<Yolo8ModelWithOptionsMock, StringToStringTaskMock, Yolo8QuantizedOptions>(new Yolo8QuantizedOptions());
+            .AddYolo5ModelWithOptions()
+            .AddYolo8ModelWithOptions();
         
         // Act
         var neuralHub = neuralHubBuilder.Build();
@@ -60,7 +66,7 @@ public class NeuralHubBuilderTests
     }
 
     [Fact]
-    public void GivenModelProviders_WhenBuildHub_ThenLoadModelInstanceFile()
+    public void GivenModelProvidersWithIncorrectWorkerOptions_WhenBuildHub_ThenThrowsInvalidException()
     {
         // Arrange
         var neuralHubBuilder = NeuralHubConfiguration
@@ -68,23 +74,21 @@ public class NeuralHubBuilderTests
             .AddModel<Yolo8ModelWithOptionsMock, StringToStringTaskMock, Yolo8QuantizedOptions>(new Yolo8QuantizedOptions());
         
         // Act
-        var neuralHub = neuralHubBuilder.Build();
+        var neuralHub = () => neuralHubBuilder.Build();
         
         // Assert
-        var loadedModel = neuralHub.Models[0];
-        
-        loadedModel.Should().NotBeNull();
-        loadedModel.Should().BeOfType<Yolo8ModelWithOptionsMock>();
-        loadedModel.InferenceSession.Should().NotBeNull();
+        neuralHub.Should().Throw<InvalidOperationException>();
     }
 
     [Fact]
     public void GivenNonExistingModelPath_WhenBuildHub_ThenThrowException()
     {
         // Arrange
-        var neuralHubBuilder = NeuralHubConfiguration
-            .FromDefaults()
-            .AddModel<Yolo5ModelMock, StringToStringTaskMock>(FakeData.FilePath());
+        var neuralHubBuilder = NeuralHubConfiguration.FromDefaults();
+        
+        neuralHubBuilder
+            .AddModel<Yolo5ModelMock, StringToStringTaskMock, OnnxOptions>(
+                OnnxOptions.FromBuilder(neuralHubBuilder, FakeData.FilePath()));
         
         // Act
         var act = () => neuralHubBuilder.Build();
@@ -97,10 +101,11 @@ public class NeuralHubBuilderTests
     public void GivenNonDefaultServices_WhenBuildHub_ThenLoadNeuralHubUsingCustomServices()
     {
         // Arrange
-        var neuralHubBuilder = NeuralHubConfiguration
-            .FromDefaults(
-                modelProvider: new ExceptionModelProviderMock())
-            .AddModel<Yolo5ModelMock, StringToStringTaskMock>("yolo5n.onnx");
+        var neuralHubBuilder = NeuralHubConfiguration.FromDefaults(modelProvider: new ExceptionModelProviderMock());
+        
+        neuralHubBuilder
+            .AddModel<Yolo5ModelMock, StringToStringTaskMock, OnnxOptions>(
+                OnnxOptions.FromBuilder(neuralHubBuilder, FakeData.FilePath()));
         
         // Act
         var act = () => neuralHubBuilder.Build();

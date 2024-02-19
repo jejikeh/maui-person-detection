@@ -1,4 +1,3 @@
-using Microsoft.ML.OnnxRuntime;
 using Neural.Core.Models;
 using Neural.Tests.Common.Mocks.Models.Tasks;
 
@@ -11,9 +10,8 @@ public class Yolo5ModelIntToStringMock : IModel<IntToStringTaskMock>
 
     public string Name { get; set; } = Guid.NewGuid().ToString();
     public ModelStatus Status { get; set; } = ModelStatus.Inactive;
-    
-    public InferenceSession? InferenceSession { get; set; }
-    
+    public IModelWorker? Worker { get; set; }
+
     public Task<IntToStringTaskMock> RunAsync(IntToStringTaskMock input)
     {
         input.Output.Set(MockedOutput);

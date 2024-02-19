@@ -1,18 +1,15 @@
-using Microsoft.ML.OnnxRuntime;
-
 namespace Neural.Core.Models;
 
 public interface IModel
 {
     public string Name { get; set; }
     public ModelStatus Status { get; set; }
-    public InferenceSession? InferenceSession { get; set; }
-    
+    public IModelWorker? Worker { get; set; }
     public bool CanProcess(IModelTask modelTask);
-    
-    public void Initialize(MemoryStream memoryStream)
+
+    public void Initialize(IModelWorker modelWorker)
     {
-        InferenceSession = new InferenceSession(memoryStream.ToArray(), new SessionOptions());
+        Worker = modelWorker;
     }
 }
 
@@ -20,7 +17,6 @@ public interface IModel<TModelTask> : IModel
     where TModelTask : IModelTask
 {
     public Task<TModelTask> RunAsync(TModelTask input);
-    
     public TModelTask TryRunInBackground(TModelTask input);
 
     bool IModel.CanProcess(IModelTask modelTask)
@@ -35,9 +31,9 @@ public interface IModel<TModelTask, TOptions> : IModel<TModelTask>
 {
     public TOptions? Options { get; set; }
     
-    public void Initialize(MemoryStream memoryStream, TOptions options)
+    public void Initialize(IModelWorker modelWorker, TOptions options)
     {
-        Initialize(memoryStream);
+        Initialize(modelWorker);
         Options = options;
     }
 }

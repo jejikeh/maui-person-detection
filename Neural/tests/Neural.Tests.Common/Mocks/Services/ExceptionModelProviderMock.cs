@@ -8,17 +8,14 @@ public class ExceptionModelProviderMock : IModelProvider
 {
     public const string ExceptionMessage = "I`m a custom model provider, and I`m throwing an exception.";
 
-    public Task<IModel> InitializeAsync<TModel, TModelTask>(IFileSystemProvider fileSystemProvider, string modelPath) 
-        where TModel : class, IModel<TModelTask> 
-        where TModelTask : IModelTask
+    public Task<IModel> InitializeAsync<TModel, TModelTask, TWorkerOptions>(IModelWorkerProvider modelWorkerProvider,
+        TWorkerOptions options) where TModel : class, IModel<TModelTask> where TModelTask : IModelTask
     {
         throw new FakeException(ExceptionMessage);
     }
 
-    public Task<IModel> InitializeAsync<TModel, TModelTask, TOptions>(IFileSystemProvider fileSystemProvider, TOptions modelOptions) 
-        where TModel : class, IModel<TModelTask, TOptions> 
-        where TOptions : IModelOptions 
-        where TModelTask : IModelTask
+    public Task<IModel> InitializeAsync<TModel, TModelTask, TOptions, TWorkerOptions>(IModelWorkerProvider modelWorkerProvider,
+        TOptions modelOptions, TWorkerOptions workerOptions) where TModel : class, IModel<TModelTask, TOptions> where TModelTask : IModelTask where TOptions : IModelOptions
     {
         throw new FakeException(ExceptionMessage);
     }

@@ -13,6 +13,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Neural.Core\Neural.Core.csproj" />
+      <ProjectReference Include="..\..\Neural.Defaults\Neural.Defaults.csproj" />
     </ItemGroup>
 
 </Project>

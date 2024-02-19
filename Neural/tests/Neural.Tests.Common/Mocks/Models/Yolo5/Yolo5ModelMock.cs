@@ -11,7 +11,7 @@ public class Yolo5ModelMock : IModel<StringToStringTaskMock>
 
     public string Name { get; set; } = Guid.NewGuid().ToString();
     public ModelStatus Status { get; set; } = ModelStatus.Inactive;
-    public InferenceSession? InferenceSession { get; set; }
+    public IModelWorker? Worker { get; set; }
     
     public async Task<StringToStringTaskMock> RunAsync(StringToStringTaskMock input)
     {
