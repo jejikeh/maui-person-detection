@@ -5,19 +5,19 @@ using Neural.Defaults.Models;
 
 namespace Neural.Defaults.Services;
 
-public class OnnxWorkerProvider : IModelWorkerProvider
+public class OnnxDependencyProvider : IDependencyProvider
 {
-    public Task<IModelWorker> CreateWorkerAsync<T>(T? options = default)
+    public Task<IDependencyContainer> CreateContainerAsync<T>(T? options = default)
     {
         if (options is OnnxOptions onnxOptions)
         {
             return CreateWorkerAsync(onnxOptions);
         }
         
-        throw new InvalidOperationException($"{nameof(OnnxWorkerProvider)} can only be used with {nameof(OnnxOptions)}");
+        throw new InvalidOperationException($"{nameof(OnnxDependencyProvider)} can only be used with {nameof(OnnxOptions)}");
     }
     
-    public async Task<IModelWorker> CreateWorkerAsync(OnnxOptions onnxOptions)
+    public async Task<IDependencyContainer> CreateWorkerAsync(OnnxOptions onnxOptions)
     {
         using var modelStream = new MemoryStream();
         
@@ -25,6 +25,6 @@ public class OnnxWorkerProvider : IModelWorkerProvider
         
         await stream.CopyToAsync(modelStream);
 
-        return new OnnxWorker(modelStream);
+        return new OnnxDependencies(modelStream);
     }
 }

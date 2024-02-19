@@ -10,12 +10,12 @@ public static class NeuralHubConfiguration
         IFileSystemProvider? fileSystemProvider = null, 
         IModelProvider? modelProvider = null,
         IClusterProvider? clusterProvider = null,
-        IModelWorkerProvider? workerProvider = null)
+        IDependencyProvider? workerProvider = null)
     {
         fileSystemProvider ??= new OpenReadFileSystemProvider();
         modelProvider ??= new WorkerModelProvider();
         clusterProvider ??= new ClusterProvider();
-        workerProvider ??= new OnnxWorkerProvider();
+        workerProvider ??= new OnnxDependencyProvider();
         
         return new NeuralHubBuilder(
             fileSystemProvider, 

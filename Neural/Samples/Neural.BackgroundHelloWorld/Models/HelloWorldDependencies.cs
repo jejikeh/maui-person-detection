@@ -4,11 +4,11 @@ using Neural.Defaults.Common.Exceptions;
 
 namespace Neural.BackgroundHelloWorld.Models;
 
-public class HelloWorldWorker : IModelWorker
+public class HelloWorldDependencies : IDependencyContainer
 {
     private readonly HelloWorldService _helloWorldService = new HelloWorldService();
     
-    public T CastToWorker<T>() where T : class
+    public T CastToDependency<T>() where T : class
     {
         if (typeof(T) == typeof(HelloWorldService))
         {

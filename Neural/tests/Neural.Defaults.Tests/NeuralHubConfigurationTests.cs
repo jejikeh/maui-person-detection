@@ -37,6 +37,6 @@ public class NeuralHubConfigurationTests
             .Build();
         
         // Assert
-        modelProviderMock.Verify(m => m.InitializeAsync<Yolo5ModelMock, StringToStringTaskMock, OnnxOptions>(It.IsAny<IModelWorkerProvider>(), It.IsAny<OnnxOptions>()), Times.Once);
+        modelProviderMock.Verify(m => m.InitializeAsync<Yolo5ModelMock, StringToStringTaskMock, OnnxOptions>(It.IsAny<IDependencyProvider>(), It.IsAny<OnnxOptions>()), Times.Once);
     }
 }

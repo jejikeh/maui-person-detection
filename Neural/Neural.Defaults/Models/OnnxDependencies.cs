@@ -3,7 +3,7 @@ using Neural.Core.Models;
 
 namespace Neural.Defaults.Models;
 
-public class OnnxWorker(MemoryStream memoryStream) : IModelWorker
+public class OnnxDependencies(MemoryStream memoryStream) : IDependencyContainer
 {
     private readonly InferenceSession _inferenceSession = new InferenceSession(memoryStream.ToArray(), new SessionOptions());
     
@@ -12,7 +12,7 @@ public class OnnxWorker(MemoryStream memoryStream) : IModelWorker
         throw new NotImplementedException();
     }
 
-    public T CastToWorker<T>() where T : class
+    public T CastToDependency<T>() where T : class
     {
         throw new NotImplementedException();
     }

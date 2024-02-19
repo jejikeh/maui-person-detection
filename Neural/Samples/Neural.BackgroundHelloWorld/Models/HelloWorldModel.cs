@@ -9,9 +9,9 @@ public class HelloWorldModel : IModel<StringToStringTask>
 {
     public string Name { get; set; } = Guid.NewGuid().ToString();
     public ModelStatus Status { get; set; }
-    public IModelWorker? Worker { get; set; }
+    public IDependencyContainer? DependencyContainer { get; set; }
     
-    public HelloWorldService HelloWorldService => Worker!.CastToWorker<HelloWorldService>();
+    public HelloWorldService HelloWorldService => DependencyContainer!.CastToDependency<HelloWorldService>();
     
     public async Task<StringToStringTask> RunAsync(StringToStringTask input)
     {

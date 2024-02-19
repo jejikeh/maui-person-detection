@@ -4,12 +4,12 @@ public interface IModel
 {
     public string Name { get; set; }
     public ModelStatus Status { get; set; }
-    public IModelWorker? Worker { get; set; }
+    public IDependencyContainer? DependencyContainer { get; set; }
     public bool CanProcess(IModelTask modelTask);
 
-    public void Initialize(IModelWorker modelWorker)
+    public void Initialize(IDependencyContainer dependencyContainer)
     {
-        Worker = modelWorker;
+        DependencyContainer = dependencyContainer;
     }
 }
 
@@ -31,9 +31,9 @@ public interface IModel<TModelTask, TOptions> : IModel<TModelTask>
 {
     public TOptions? Options { get; set; }
     
-    public void Initialize(IModelWorker modelWorker, TOptions options)
+    public void Initialize(IDependencyContainer dependencyContainer, TOptions options)
     {
-        Initialize(modelWorker);
+        Initialize(dependencyContainer);
         Options = options;
     }
 }
