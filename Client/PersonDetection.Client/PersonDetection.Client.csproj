@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
+        <TargetFrameworks>net8.0-android;net8.0-maccatalyst;</TargetFrameworks>
         <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
         <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
         <!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
@@ -52,7 +52,7 @@
 
         <!-- Custom Fonts -->
         <MauiFont Include="Resources\Fonts\*"/>
-
+    
         <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
         <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
     </ItemGroup>
@@ -63,10 +63,13 @@
         <PackageReference Include="Camera.MAUI" Version="1.4.4" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
         <PackageReference Include="CommunityToolkit.Maui" Version="7.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-        <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)"/>
-        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
         <PackageReference Include="Refractored.MvvmHelpers" Version="1.6.2" />
     </ItemGroup>
 
@@ -74,6 +77,13 @@
       <ProjectReference Include="..\PersonDetection.Client.Application\PersonDetection.Client.Application.csproj" />
       <ProjectReference Include="..\PersonDetection.Client.Infrastructure\PersonDetection.Client.Infrastructure.csproj" />
     </ItemGroup>
+
+    <!-- IOS Workaround -->
+    <Target Name="AddCoreML" Condition="'$(TargetFramework)' == 'net8.0-ios'" AfterTargets="_LoadLinkerOutput" BeforeTargets="_ComputeLinkNativeExecutableInputs">
+        <ItemGroup>
+            <_LinkerFrameworks Include="CoreML" />
+        </ItemGroup>
+    </Target>
 
     <ItemGroup>
       <MauiXaml Update="App.xaml">
@@ -104,9 +114,27 @@
     <ItemGroup>
       <AdditionalFiles Include="Pages\ChoosePhotoPage.xaml" />
     </ItemGroup>
+    
+    <ItemGroup>
+        <EmbeddedResource Include="appsettings.json" />
+        <EmbeddedResource Include="appsettings.Android.json" />
+        <EmbeddedResource Include="appsettings.MacCatalyst.json" />
+    </ItemGroup>
 
     <ItemGroup>
         <MauiImage Update="Resources\Images\imageregular.svg" BaseSize="24,24" />
         <MauiImage Update="Resources\Images\videosolid.svg" BaseSize="24,24" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="Assets\Weights\yolov5n.onnx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Assets\Weights\yolov5s.onnx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Resources\Raw\Inter.ttf">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 </Project>

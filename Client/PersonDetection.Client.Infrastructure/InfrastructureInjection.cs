@@ -1,25 +1,46 @@
+using Microsoft.Extensions.Configuration;
 using PersonDetection.Client.Application.Services;
+using PersonDetection.Client.Infrastructure.Common.Options;
 using PersonDetection.Client.Infrastructure.Services;
+using PersonDetection.ImageProcessing;
 
 namespace PersonDetection.Client.Infrastructure;
 
 public static class InfrastructureInjection
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection serviceCollection)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
-        serviceCollection.AddSingleton<IPhotoGallery, PhotoGallery>();
-        serviceCollection.AddSingleton<PhotoSaverService>();
-        serviceCollection.AddHttpClientProviders();
-        
-        return serviceCollection;
+        return serviceCollection
+            .AddSingleton<IPhotoGallery, PhotoGallery>()
+            .AddSingleton<PhotoSaverService>()
+            .AddInfrastructureOptions(configuration);
     }
 
-    private static IServiceCollection AddHttpClientProviders(this IServiceCollection serviceCollection)
+    public static IServiceCollection AddHttpClientProviders(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddSingleton<HttpClientProvider>();
-        serviceCollection.AddScoped<CacheHttpClientService>();
-        serviceCollection.AddScoped<IPhotoProcessService, HttpPhotoProcessService>();
-        
-        return serviceCollection;
+        return serviceCollection
+            .AddSingleton<HttpClientProvider>()
+            .AddScoped<CacheHttpClientService>()
+            .AddScoped<IPhotoProcessService, HttpPhotoProcessService>();
+    }
+
+    public static IServiceCollection AddYoloServices(this IServiceCollection serviceCollection, IConfiguration configuration)
+    {
+        return serviceCollection
+            .AddYoloImageProcessing(configuration)
+            .AddSingleton<IPhotoProcessService, YoloPhotoProcessService>();
+    }
+
+    private static IServiceCollection AddInfrastructureOptions(this IServiceCollection serviceCollection, IConfiguration configuration)
+    {
+        return serviceCollection
+            .ConfigureOptions<PhotoGalleryOptions>(configuration)
+            .ConfigureOptions<PhotoSaverOptions>(configuration)
+            .ConfigureOptions<HttpPhotoProcessOptions>(configuration);
+    }
+
+    private static IServiceCollection ConfigureOptions<T>(this IServiceCollection serviceCollection, IConfiguration configuration) where T : class
+    {
+        return serviceCollection.Configure<T>(configuration.GetSection(typeof(T).Name));
     }
 }

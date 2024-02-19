@@ -1,3 +1,4 @@
+using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MvvmHelpers;
@@ -13,8 +14,7 @@ namespace PersonDetection.Client.ViewModels;
 public partial class ChoosePhotoViewModel(
     PhotoService photoService, 
     IPhotoGallery photoGallery,
-    IPlatformImageSourceLoader imageSourceLoader,
-    IPlatformFilePicker platformFilePicker) : ObservableObject
+    IPlatformImageSourceLoader imageSourceLoader) : ObservableObject
 {
     [ObservableProperty]
     private ObservableRangeCollection<ViewPhotoPair> _photos = new();
@@ -22,13 +22,28 @@ public partial class ChoosePhotoViewModel(
     [ObservableProperty]
     private int _imageHeight = (int)Shell.Current.Height / 3;
 
+    [ObservableProperty] 
+    private bool _canAddPhoto = true;
+
     [RelayCommand]
     private async Task AddNewPhoto()
     {
-        var result = await photoService.NewPhoto();
+        if (!CanAddPhoto)
+        {
+            await Toast.Make("Please wait until the photo is processed").Show();
+            
+            return;
+        }
+        
+        CanAddPhoto = false;
+        
+        var result = await Task.Run(async () => await photoService.NewPhotoToGalleryAsync());
+        CanAddPhoto = true;
+
         if (result.IsError)
         {
             await result.GetError().ToastErrorAsync();
+            
             return;
         }
         
@@ -49,13 +64,16 @@ public partial class ChoosePhotoViewModel(
     private async Task SelectPhotoCommand(int id)
     {
         var result = await photoGallery.GetPhotosByIdAsync(id);
+        
         if (result.IsError)
         {
             await result.GetError().DisplayErrorAsync();
+            
             return;
         }
 
         var photo = result.GetValue();
+        
         await Shell.Current.GoToAsync(nameof(PhotoPage), true, new Dictionary<string, object>()
         {
             {
@@ -68,12 +86,15 @@ public partial class ChoosePhotoViewModel(
     {
         Photos.Clear();
         var photoPairs = await photoGallery.GetPhotoPairsAsync();
+        
         foreach (var photoPair in photoPairs)
         {
             var result = await photoGallery.GetPhotosAsync(photoPair);
+            
             if (result.IsError)
             {
                 await result.GetError().DisplayErrorAsync();
+                
                 continue;
             }
 

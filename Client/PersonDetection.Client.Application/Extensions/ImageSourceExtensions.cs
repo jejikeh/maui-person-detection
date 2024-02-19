@@ -6,6 +6,7 @@ public static class ImageSourceExtensions
     {
         using var memoryStream = new MemoryStream();
         imageStream.CopyTo(memoryStream);
+        
         return Convert.ToBase64String(memoryStream.ToArray());
     }
 }

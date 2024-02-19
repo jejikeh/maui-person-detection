@@ -4,6 +4,7 @@ using PersonDetection.Client.Application.Models;
 using PersonDetection.Client.Application.Services;
 using PersonDetection.Client.Application.Extensions;
 using PersonDetection.Client.Application.Models.Types;
+using PersonDetection.Client.Common;
 
 namespace PersonDetection.Client.Platforms.Android.Services;
 
@@ -19,7 +20,7 @@ public class AndroidFilePicker : IPlatformFilePicker
 
         if (result is null)
         {
-            return new Error("No photo was selected");
+            return new Error(ClientErrorMessages.NoPhotoSelected);
         }
         
         await using var stream = await result.OpenReadAsync();

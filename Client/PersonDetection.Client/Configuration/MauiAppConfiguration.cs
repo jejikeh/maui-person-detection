@@ -1,7 +1,9 @@
+using System.Reflection;
 using Camera.MAUI;
 using CommunityToolkit.Maui;
 using MauiIcons.FontAwesome;
 using MauiIcons.Material;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using PersonDetection.Client.Pages;
 
@@ -11,7 +13,9 @@ public static class MauiAppConfiguration
 {
     public static MauiAppBuilder Configure(this MauiAppBuilder builder)
     {
-        var m = builder.UseMauiApp<App>()
+        builder
+            .UseMauiApp<App>()
+            .AddConfiguration()
             .UseMauiCommunityToolkit()
             .UseFontAwesomeMauiIcons()
             .UseMaterialMauiIcons()
@@ -23,7 +27,7 @@ public static class MauiAppConfiguration
             });
 
         #if DEBUG
-                builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
         #endif
         
         return builder;
@@ -34,5 +38,31 @@ public static class MauiAppConfiguration
         Routing.RegisterRoute(nameof(ChoosePhotoPage), typeof(ChoosePhotoPage));
         Routing.RegisterRoute(nameof(PhotoPage), typeof(PhotoPage));
         Routing.RegisterRoute(nameof(StreamCameraPage), typeof(StreamCameraPage));
+    }
+
+    private static MauiAppBuilder AddConfiguration(this MauiAppBuilder builder)
+    {
+        var platform = DeviceInfo.Current.Platform.ToString();
+        var config = new ConfigurationBuilder()
+            .AddJsonStream(GetManifestResourceStream("PersonDetection.Client.appsettings.json"))
+            .AddJsonStream(GetManifestResourceStream($"PersonDetection.Client.appsettings.{platform}.json"))
+            .Build();
+        
+        builder.Configuration.AddConfiguration(config);
+
+        return builder;
+    }
+
+    private static Stream GetManifestResourceStream(string name)
+    {
+        var executingAssembly = Assembly.GetExecutingAssembly();
+        var stream = executingAssembly.GetManifestResourceStream(name);
+        
+        if (stream is null)
+        {
+            throw new Exception($"{name} not found");
+        }
+        
+        return stream;
     }
 }

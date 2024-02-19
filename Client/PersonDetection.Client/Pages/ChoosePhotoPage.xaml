@@ -5,11 +5,18 @@
              x:Class="PersonDetection.Client.Pages.ChoosePhotoPage"
              xmlns:viewModels="clr-namespace:PersonDetection.Client.ViewModels"
              xmlns:models="clr-namespace:PersonDetection.Client.Models"
-             xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:DataType="viewModels:ChoosePhotoViewModel"
              Shell.NavBarIsVisible="False">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
     <ContentPage.Content>
         <StackLayout Padding="16" Spacing="16">
+            <ActivityIndicator IsRunning="{Binding CanAddPhoto, Converter={StaticResource InvertedBoolConverter}}" />
             <ListView
                 HasUnevenRows="True"
                 ItemsSource="{Binding Photos}">
@@ -19,29 +26,35 @@
                             <Border
                                 StrokeShape="RoundRectangle 16,16,16,16"
                                 HorizontalOptions="Center"
-                                    Margin="0,0,0,0">
-                            <Image
-                                Source="{Binding Processed}" 
-                                MinimumHeightRequest="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ChoosePhotoViewModel}}, Path=ImageHeight}">
-                                <Image.GestureRecognizers>
-                                    <TapGestureRecognizer
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ChoosePhotoViewModel}}, Path=SelectPhotoCommandCommand}" 
-                                        CommandParameter="{Binding Id}"/>
-                                </Image.GestureRecognizers>
-                            </Image>
-                                </Border>
+                                Margin="0,0,0,0">
+                                <Image
+                                    Source="{Binding Processed}"
+                                    MinimumHeightRequest="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ChoosePhotoViewModel}}, Path=ImageHeight}">
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ChoosePhotoViewModel}}, Path=SelectPhotoCommandCommand}"
+                                            CommandParameter="{Binding Id}" />
+                                    </Image.GestureRecognizers>
+                                </Image>
+                            </Border>
                         </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <HorizontalStackLayout Spacing="16" VerticalOptions="Fill" HorizontalOptions="Center">
-                    <Button
+            <Grid ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0"
                         Command="{Binding AddNewPhotoCommand}"
-                        Text="Upload"/>
-                    <Button 
-                        Command="{Binding StreamCameraCommand}" 
-                        Text="Stream"/>
-            </HorizontalStackLayout>
+                        IsEnabled="{Binding CanAddPhoto}"
+                        Text="Upload" />
+                <Button Grid.Column="1"
+                        Command="{Binding StreamCameraCommand}"
+                        IsEnabled="{Binding CanAddPhoto}"
+                        Text="Stream" />
+            </Grid>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

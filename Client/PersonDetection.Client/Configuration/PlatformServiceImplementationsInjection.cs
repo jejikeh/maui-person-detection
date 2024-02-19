@@ -1,4 +1,8 @@
+using Microsoft.Extensions.Configuration;
 using PersonDetection.Client.Application.Services;
+using PersonDetection.Client.Common;
+using PersonDetection.Client.Common.Options;
+using PersonDetection.Client.Infrastructure;
 using PersonDetection.Client.Services;
 
 #if ANDROID
@@ -18,6 +22,24 @@ public static class PlatformServiceImplementationsInjection
         return serviceCollection
             .AddAndroidServiceImplementations()
             .AddMacServiceImplementations();
+    }
+    
+    public static IServiceCollection AddPhotoProcessServices(
+        this IServiceCollection serviceCollection,
+        IConfiguration configuration,
+        PhotoProcessProvider photoProcessProvider)
+    {
+        return photoProcessProvider switch
+        {
+            #if MACCATALYST
+                // MAC CATALYST Doesn't support YoloV5
+                PhotoProcessProvider.YoloV5 => serviceCollection.AddHttpClientProviders(),
+            #else
+                PhotoProcessProvider.YoloV5 => serviceCollection.AddYoloServices(configuration),
+            #endif
+                PhotoProcessProvider.Http => serviceCollection.AddHttpClientProviders(),
+                _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     private static IServiceCollection AddAndroidServiceImplementations(this IServiceCollection serviceCollection)

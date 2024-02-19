@@ -1,7 +1,9 @@
 using CommunityToolkit.Maui.Storage;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using PersonDetection.Client.Application;
+using PersonDetection.Client.Common.Options;
 using PersonDetection.Client.Infrastructure;
-using PersonDetection.Client.Infrastructure.Common;
 using PersonDetection.Client.Pages;
 using PersonDetection.Client.Services;
 using PersonDetection.Client.ViewModels;
@@ -10,17 +12,26 @@ namespace PersonDetection.Client.Configuration;
 
 public static class InjectionsConfiguration
 {
-    public static IServiceCollection AddInjections(this IServiceCollection serviceCollection)
+    public static IServiceCollection AddInjections(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
-        return serviceCollection
-            .AddConfiguration()
+        var clientOptions = new ClientOptions();
+        configuration
+            .GetSection(nameof(ClientOptions))
+            .Bind(clientOptions);
+
+        serviceCollection.AddSingleton(Options.Create(clientOptions));
+    
+        serviceCollection
             .AddDeviceAccessServices()
             .AddPlatformServiceImplementations()
             .AddServices()
             .AddPages()
             .AddViewModels()
             .AddApplication()
-            .AddInfrastructure();
+            .AddInfrastructure(configuration)
+            .AddPhotoProcessServices(configuration, clientOptions.PhotoProcessProvider);
+
+        return serviceCollection;
     }
 
     private static IServiceCollection AddServices(this IServiceCollection serviceCollection)
@@ -29,16 +40,7 @@ public static class InjectionsConfiguration
         
         return serviceCollection;
     }
-
-    private static IServiceCollection AddConfiguration(this IServiceCollection serviceCollection)
-    {
-        var clientConfiguration = new ClientConfiguration();
-        serviceCollection.AddSingleton(clientConfiguration);
-        serviceCollection.AddSingleton<IInfrastructureConfiguration>(clientConfiguration);
-
-        return serviceCollection;
-    }
-
+    
     private static IServiceCollection AddDeviceAccessServices(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton(Connectivity.Current);

@@ -8,30 +8,41 @@
              Shell.NavBarIsVisible="False">
     <ContentPage.Content>
         <StackLayout Padding="16" Spacing="16">
-                <Label
-                    Text="{Binding Path=ViewPhotoPair.Id, StringFormat='Photo {0}'}" 
-                    FontSize="24" 
-                    HorizontalOptions="Center" 
-                    VerticalOptions="Center"
-                    FontAttributes="Bold"/>
-            <ScrollView
-                    VerticalOptions="FillAndExpand"
-                    Padding="32">
-                    <StackLayout Spacing="16">
-                <Label Text="Original" FontSize="18" HorizontalOptions="Center"/>
-                <Image Source="{Binding ViewPhotoPair.Original}"/>
-                <Label Text="Processed" FontSize="18" HorizontalOptions="Center"/>
-                <Image Source="{Binding ViewPhotoPair.Processed}"/>
-                    </StackLayout>
-                </ScrollView>
-            <HorizontalStackLayout
-                Spacing="16"
+            <Label
+                Text="{Binding Path=ViewPhotoPair.Id, StringFormat='Photo {0}'}"
+                FontSize="24"
                 HorizontalOptions="Center"
-                VerticalOptions="Center">
-                <Button Text="Back" Command="{Binding BackCommand}"/>
-                <Button Text="Save" Command="{Binding SaveCommand}"/>
-                <Button Text="Delete" Command="{Binding DeleteCommand}"/>
-            </HorizontalStackLayout>
+                VerticalOptions="Center"
+                FontAttributes="Bold" />
+            <ScrollView
+                VerticalOptions="FillAndExpand">
+                <StackLayout Spacing="16">
+                    <Label Text="Original" FontSize="18" HorizontalOptions="Center" />
+                    <Border
+                        StrokeShape="RoundRectangle 16,16,16,16"
+                        HorizontalOptions="Center"
+                        Margin="0,0,0,0">
+                        <Image Source="{Binding ViewPhotoPair.Original}" />
+                    </Border>
+                    <Label Text="Processed" FontSize="18" HorizontalOptions="Center" />
+                    <Border
+                        StrokeShape="RoundRectangle 16,16,16,16"
+                        HorizontalOptions="Center"
+                        Margin="0,0,0,0">
+                        <Image Source="{Binding ViewPhotoPair.Processed}" />
+                    </Border>
+                </StackLayout>
+            </ScrollView>
+            <Grid ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Text="Back" Command="{Binding BackCommand}" />
+                <Button Grid.Column="1" Text="Delete" Command="{Binding DeleteCommand}" />
+                <Button Grid.Column="2" Text="Save" Command="{Binding SaveCommand}" />
+            </Grid>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -9,20 +9,20 @@ using PersonDetection.Client.Models;
 namespace PersonDetection.Client.ViewModels;
 
 [QueryProperty(nameof(ViewPhotoPair), "ViewPhotoPair")]
-public partial class PhotoViewModel(
-    IPhotoGallery photoGallery, 
-    PhotoSaverService photoSaverService) : ObservableObject
+public partial class PhotoViewModel(IPhotoGallery photoGallery, PhotoSaverService photoSaverService) : ObservableObject
 {
     [ObservableProperty]
     private ViewPhotoPair _viewPhotoPair = default!;
     
     [RelayCommand]
-    private async Task Back() => await Shell.Current.GoToAsync("..");
+    private async Task Back() => 
+        await Shell.Current.GoToAsync("..", true);
 
     [RelayCommand]
     private async Task Delete()
     {
         var getPhotosResult = await photoGallery.GetPhotosByIdAsync(ViewPhotoPair.Id);
+        
         if (getPhotosResult.IsError)
         {
             await getPhotosResult.GetError().DisplayErrorAsync();
@@ -31,6 +31,7 @@ public partial class PhotoViewModel(
 
         var photo = getPhotosResult.GetValue();
         var deletePairResult = await photoGallery.DeletePairAsync(photo.Original);
+        
         if (deletePairResult.IsError)
         {
             await deletePairResult.GetError().DisplayErrorAsync();
@@ -47,9 +48,11 @@ public partial class PhotoViewModel(
     private async Task Save()
     {
         var result = await photoGallery.GetPhotosByIdAsync(ViewPhotoPair.Id);
+        
         if (result.IsError)
         {
             await result.GetError().DisplayErrorAsync();
+            
             return;
         }
         
