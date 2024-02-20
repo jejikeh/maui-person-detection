@@ -20,14 +20,13 @@ public static class FakeData
 
         for (var i = 0; i < count; i++)
         {
-            fakeTasks.Add(IntsToIntTask());
+            fakeTasks.Add(IntsToIntTask(count));
         }
         
         return fakeTasks;
     }
     
-    public static IntsToIntTask IntsToIntTask() => new IntsToIntTask(Digits());
+    public static IntsToIntTask IntsToIntTask(int count) => new IntsToIntTask(DigitsTo(count));
 
-    public static int[] Digits() => 
-        _faker.Random.Digits(_faker.Random.Number(100));
+    public static int[] DigitsTo(int count) => Enumerable.Range(0, count).ToArray();
 }

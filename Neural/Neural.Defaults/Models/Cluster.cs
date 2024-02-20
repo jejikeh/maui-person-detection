@@ -18,6 +18,16 @@ public class Cluster<TModel, TModelTask> : ICluster<TModel, TModelTask>
         return _models.FirstOrDefault(model => model.Status == status);
     }
 
+    public async Task RunHandleAsync(TModelTask input, Action<TModelTask> handleModelCompleted)
+    {
+        var output = await RunAsync(input);
+
+        if (output is not null)
+        {
+            handleModelCompleted(output);
+        }
+    }
+
     private async Task<TModel?> WaitUntilModelWithStatus(ModelStatus status)
     {
         if (_models.Count == 0)
@@ -60,8 +70,11 @@ public class Cluster<TModel, TModelTask> : ICluster<TModel, TModelTask>
         await Parallel.ForEachAsync(inputs, async (input, _) =>
         {
             var output = await RunAsync(input);
-            
-            handleModelCompleted(output ?? throw new InvalidOperationException());
+
+            if (output is not null)
+            {
+                handleModelCompleted(output);
+            }
         });
     }
 

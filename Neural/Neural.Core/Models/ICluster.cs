@@ -1,5 +1,3 @@
-using System.Threading.Tasks.Dataflow;
-
 namespace Neural.Core.Models;
 
 public interface ICluster<TModel, TModelTask> 
@@ -8,6 +6,7 @@ public interface ICluster<TModel, TModelTask>
 {
     public TModel? GetModelWithStatus(ModelStatus status);
 
+    public Task RunHandleAsync(TModelTask input, Action<TModelTask> handleModelCompleted);
     public Task RunHandleAsync(IEnumerable<TModelTask> inputs, Action<TModelTask> handleModelCompleted);
     public Task<TModelTask?> RunAsync(TModelTask input);
     public Task<TModelTask?> RunInBackgroundAsync(TModelTask input);

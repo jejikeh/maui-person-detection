@@ -8,7 +8,8 @@ namespace Neural.Tests.Common.Mocks.Samples.SumOfNumbersCluster.Models;
 public class SumNumbersModel : IModel<IntsToIntTask, SumNumbersDependencies>
 {
     public string Name { get; set; } = Guid.NewGuid().ToString();
-    
+    public SumNumbersDependencies? DependencyContainer { get; set; }
+
     private ModelStatus _status = ModelStatus.Inactive;
 
     public ModelStatus Status
@@ -49,6 +50,4 @@ public class SumNumbersModel : IModel<IntsToIntTask, SumNumbersDependencies>
 
         return input;
     }
-
-    public SumNumbersDependencies? DependencyContainer { get; set; }
 }

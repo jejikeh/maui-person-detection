@@ -7,8 +7,9 @@ namespace Neural.Samples.SumOfNumbersCluster.Models;
 
 public class SumNumbersModel : IModel<IntsToIntTask, SumNumbersDependencies>
 {
-    public string Name { get; set; } = Guid.NewGuid().ToString();
-    
+    public string Name { get; set; }
+    public SumNumbersDependencies? DependencyContainer { get; set; }
+    public event EventHandler<ModelStatusChangedEventArgs>? StatusChanged;
     private ModelStatus _status = ModelStatus.Inactive;
 
     public ModelStatus Status
@@ -20,9 +21,7 @@ public class SumNumbersModel : IModel<IntsToIntTask, SumNumbersDependencies>
             StatusChanged?.Invoke(this, new ModelStatusChangedEventArgs(value));
         }
     }
-
-    public event EventHandler<ModelStatusChangedEventArgs>? StatusChanged;
-
+    
     public async Task<IntsToIntTask> RunAsync(IntsToIntTask input)
     {
         if (DependencyContainer is null)
@@ -49,6 +48,10 @@ public class SumNumbersModel : IModel<IntsToIntTask, SumNumbersDependencies>
 
         return input;
     }
-
-    public SumNumbersDependencies? DependencyContainer { get; set; }
+    
+    void IModel<IntsToIntTask, SumNumbersDependencies>.Initialize(SumNumbersDependencies dependencyContainer)
+    {
+        DependencyContainer = dependencyContainer;
+        Name = dependencyContainer.ModelNameProvider.GetModelName();
+    }
 }

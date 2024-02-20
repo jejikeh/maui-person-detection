@@ -18,6 +18,16 @@ public class ClusterMock<TModel, TModelTask> : ICluster<TModel, TModelTask>
         return _models.FirstOrDefault(model => model.Status == status);
     }
 
+    public async Task RunHandleAsync(TModelTask input, Action<TModelTask> handleModelCompleted)
+    {
+        var output = await RunAsync(input);
+
+        if (output is not null)
+        {
+            handleModelCompleted(output);
+        }
+    }
+
     public async Task RunHandleAsync(IEnumerable<TModelTask> inputs, Action<TModelTask> handleModelCompleted)
     {
         foreach (var input in inputs)

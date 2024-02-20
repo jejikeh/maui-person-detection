@@ -132,7 +132,10 @@ public class ClusterTests
         {
             var task = await cluster.RunInBackgroundAsync(FakeData.StringToStringTaskMock);
             
-            task.OnModelTaskCompleted += (_, _) => { modelCompleted++; };
+            // Assert
+            task.Should().NotBeNull();
+            
+            task!.OnModelTaskCompleted += (_, _) => { modelCompleted++; };
         }
         
         var clusterUnderLoad = cluster.IsAnyModelWithStatus(ModelStatus.Active);
@@ -153,8 +156,7 @@ public class ClusterTests
     {
         // Assert
         var modelCount = FakeData.IntFromSmallRange();
-        var tasksCount = FakeData.IntFromSmallRange();
-        var handleCallTimes = 0;
+        var tasksCount = 10;
 
         var neuralHub = NeuralHubConfiguration
             .FromDefaults()
@@ -163,14 +165,30 @@ public class ClusterTests
         
         var cluster = neuralHub.ShapeCluster<SumNumbersModel, IntsToIntTask>();
         
+        // Act
+        await cluster.RunHandleAsync(FakeData.IntsToIntTasks(tasksCount), output =>
+        {
+            // Assert
+            output.IntOutput().Value.Should().Be(45);
+        });
+    }
+
+    [Fact]
+    public async void GivenModelInputToEmptyCluster_WhenRunHandleAsync_ThenDontInvokeHandle()
+    {
+        // Assert
+        var neuralHub = NeuralHubConfiguration
+            .FromDefaults()
+            .Build();
+        
+        var cluster = neuralHub.ShapeCluster<SumNumbersModel, IntsToIntTask>();
         
         // Act
-        await cluster.RunHandleAsync(FakeData.IntsToIntTasks(tasksCount), _ =>
+        await cluster.RunHandleAsync(FakeData.IntsToIntTasks(10), _ =>
         {
-            handleCallTimes++;
+            // Assert
+            var shouldNotBeCalled = true;
+            shouldNotBeCalled.Should().BeFalse();
         });
-        
-        // Assert
-        handleCallTimes.Should().Be(tasksCount);
     }
 }

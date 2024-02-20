@@ -7,6 +7,10 @@ namespace Neural.Samples.BackgroundHelloWorld.Models;
 
 public class HelloWorldModel : IModel<StringToStringTask, HelloWorldDependencies>
 {
+    public event EventHandler<ModelStatusChangedEventArgs>? StatusChanged;
+    public string Name { get; set; } = string.Empty;
+    public HelloWorldDependencies? DependencyContainer { get; set; }
+    
     private ModelStatus _status = ModelStatus.Inactive;
 
     public ModelStatus Status
@@ -18,10 +22,6 @@ public class HelloWorldModel : IModel<StringToStringTask, HelloWorldDependencies
             StatusChanged?.Invoke(this, new ModelStatusChangedEventArgs(value));
         }
     }
-    
-    public event EventHandler<ModelStatusChangedEventArgs>? StatusChanged;
-    public string Name { get; set; } = string.Empty;
-    public HelloWorldDependencies? DependencyContainer { get; set; }
 
     void IModel<StringToStringTask, HelloWorldDependencies>.Initialize(HelloWorldDependencies dependencyContainer)
     {

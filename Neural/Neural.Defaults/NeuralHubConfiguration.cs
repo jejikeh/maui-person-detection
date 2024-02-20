@@ -17,7 +17,7 @@ public static class NeuralHubConfiguration
         
         return new NeuralHubBuilder(
             fileSystemProvider, 
-            modelProvider, 
+            modelProvider,
             clusterProvider);
     }
 }
