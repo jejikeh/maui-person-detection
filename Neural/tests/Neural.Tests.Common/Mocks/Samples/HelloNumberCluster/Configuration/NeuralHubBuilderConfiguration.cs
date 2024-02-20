@@ -10,7 +10,7 @@ namespace Neural.Tests.Common.Mocks.Samples.HelloNumberCluster.Configuration;
 
 public static class NeuralHubBuilderConfiguration
 {
-    public static NeuralHubBuilder AddHelloNumberModels(this NeuralHubBuilder neuralHub, int count)
+    public static NeuralHubBuilder AddHelloNumberModelsMocks(this NeuralHubBuilder neuralHub, int count)
     {
         foreach (var _ in Enumerable.Range(0, count))
         {

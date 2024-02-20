@@ -7,7 +7,7 @@ namespace Neural.Tests.Common.Mocks.Samples.SumOfNumbersCluster.Configuration;
 
 public static class NeuralHubBuilderConfiguration
 {
-    public static NeuralHubBuilder AddSumNumbersModels(this NeuralHubBuilder neuralHub, int count)
+    public static NeuralHubBuilder AddSumNumbersModelsMocks(this NeuralHubBuilder neuralHub, int count)
     {
         foreach (var _ in Enumerable.Range(0, count))
         {

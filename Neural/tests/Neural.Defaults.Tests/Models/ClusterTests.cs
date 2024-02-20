@@ -160,7 +160,7 @@ public class ClusterTests
 
         var neuralHub = NeuralHubConfiguration
             .FromDefaults()
-            .AddSumNumbersModels(modelCount)
+            .AddSumNumbersModelsMocks(modelCount)
             .Build();
         
         var cluster = neuralHub.ShapeCluster<SumNumbersModel, IntsToIntTask>();

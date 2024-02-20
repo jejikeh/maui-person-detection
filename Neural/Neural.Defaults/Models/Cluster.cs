@@ -1,3 +1,4 @@
+using Neural.Core;
 using Neural.Core.Models;
 
 namespace Neural.Defaults.Models;
@@ -102,5 +103,11 @@ public class Cluster<TModel, TModelTask> : ICluster<TModel, TModelTask>
         var modelTask = model?.TryRunInBackground(input);
 
         return modelTask;
+    }
+    
+    public static Cluster<TModel, TModelTask> ShapeFromHub(NeuralHub neuralHub) 
+    {
+        return neuralHub.ShapeCluster<TModel, TModelTask>() as Cluster<TModel, TModelTask> 
+               ?? throw new NullReferenceException();
     }
 }

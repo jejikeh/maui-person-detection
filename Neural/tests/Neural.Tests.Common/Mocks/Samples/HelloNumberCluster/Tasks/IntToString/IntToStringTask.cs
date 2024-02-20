@@ -23,8 +23,8 @@ public class IntToStringTask(int _input) : IModelTask
         Output.Set(value);
     }
 
-    public static IntToStringTask FromIntOutput(IntOutput output)
+    public static IntToStringTask FromTask(IntsToIntTask output)
     {
-        return new IntToStringTask(output.Value);
+        return new IntToStringTask(output.IntOutput().Value);
     }
 }

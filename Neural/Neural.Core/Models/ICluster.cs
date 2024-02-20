@@ -11,6 +11,7 @@ public interface ICluster<TModel, TModelTask>
     public Task<TModelTask?> RunAsync(TModelTask input);
     public Task<TModelTask?> RunInBackgroundAsync(TModelTask input);
     
+    public bool Empty => Count() == 0;
     public void AddRange(IEnumerable<TModel> models);
     public int Count();
     

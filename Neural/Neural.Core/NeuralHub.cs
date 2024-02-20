@@ -35,6 +35,19 @@ public class NeuralHub(IClusterProvider _clusterProvider)
         return _clusterProvider.GetCluster<TModel, TModelTask>(GetModels<TModel>());
     }
 
+    public ICluster<IModel<TModelTask>, TModelTask> ShapeCluster<TModelTask>() 
+        where TModelTask : class, IModelTask
+    {
+        return _clusterProvider.GetCluster<IModel<TModelTask>, TModelTask>(GetModels<IModel<TModelTask>>());
+    }
+    
+    public TStory? ShapeStory<TStory>() where TStory : class, IStory
+    {
+        var story = Activator.CreateInstance<TStory>();
+
+        return story.InitClusters(this) ? story : null;
+    }
+
     public async Task<TModelTask?> RunAsync<TModelTask>(TModelTask input) 
         where TModelTask : IModelTask
     {
@@ -56,4 +69,9 @@ public class NeuralHub(IClusterProvider _clusterProvider)
         
         return model.TryRunInBackground(input);
     }
+}
+
+public interface IStory
+{
+    public bool InitClusters(NeuralHub neuralHub);
 }
