@@ -22,7 +22,7 @@ public class HelloNumberModel : IModel<IntToStringTask, HelloNumberDependencies>
         }
     }
     
-    public Task<IntToStringTask> RunAsync(IntToStringTask input)
+    public Task<IntToStringTask> RunAsync(IntToStringTask task)
     {
         if (DependencyContainer is null)
         {
@@ -31,13 +31,13 @@ public class HelloNumberModel : IModel<IntToStringTask, HelloNumberDependencies>
         
         Status = ModelStatus.Active;
         
-        var sum = DependencyContainer.HelloNumberService.SayHello(input.IntInput().Value);
+        var sum = DependencyContainer.HelloNumberService.SayHello(task.IntInput().Value);
         
-        input.SetOutput(this, sum);
+        task.SetOutput(this, sum);
         
         Status = ModelStatus.Inactive;
         
-        return Task.FromResult(input);
+        return Task.FromResult(task);
     }
 
     public IntToStringTask TryRunInBackground(IntToStringTask input)

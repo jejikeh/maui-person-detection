@@ -1,5 +1,5 @@
 using Neural.Core.Models;
-using Neural.Defaults.Common.Dependencies;
+using Neural.Onnx.Common.Dependencies;
 
 namespace Neural.Tests.Common.Mocks.Models.Yolo5;
 
@@ -28,11 +28,11 @@ public class Yolo5Model<TModelTask> : IModel<TModelTask, OnnxDependencies>
     
     public OnnxDependencies? DependencyContainer { get; set; }
     
-    public Task<TModelTask> RunAsync(TModelTask input)
+    public Task<TModelTask> RunAsync(TModelTask task)
     {
-        input.SetOutput(this, MockedOutput);
+        task.SetOutput(this, MockedOutput);
         
-        return Task.FromResult(input);
+        return Task.FromResult(task);
     }
 
     public TModelTask TryRunInBackground(TModelTask input)

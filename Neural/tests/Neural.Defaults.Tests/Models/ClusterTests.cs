@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Neural.Core.Models;
+using Neural.Defaults.Models;
 using Neural.Tests.Common.Mocks.Models.Tasks;
 using Neural.Tests.Common.Mocks.Models.Yolo5;
 using Neural.Tests.Common.Mocks.Samples.SumOfNumbersCluster.Configuration;
@@ -7,7 +8,7 @@ using Neural.Tests.Common.Mocks.Samples.SumOfNumbersCluster.Models;
 using Neural.Tests.Common.Mocks.Samples.SumOfNumbersCluster.Tasks.IntToInt;
 using Neural.Tests.Common.Utils;
 
-namespace Neural.Defaults.Tests.Services;
+namespace Neural.Defaults.Tests.Models;
 
 public class ClusterTests
 {
@@ -24,11 +25,11 @@ public class ClusterTests
             .Build();
         
         // Act
-        var yolo5Cluster = neuralHub.ShapeCluster<Yolo5ModelStringToStringMock, StringToStringTaskMock>();
+        var yolo5Cluster = neuralHub.ShapeCluster<Cluster<Yolo5ModelStringToStringMock, StringToStringTaskMock>>();
         
         // Assert
         yolo5Cluster.Should().NotBeNull();
-        yolo5Cluster.Count().Should().Be(modelsCount);
+        yolo5Cluster?.Count().Should().Be(modelsCount);
     }
 
     [Fact]
@@ -40,10 +41,10 @@ public class ClusterTests
             .AddYolo5ModelStringToString()
             .Build();
         
-        var cluster = neuralHub.ShapeCluster<Yolo5ModelStringToStringMock, StringToStringTaskMock>();
+        var cluster = neuralHub.ShapeCluster<Cluster<Yolo5ModelStringToStringMock, StringToStringTaskMock>>();
         
         // Act
-        var result = await cluster.RunAsync(FakeData.StringToStringTaskMock);
+        var result = await cluster!.RunAsync(FakeData.StringToStringTaskMock);
         
         // Assert
         result.Should().NotBeNull();
@@ -59,10 +60,10 @@ public class ClusterTests
             .AddYolo5ModelsStringToString(3)
             .Build();
         
-        var cluster = neuralHub.ShapeCluster<Yolo5ModelStringToStringMock, StringToStringTaskMock>();
+        var cluster = neuralHub.ShapeCluster<Cluster<Yolo5ModelStringToStringMock, StringToStringTaskMock>>();
         
         // Act
-        var resultFirst = await cluster.RunAsync(FakeData.StringToStringTaskMock);
+        var resultFirst = await cluster!.RunAsync(FakeData.StringToStringTaskMock);
         var resultSecond = await cluster.RunAsync(FakeData.StringToStringTaskMock);
         var resultThird = await cluster.RunAsync(FakeData.StringToStringTaskMock);
         var resultFour = await cluster.RunAsync(FakeData.StringToStringTaskMock);
@@ -90,10 +91,10 @@ public class ClusterTests
             .AddYolo5ModelsStringToString(3)
             .Build();
         
-        var cluster = neuralHub.ShapeCluster<Yolo5ModelStringToStringMock, StringToStringTaskMock>();
+        var cluster = neuralHub.ShapeCluster<Cluster<Yolo5ModelStringToStringMock, StringToStringTaskMock>>();
         
         // Act
-        var resultFirst = await cluster.RunInBackgroundAsync(FakeData.StringToStringTaskMock);
+        var resultFirst = await cluster!.RunInBackgroundAsync(FakeData.StringToStringTaskMock);
         
         // Assert
         resultFirst.Should().NotBeNull();
@@ -123,14 +124,14 @@ public class ClusterTests
             .AddYolo5ModelsStringToString(clusterCount)
             .Build();
         
-        var cluster = neuralHub.ShapeCluster<Yolo5ModelStringToStringMock, StringToStringTaskMock>();
+        var cluster = neuralHub.ShapeCluster<Cluster<Yolo5ModelStringToStringMock, StringToStringTaskMock>>();
 
         var modelCompleted = 0;
         
         // Act
         for (var i = 0; i < clusterCount; i++)
         {
-            var task = await cluster.RunInBackgroundAsync(FakeData.StringToStringTaskMock);
+            var task = await cluster!.RunInBackgroundAsync(FakeData.StringToStringTaskMock);
             
             // Assert
             task.Should().NotBeNull();
@@ -163,10 +164,10 @@ public class ClusterTests
             .AddSumNumbersModelsMocks(modelCount)
             .Build();
         
-        var cluster = neuralHub.ShapeCluster<SumNumbersModel, IntsToIntTask>();
+        var cluster = neuralHub.ShapeCluster<Cluster<SumNumbersModel, IntsToIntTask>>();
         
         // Act
-        await cluster.RunHandleAsync(FakeData.IntsToIntTasks(tasksCount), output =>
+        await cluster!.RunHandleAsync(FakeData.IntsToIntTasks(tasksCount), async output =>
         {
             // Assert
             output.IntOutput().Value.Should().Be(45);
@@ -181,14 +182,9 @@ public class ClusterTests
             .FromDefaults()
             .Build();
         
-        var cluster = neuralHub.ShapeCluster<SumNumbersModel, IntsToIntTask>();
+        var cluster = neuralHub.ShapeCluster<Cluster<SumNumbersModel, IntsToIntTask>>();
         
         // Act
-        await cluster.RunHandleAsync(FakeData.IntsToIntTasks(10), _ =>
-        {
-            // Assert
-            var shouldNotBeCalled = true;
-            shouldNotBeCalled.Should().BeFalse();
-        });
+        cluster.Should().BeNull();
     }
 }

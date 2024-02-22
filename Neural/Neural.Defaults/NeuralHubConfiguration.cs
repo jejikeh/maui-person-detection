@@ -13,11 +13,9 @@ public static class NeuralHubConfiguration
     {
         fileSystemProvider ??= new OpenReadFileSystemProvider();
         modelProvider ??= new WorkerModelProvider();
-        clusterProvider ??= new ClusterProvider();
         
         return new NeuralHubBuilder(
             fileSystemProvider, 
-            modelProvider,
-            clusterProvider);
+            modelProvider);
     }
 }

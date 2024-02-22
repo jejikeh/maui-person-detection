@@ -1,8 +1,8 @@
 using FluentAssertions;
 using Neural.Core.Models;
 using Neural.Core.Tests.Mocks.Models;
-using Neural.Core.Tests.Mocks.Services;
 using Neural.Defaults;
+using Neural.Defaults.Models;
 using Neural.Tests.Common.Mocks.Models.Tasks;
 using Neural.Tests.Common.Mocks.Models.Yolo5;
 using Neural.Tests.Common.Mocks.Models.Yolo8;
@@ -219,27 +219,26 @@ public class NeuralHubTests
     }
 
     [Fact]
-    public void GivenNonDefaultClusterProvider_WhenShapeCluster_ThenShapeMockedCluster()
+    public void GivenNonDefaultCluster_WhenShapeCluster_ThenShapeMockedCluster()
     {
         // Arrange
         var modelCount = FakeData.IntFromSmallRange();
         
         var neuralHub = NeuralHubConfiguration
-            .FromDefaults(
-                clusterProvider: new ClusterProviderMock())
+            .FromDefaults()
             .AddYolo5ModelsStringToString(modelCount)
             .Build();
         
         // Act
-        var cluster = neuralHub.ShapeCluster<Yolo5ModelStringToStringMock, StringToStringTaskMock>();
+        var cluster = neuralHub.ShapeCluster<ClusterMock<Yolo5ModelStringToStringMock, StringToStringTaskMock>>();
         
         // Assert
         cluster.Should().BeOfType<ClusterMock<Yolo5ModelStringToStringMock, StringToStringTaskMock>>();
-        cluster.Count().Should().Be(modelCount);
+        cluster?.Count().Should().Be(modelCount);
     }
     
     [Fact]
-    public void GivenNonDefaultClusterProvider_WhenShapeCluster_ThenUseNonDefaultProvider()
+    public void GivenNonDefaultCluster_WhenShapeCluster_ThenUseNonDefaultProvider()
     {
         // Arrange
         var modelCount = FakeData.IntFromSmallRange();
@@ -247,16 +246,15 @@ public class NeuralHubTests
         // DoubleClusterProviderMock will be used for testing purpose to check if non default cluster provider is used
         // DoubleClusterProviderMock should double the model count
         var neuralHub = NeuralHubConfiguration
-            .FromDefaults(
-                clusterProvider: new DoubleCountClusterProviderMock())
+            .FromDefaults()
             .AddYolo5ModelsStringToString(modelCount)
             .Build();
         
         // Act
-        var cluster = neuralHub.ShapeCluster<Yolo5ModelStringToStringMock, StringToStringTaskMock>();
+        var cluster = neuralHub.ShapeCluster<DoubleClusterMock<Yolo5ModelStringToStringMock, StringToStringTaskMock>>();
         
         // Assert
-        cluster.Should().BeOfType<ClusterMock<Yolo5ModelStringToStringMock, StringToStringTaskMock>>();
-        cluster.Count().Should().Be(modelCount * 2);
+        cluster.Should().BeOfType<DoubleClusterMock<Yolo5ModelStringToStringMock, StringToStringTaskMock>>();
+        cluster?.Count().Should().Be(modelCount * 2);
     }
 }

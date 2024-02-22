@@ -6,15 +6,13 @@ namespace Neural.Core;
 
 public class NeuralHubBuilder(
     IFileSystemProvider _fileSystemProvider, 
-    IModelProvider _modelProvider, 
-    IClusterProvider _clusterProvider)
+    IModelProvider _modelProvider)
 {
-    private readonly NeuralHub _neuralHub = new NeuralHub(_clusterProvider);
+    private readonly NeuralHub _neuralHub = new NeuralHub();
     private readonly List<Func<IModel>> _modelProviders = new List<Func<IModel>>();
     
     public IFileSystemProvider FileSystemProvider => _fileSystemProvider;
     public IModelProvider ModelProvider => _modelProvider;
-    public IClusterProvider ClusterProvider => _clusterProvider;
     
     public NeuralHubBuilder AddModel<TModel, TModelTask, TDependencyContainer>(TDependencyContainer dependencyContainer) 
         where TModel : class, IModel<TModelTask, TDependencyContainer> 

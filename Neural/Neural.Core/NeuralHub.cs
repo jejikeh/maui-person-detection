@@ -1,9 +1,8 @@
 using Neural.Core.Models;
-using Neural.Core.Services;
 
 namespace Neural.Core;
 
-public class NeuralHub(IClusterProvider _clusterProvider)
+public class NeuralHub
 {
     public List<IModel> Models { get; } = new List<IModel>();
 
@@ -28,24 +27,18 @@ public class NeuralHub(IClusterProvider _clusterProvider)
         return await model.RunAsync(input);
     }
     
-    public ICluster<TModel, TModelTask> ShapeCluster<TModel, TModelTask>() 
-        where TModel : class, IModel<TModelTask> 
-        where TModelTask : class, IModelTask
+    public TCluster? ShapeCluster<TCluster>() where TCluster : class, ICluster 
     {
-        return _clusterProvider.GetCluster<TModel, TModelTask>(GetModels<TModel>());
-    }
+        var cluster = Activator.CreateInstance<TCluster>();
 
-    public ICluster<IModel<TModelTask>, TModelTask> ShapeCluster<TModelTask>() 
-        where TModelTask : class, IModelTask
-    {
-        return _clusterProvider.GetCluster<IModel<TModelTask>, TModelTask>(GetModels<IModel<TModelTask>>());
+        return cluster.Init(this) ? cluster : null;
     }
     
-    public TStory? ShapeStory<TStory>() where TStory : class, IStory
+    public TPipeline? ExtractPipeline<TPipeline>() where TPipeline : class, IPipeline
     {
-        var story = Activator.CreateInstance<TStory>();
+        var story = Activator.CreateInstance<TPipeline>();
 
-        return story.InitClusters(this) ? story : null;
+        return story.Init(this) ? story : null;
     }
 
     public async Task<TModelTask?> RunAsync<TModelTask>(TModelTask input) 
@@ -71,7 +64,9 @@ public class NeuralHub(IClusterProvider _clusterProvider)
     }
 }
 
-public interface IStory
+public interface IPipeline : IInitFromNeuralHub;
+
+public interface IPipeline<in TTaskInput, TTaskOutput> : IPipeline
 {
-    public bool InitClusters(NeuralHub neuralHub);
+    public Task<TTaskOutput?> RunAsync(TTaskInput task);
 }

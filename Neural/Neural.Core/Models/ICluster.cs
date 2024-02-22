@@ -1,22 +1,15 @@
 namespace Neural.Core.Models;
 
-public interface ICluster<TModel, TModelTask> 
+public interface ICluster : IInitFromNeuralHub;
+
+public interface ICluster<out TModel, TModelTask> : ICluster
     where TModel : IModel<TModelTask> 
     where TModelTask : IModelTask
 {
     public TModel? GetModelWithStatus(ModelStatus status);
-
-    public Task RunHandleAsync(TModelTask input, Action<TModelTask> handleModelCompleted);
-    public Task RunHandleAsync(IEnumerable<TModelTask> inputs, Action<TModelTask> handleModelCompleted);
+    public Task RunHandleAsync(TModelTask input, Func<TModelTask, Task> handleModelCompleted);
+    public Task RunHandleAsync(IEnumerable<TModelTask> inputs, Func<TModelTask, Task> handleModelCompleted);
     public Task<TModelTask?> RunAsync(TModelTask input);
     public Task<TModelTask?> RunInBackgroundAsync(TModelTask input);
-    
-    public bool Empty => Count() == 0;
-    public void AddRange(IEnumerable<TModel> models);
     public int Count();
-    
-    public bool IsAnyModelWithStatus(ModelStatus status)
-    {
-        return GetModelWithStatus(status) is not null;
-    }
 }

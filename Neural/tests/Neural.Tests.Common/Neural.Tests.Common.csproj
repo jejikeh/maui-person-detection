@@ -14,6 +14,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Neural.Core\Neural.Core.csproj" />
       <ProjectReference Include="..\..\Neural.Defaults\Neural.Defaults.csproj" />
+      <ProjectReference Include="..\..\Neural.Onnx\Neural.Onnx.csproj" />
     </ItemGroup>
 
 </Project>

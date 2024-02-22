@@ -1,5 +1,5 @@
 using Neural.Core;
-using Neural.Defaults.Common.Dependencies;
+using Neural.Onnx.Common.Dependencies;
 using Neural.Tests.Common.Mocks;
 using Neural.Tests.Common.Mocks.Models.Tasks;
 using Neural.Tests.Common.Mocks.Models.Yolo5;

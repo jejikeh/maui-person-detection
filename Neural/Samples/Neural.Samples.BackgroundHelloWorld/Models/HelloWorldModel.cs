@@ -29,7 +29,7 @@ public class HelloWorldModel : IModel<StringToStringTask, HelloWorldDependencies
         Name = dependencyContainer.ModelNameProvider.GetModelName();
     }
 
-    public async Task<StringToStringTask> RunAsync(StringToStringTask input)
+    public async Task<StringToStringTask> RunAsync(StringToStringTask task)
     {
         if (DependencyContainer is null)
         {
@@ -38,19 +38,19 @@ public class HelloWorldModel : IModel<StringToStringTask, HelloWorldDependencies
         
         Status = ModelStatus.Active;
         
-        if (input.StringInput().Value!.Equals(Constants.HelloMessage))
+        if (task.StringInput().Value!.Equals(Constants.HelloMessage))
         {
-            input.SetOutput(this, await DependencyContainer.HelloWorldService.HelloAsync());
+            task.SetOutput(this, await DependencyContainer.HelloWorldService.HelloAsync());
         }
         
-        if (input.StringInput().Value!.Equals(Constants.ByeMessage))
+        if (task.StringInput().Value!.Equals(Constants.ByeMessage))
         {
-            input.SetOutput(this, await DependencyContainer.HelloWorldService.ByeAsync());
+            task.SetOutput(this, await DependencyContainer.HelloWorldService.ByeAsync());
         }
         
         Status = ModelStatus.Inactive;
         
-        return input;
+        return task;
     }
     
     public StringToStringTask TryRunInBackground(StringToStringTask input)

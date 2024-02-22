@@ -1,6 +1,6 @@
 using FluentAssertions;
 using Neural.Defaults;
-using Neural.Defaults.Common.Dependencies;
+using Neural.Onnx.Common.Dependencies;
 using Neural.Tests.Common.Mocks;
 using Neural.Tests.Common.Mocks.Exceptions;
 using Neural.Tests.Common.Mocks.Models.Tasks;

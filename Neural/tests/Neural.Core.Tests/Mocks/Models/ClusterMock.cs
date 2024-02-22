@@ -7,10 +7,19 @@ public class ClusterMock<TModel, TModelTask> : ICluster<TModel, TModelTask>
     where TModelTask : class, IModelTask
 {
     private readonly List<TModel> _models = [];
-
-    public void AddRange(IEnumerable<TModel> models)
+    
+    public bool Init(NeuralHub neuralHub)
     {
+        var models = neuralHub.GetModels<TModel>().ToArray();
+        
+        if (models.Length == 0)
+        {
+            return false;
+        }
+        
         _models.AddRange(models);
+        
+        return true;
     }
 
     public TModel? GetModelWithStatus(ModelStatus status)
@@ -18,21 +27,21 @@ public class ClusterMock<TModel, TModelTask> : ICluster<TModel, TModelTask>
         return _models.FirstOrDefault(model => model.Status == status);
     }
 
-    public async Task RunHandleAsync(TModelTask input, Action<TModelTask> handleModelCompleted)
+    public async Task RunHandleAsync(TModelTask input, Func<TModelTask, Task> handleModelCompleted)
     {
         var output = await RunAsync(input);
 
         if (output is not null)
         {
-            handleModelCompleted(output);
+            await handleModelCompleted(output);
         }
     }
 
-    public async Task RunHandleAsync(IEnumerable<TModelTask> inputs, Action<TModelTask> handleModelCompleted)
+    public async Task RunHandleAsync(IEnumerable<TModelTask> inputs, Func<TModelTask, Task> handleModelCompleted)
     {
         foreach (var input in inputs)
         {
-            handleModelCompleted(await RunAsync(input) ?? throw new InvalidOperationException());
+            await handleModelCompleted(await RunAsync(input) ?? throw new InvalidOperationException());
         }
     }
 

@@ -24,7 +24,7 @@ public class SumNumbersModel : IModel<IntsToIntTask, SumNumbersDependencies>
 
     public event EventHandler<ModelStatusChangedEventArgs>? StatusChanged;
 
-    public async Task<IntsToIntTask> RunAsync(IntsToIntTask input)
+    public async Task<IntsToIntTask> RunAsync(IntsToIntTask task)
     {
         if (DependencyContainer is null)
         {
@@ -33,13 +33,13 @@ public class SumNumbersModel : IModel<IntsToIntTask, SumNumbersDependencies>
         
         Status = ModelStatus.Active;
         
-        var sum = await DependencyContainer.SumNumbersService.SumAsync(input.IntsInput().Value);
+        var sum = await DependencyContainer.SumNumbersService.SumAsync(task.IntsInput().Value);
         
-        input.SetOutput(this, sum);
+        task.SetOutput(this, sum);
         
         Status = ModelStatus.Inactive;
         
-        return input;
+        return task;
     }
 
     public IntsToIntTask TryRunInBackground(IntsToIntTask input)

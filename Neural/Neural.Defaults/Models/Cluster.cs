@@ -9,23 +9,32 @@ public class Cluster<TModel, TModelTask> : ICluster<TModel, TModelTask>
 {
     private readonly List<TModel> _models = [];
     
-    public void AddRange(IEnumerable<TModel> models)
+    public bool Init(NeuralHub neuralHub)
     {
+        var models = neuralHub.GetModels<TModel>().ToArray();
+
+        if (models.Length == 0)
+        {
+            return false;
+        }
+        
         _models.AddRange(models);
+
+        return true;
     }
 
     public TModel? GetModelWithStatus(ModelStatus status)
     {
         return _models.FirstOrDefault(model => model.Status == status);
     }
-
-    public async Task RunHandleAsync(TModelTask input, Action<TModelTask> handleModelCompleted)
+    
+    public async Task RunHandleAsync(TModelTask input, Func<TModelTask, Task> handleModelCompleted)
     {
         var output = await RunAsync(input);
 
         if (output is not null)
         {
-            handleModelCompleted(output);
+            await handleModelCompleted(output);
         }
     }
 
@@ -66,7 +75,7 @@ public class Cluster<TModel, TModelTask> : ICluster<TModel, TModelTask>
         return await taskCompletionSource.Task;
     }
     
-    public async Task RunHandleAsync(IEnumerable<TModelTask> inputs, Action<TModelTask> handleModelCompleted)
+    public async Task RunHandleAsync(IEnumerable<TModelTask> inputs, Func<TModelTask, Task> handleModelCompleted)
     {
         await Parallel.ForEachAsync(inputs, async (input, _) =>
         {
@@ -74,7 +83,7 @@ public class Cluster<TModel, TModelTask> : ICluster<TModel, TModelTask>
 
             if (output is not null)
             {
-                handleModelCompleted(output);
+                await handleModelCompleted(output);
             }
         });
     }
@@ -105,9 +114,8 @@ public class Cluster<TModel, TModelTask> : ICluster<TModel, TModelTask>
         return modelTask;
     }
     
-    public static Cluster<TModel, TModelTask> ShapeFromHub(NeuralHub neuralHub) 
+    public bool IsAnyModelWithStatus(ModelStatus status)
     {
-        return neuralHub.ShapeCluster<TModel, TModelTask>() as Cluster<TModel, TModelTask> 
-               ?? throw new NullReferenceException();
+        return GetModelWithStatus(status) is not null;
     }
 }

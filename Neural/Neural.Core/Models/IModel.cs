@@ -16,7 +16,7 @@ public interface IModel
 public interface IModel<TModelTask> : IModel
     where TModelTask : IModelTask
 {
-    public Task<TModelTask> RunAsync(TModelTask input);
+    public Task<TModelTask> RunAsync(TModelTask task);
     public TModelTask TryRunInBackground(TModelTask input);
 
     bool IModel.CanProcess(IModelTask modelTask)

@@ -1,4 +1,5 @@
 ﻿using Neural.Defaults;
+using Neural.Defaults.Models;
 using Neural.Samples.SumOfNumbersCluster.Common;
 using Neural.Samples.SumOfNumbersCluster.Configuration;
 using Neural.Samples.SumOfNumbersCluster.Models;
@@ -13,9 +14,9 @@ var neuralHub = NeuralHubConfiguration
     .AddSumNumbersModels(modelsCount)
     .Build();
 
-var sumNumbersCluster = neuralHub.ShapeCluster<SumNumbersModel, IntsToIntTask>();
+var sumNumbersCluster = neuralHub.ShapeCluster<Cluster<SumNumbersModel, IntsToIntTask>>();
 
-await sumNumbersCluster.RunHandleAsync(inputTasks, output =>
+await sumNumbersCluster?.RunHandleAsync(inputTasks, output =>
 {
-    Console.WriteLine($"{output.ValueFromModelWithName} Output: {output.IntOutput().Value}");
-});
+    return Task.Run(() => Console.WriteLine($"{output.ValueFromModelWithName} Output: {output.IntOutput().Value}"));
+})!;
