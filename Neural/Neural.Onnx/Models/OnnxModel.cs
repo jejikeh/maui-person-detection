@@ -4,7 +4,8 @@ using Neural.Onnx.Common.Dependencies;
 
 namespace Neural.Onnx.Models;
 
-public abstract class OnnxModel<TModelTask> : IModel<TModelTask, OnnxDependencies> where TModelTask : IModelTask
+public abstract class OnnxModel<TModelTask> : IModel<TModelTask, OnnxDependencies> 
+    where TModelTask : IModelTask
 {
     private ModelStatus _status = ModelStatus.Inactive;
 
@@ -26,6 +27,13 @@ public abstract class OnnxModel<TModelTask> : IModel<TModelTask, OnnxDependencie
     public InferenceSession? InferenceSession { get; set; }
 
     public abstract Task<TModelTask> RunAsync(TModelTask task);
+    
+    void IModel<TModelTask, OnnxDependencies>.Initialize(OnnxDependencies onnxDependencies)
+    {
+        DependencyContainer = onnxDependencies;
+        
+        InferenceSession = DependencyContainer.InferenceSession;
+    }
 
     public TModelTask TryRunInBackground(TModelTask input)
     {

@@ -20,13 +20,13 @@ public class NeuralHubBuilderTests
         var neuralHubBuilder = NeuralHubConfiguration.FromDefaults();
             
         neuralHubBuilder.AddModel<Yolo5ModelStringToStringMock, StringToStringTaskMock, OnnxDependencies>(
-                OnnxDependencies.FromBuilder(neuralHubBuilder, Constants.Yolo5ModelPath));
+                OnnxDependencies.FromBuilder(neuralHubBuilder, Paths.Yolo5ModelPath));
             
         neuralHubBuilder.AddModel<Yolo5ModelStringToStringMock, StringToStringTaskMock, OnnxDependencies>(
-                OnnxDependencies.FromBuilder(neuralHubBuilder, Constants.Yolo5ModelPath));
+                OnnxDependencies.FromBuilder(neuralHubBuilder, Paths.Yolo5ModelPath));
             
         neuralHubBuilder.AddModel<Yolo8ModelStringToStringMock, StringToStringTaskMock, OnnxDependencies>(
-            OnnxDependencies.FromBuilder(neuralHubBuilder, Constants.Yolo8ModelPath));
+            OnnxDependencies.FromBuilder(neuralHubBuilder, Paths.Yolo8ModelPath));
 
         // Act
         var neuralHub = neuralHubBuilder.Build();
@@ -87,7 +87,7 @@ public class NeuralHubBuilderTests
         
         neuralHubBuilder
             .AddModel<Yolo5ModelStringToStringMock, StringToStringTaskMock, OnnxDependencies>(
-                await OnnxDependencies.FromBuilderAsync(neuralHubBuilder, Constants.Yolo5ModelPath));
+                await OnnxDependencies.FromBuilderAsync(neuralHubBuilder, Paths.Yolo5ModelPath));
         
         // Act
         var act = () => neuralHubBuilder.Build();

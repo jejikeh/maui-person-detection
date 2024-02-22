@@ -23,20 +23,20 @@ public static class NeuralHubBuilderExtensions
     {
         return builder
             .AddModel<Yolo5ModelStringToStringMock, StringToStringTaskMock, OnnxDependencies>(
-                OnnxDependencies.FromBuilder(builder, Constants.Yolo5ModelPath));
+                OnnxDependencies.FromBuilder(builder, Paths.Yolo5ModelPath));
     }
 
     public static NeuralHubBuilder AddYolo8ModelIntToString(this NeuralHubBuilder builder)
     {
         return builder
             .AddModel<Yolo8ModelIntToStringMock, IntToStringTaskMock, OnnxDependencies>(
-                OnnxDependencies.FromBuilder(builder, Constants.Yolo8ModelPath));
+                OnnxDependencies.FromBuilder(builder, Paths.Yolo8ModelPath));
     }
 
     public static NeuralHubBuilder AddYolo8ModelStringToString(this NeuralHubBuilder builder)
     {
         return builder
             .AddModel<Yolo8ModelStringToStringMock, StringToStringTaskMock, OnnxDependencies>(
-                OnnxDependencies.FromBuilder(builder, Constants.Yolo8ModelPath));
+                OnnxDependencies.FromBuilder(builder, Paths.Yolo8ModelPath));
     }
 }

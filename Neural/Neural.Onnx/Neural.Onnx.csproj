@@ -8,14 +8,11 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.ML.OnnxRuntime.Managed" Version="1.17.0" />
+      <PackageReference Include="SixLabors.ImageSharp" Version="3.1.2" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Neural.Core\Neural.Core.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Tasks\" />
     </ItemGroup>
 
 </Project>

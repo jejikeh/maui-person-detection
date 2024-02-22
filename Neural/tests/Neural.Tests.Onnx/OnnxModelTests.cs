@@ -33,8 +33,8 @@ public class OnnxModelTests
         
         var neuralHubConfiguration = NeuralHubConfiguration
             .FromDefaults()
-            .AddOnnxModels<Yolo5ModelMock, IntToStringTaskMock>(Constants.Yolo5ModelPath, modelCount)
-            .AddOnnxModels<Yolo8ModelMock, IntToStringTaskMock>(Constants.Yolo8ModelPath, modelCount);
+            .AddOnnxModels<Yolo5ModelMock, IntToStringTaskMock>(Paths.Yolo5ModelPath, modelCount)
+            .AddOnnxModels<Yolo8ModelMock, IntToStringTaskMock>(Paths.Yolo8ModelPath, modelCount);
 
         // Act
         var neuralHub = neuralHubConfiguration.Build();

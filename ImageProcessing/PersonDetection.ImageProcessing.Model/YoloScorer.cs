@@ -109,6 +109,8 @@ public class YoloScorer : IDisposable
 
         Parallel.For(0, (int)output.Length / _model.Dimensions, i =>
         {
+            var x = output[0, i, 4];
+            
             if (output[0, i, 4] <= _model.Confidence)
             {
                 return;
