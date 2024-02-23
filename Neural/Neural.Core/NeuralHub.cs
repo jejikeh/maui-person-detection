@@ -65,8 +65,3 @@ public class NeuralHub
 }
 
 public interface IPipeline : IInitFromNeuralHub;
-
-public interface IPipeline<in TTaskInput, TTaskOutput> : IPipeline
-{
-    public Task<TTaskOutput?> RunAsync(TTaskInput task);
-}

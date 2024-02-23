@@ -1,4 +1,5 @@
 using Neural.Core.Models;
+using Neural.Core.Models.Events;
 using Neural.Samples.BackgroundHelloWorld.Common;
 using Neural.Samples.BackgroundHelloWorld.Common.Dependencies;
 using Neural.Samples.BackgroundHelloWorld.Tasks.StringToString;

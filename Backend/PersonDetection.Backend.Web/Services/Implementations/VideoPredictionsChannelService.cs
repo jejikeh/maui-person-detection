@@ -11,8 +11,8 @@ public class VideoPredictionsChannelService(IPhotoProcessingService _processingS
     
     public async Task StreamTransparentPhotoAsync(string data)
     {
-        var processPhoto = await _processingService.ProcessPhotoTransparentAsync(data);
+        var processPhoto = await _processingService.ProcessPhotoAsync(data);
         
-        await _messages.Writer.WriteAsync(processPhoto.Content);
+        await _messages.Writer.WriteAsync(processPhoto);
     }
 }

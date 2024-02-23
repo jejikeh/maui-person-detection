@@ -20,6 +20,7 @@ public class AuthorizationService(
         {
             Email = registerRequest.Email
         };
+        
         var createUserResult = await _userManager.CreateAsync(user, registerRequest.Password);
 
         if (!createUserResult.Succeeded)

@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.ML.OnnxRuntime.Tensors;
-using Neural.Onnx.Tasks.ImageToBoxPredictions;
 using SixLabors.ImageSharp;
 
 namespace Neural.Onnx.Models.Yolo5.Specifications;
@@ -12,8 +12,8 @@ public static class Yolo5OutputSpecification
     public static int Dimensions { get; set; } = 85;
     
     public static float OverlapThreshold { get; set; } = 0.5f;
-    public static float ConfidenceThreshold { get; set; } = 0.5f;
-    public static float DimensionValueThreshold { get; set; } = 0.5f;
+    public static float ConfidenceThreshold { get; set; } = 0.2f;
+    public static float DimensionValueThreshold { get; set; } = 0.2f;
     
     private const int _xLayer = 0;
     private const int _yLayer = 1;
@@ -28,7 +28,7 @@ public static class Yolo5OutputSpecification
         
         // We do not calculate Scaling Factors and Paddings, since input image is already scaled
 
-        var outputsEntryCount = (int)outputTensor.Length / Yolo5OutputSpecification.Dimensions;
+        var outputsEntryCount = (int)outputTensor.Length / Dimensions;
 
         Parallel.For(0, outputsEntryCount, prediction =>
         {

@@ -1,4 +1,5 @@
 using Neural.Core.Models;
+using Neural.Core.Models.Events;
 using Neural.Samples.HelloSumOfNumberPipeline.Common.Dependencies;
 using Neural.Samples.HelloSumOfNumberPipeline.Services;
 using Neural.Samples.HelloSumOfNumberPipeline.Tasks.IntToString;

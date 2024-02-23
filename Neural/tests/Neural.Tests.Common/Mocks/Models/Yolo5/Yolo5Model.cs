@@ -1,4 +1,5 @@
 using Neural.Core.Models;
+using Neural.Core.Models.Events;
 using Neural.Onnx.Common.Dependencies;
 
 namespace Neural.Tests.Common.Mocks.Models.Yolo5;

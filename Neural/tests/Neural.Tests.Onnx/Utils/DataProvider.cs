@@ -46,31 +46,31 @@ public static class DataProvider
         return randomImage;
     }
 
-    public static List<ImageToBoxPredictionsYolo5Task> LoadImageToBoxPredictionsTasks(string imagesPath)
+    public static List<ImageToBoxPredictionsTask> LoadImageToBoxPredictionsTasks(string imagesPath)
     {
         var images = LoadImages(imagesPath);
 
         var tasks = images
-            .Select(image => new ImageToBoxPredictionsYolo5Task(image))
+            .Select(image => new ImageToBoxPredictionsTask(image))
             .ToList();
 
         return tasks;
     }
     
-    public static ImageToBoxPredictionsYolo5Task LoadImageToBoxPredictionsTask(string imagesPath)
+    public static ImageToBoxPredictionsTask LoadImageToBoxPredictionsTask(string imagesPath)
     {
         var image = LoadRandomImage(imagesPath);
 
-        var task = new ImageToBoxPredictionsYolo5Task(image);
+        var task = new ImageToBoxPredictionsTask(image);
 
         return task;
     }
     
-    public static ImageToBoxPredictionsYolo5Task LoadImageToBoxPredictionsTask(string[] imagesPath)
+    public static ImageToBoxPredictionsTask LoadImageToBoxPredictionsTask(string[] imagesPath)
     {
         var image = LoadRandomImage(imagesPath);
 
-        var task = new ImageToBoxPredictionsYolo5Task(image);
+        var task = new ImageToBoxPredictionsTask(image);
 
         return task;
     }

@@ -7,7 +7,8 @@ namespace PersonDetection.Backend.Web.Hubs;
 
 public class VideoHub(IVideoPredictionsChannelService _predictionsChannelService) : Hub
 {
-    private readonly Stopwatch _stopwatch = new();
+    private static readonly string _sendModelPerformanceMethodName = "SendModelPerformance";
+    private readonly Stopwatch _stopwatch = new Stopwatch();
     
     public async Task<ChannelReader<string>> ReceiveVideoData(string data)
     {
@@ -16,7 +17,9 @@ public class VideoHub(IVideoPredictionsChannelService _predictionsChannelService
         _ = _predictionsChannelService.StreamTransparentPhotoAsync(data);
        
         _stopwatch.Stop();
+        
         await SendModelPerformance(_stopwatch.ElapsedMilliseconds.ToString());
+        
         _stopwatch.Reset();
         
         return _predictionsChannelService.GetReader();
@@ -24,6 +27,6 @@ public class VideoHub(IVideoPredictionsChannelService _predictionsChannelService
 
     public async Task SendModelPerformance(string data)
     {
-        await Clients.All.SendAsync("SendModelPerformance", data);
+        await Clients.All.SendAsync(_sendModelPerformanceMethodName, data);
     }
 }

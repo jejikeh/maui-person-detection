@@ -6,7 +6,7 @@ using Neural.Samples.HelloSumOfNumberPipeline.Tasks.IntToString;
 
 namespace Neural.Samples.HelloSumOfNumberPipeline.Pipelines;
 
-public class HelloSumOfNumbersPipeline : IPipeline<IntsToIntTask[], IntToStringTask>
+public class HelloSumOfNumbersPipeline : IPipeline
 {
     private Cluster<SumNumbersModel, IntsToIntTask>? _sumNumbersCluster;
     private Cluster<HelloNumberModel, IntToStringTask>? _helloNumberCluster;

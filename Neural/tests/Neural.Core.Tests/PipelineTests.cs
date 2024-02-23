@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Neural.Core.Tests.Mocks;
 using Neural.Defaults;
 using Neural.Defaults.Models;
 using Neural.Tests.Common.Mocks.Samples.HelloNumberCluster.Configuration;
@@ -127,37 +128,5 @@ public class PipelineTests
         // Assert
         output.Should().NotBeNull();
         output.Result!.StringOutput().Value.Should().Be("Hello 45");
-    }
-}
-
-public class HelloSumNumberMock : IPipeline<IntsToIntTask, IntToStringTask>
-{
-    public Cluster<SumNumbersModel, IntsToIntTask>? SumNumbersCluster;
-    public Cluster<HelloNumberModel, IntToStringTask>? HelloNumberCluster;
-
-    public bool Init(NeuralHub neuralHub)
-    {
-        SumNumbersCluster = neuralHub.ShapeCluster<Cluster<SumNumbersModel, IntsToIntTask>>();
-        HelloNumberCluster = neuralHub.ShapeCluster<Cluster<HelloNumberModel, IntToStringTask>>();
-
-        return ClustersInitialized();
-    }
-
-    public async Task<IntToStringTask?> RunAsync(IntsToIntTask task)
-    {
-        if (!ClustersInitialized())
-        {
-            return null;
-        }
-
-        var intOutput = await SumNumbersCluster!.RunAsync(task);
-        var stringOutput = await HelloNumberCluster!.RunAsync(IntToStringTask.FromTask(intOutput));
-        
-        return stringOutput;
-    }
-
-    private bool ClustersInitialized()
-    {
-        return SumNumbersCluster is not null && HelloNumberCluster is not null;
     }
 }

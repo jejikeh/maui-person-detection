@@ -15,7 +15,7 @@ public static class Yolo5InputSpecification
     
     private const float _maxColorValue = 255.0f; 
     
-    public static DenseTensor<float> FillTensorRgb(this DenseTensor<float> tensor, Image<Rgba32> image, int x, int y)
+    public static DenseTensor<float> FillTensorFromRgbImage(this DenseTensor<float> tensor, Image<Rgba32> image, int x, int y)
     {
         return tensor
             .FillTensor(image, x, y, RedLayer)

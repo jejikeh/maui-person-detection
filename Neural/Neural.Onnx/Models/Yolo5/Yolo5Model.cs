@@ -3,9 +3,9 @@ using Neural.Onnx.Tasks.ImageToBoxPredictions;
 
 namespace Neural.Onnx.Models.Yolo5;
 
-public class Yolo5Model : OnnxModel<ImageToBoxPredictionsYolo5Task>
+public class Yolo5Model : OnnxModel<ImageToBoxPredictionsTask>
 {
-    public override Task<ImageToBoxPredictionsYolo5Task> RunAsync(ImageToBoxPredictionsYolo5Task yolo5Task)
+    public override Task<ImageToBoxPredictionsTask> RunAsync(ImageToBoxPredictionsTask task)
     {
         if (InferenceSession is null)
         {
@@ -14,16 +14,16 @@ public class Yolo5Model : OnnxModel<ImageToBoxPredictionsYolo5Task>
         
         Status = ModelStatus.Active;
 
-        var namedOnnxValues = yolo5Task
+        var namedOnnxValues = task
             .Yolo5ImageInput()
             .GetNamedOnnxValues();
         
         var result = InferenceSession.Run(namedOnnxValues);
         
-        yolo5Task.SetOutput(this, result);
+        task.SetOutput(this, result);
         
         Status = ModelStatus.Inactive;
         
-        return Task.FromResult(yolo5Task);
+        return Task.FromResult(task);
     }
 }

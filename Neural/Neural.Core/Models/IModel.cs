@@ -1,4 +1,5 @@
 using Neural.Core.Common;
+using Neural.Core.Models.Events;
 
 namespace Neural.Core.Models;
 

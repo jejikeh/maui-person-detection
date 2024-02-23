@@ -1,4 +1,5 @@
 using Neural.Core.Models;
+using Neural.Core.Models.Events;
 using Neural.Tests.Common.Mocks.Samples.SumOfNumbersCluster.Common.Dependencies;
 using Neural.Tests.Common.Mocks.Samples.SumOfNumbersCluster.Tasks.IntToInt;
 using NullReferenceException = System.NullReferenceException;

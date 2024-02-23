@@ -1,5 +1,6 @@
 using Neural.Core;
 using Neural.Core.Models;
+using Neural.Core.Models.Events;
 
 namespace Neural.Defaults.Models;
 
@@ -64,7 +65,11 @@ public class Cluster<TModel, TModelTask> : ICluster<TModel, TModelTask>
             
             var model = sender as TModel ?? throw new InvalidOperationException();
             model.StatusChanged -= handler;
-            taskCompletionSource.SetResult(model);
+
+            if (!taskCompletionSource.Task.IsCompleted)
+            {
+                taskCompletionSource.SetResult(model);
+            }
         };
 
         foreach (var model in _models)

@@ -1,60 +1,41 @@
+using Neural.Onnx.Tasks.ImageToBoxPredictions;
 using PersonDetection.Backend.Application.Common.Exceptions;
-using PersonDetection.Backend.Application.Common.Models;
-using PersonDetection.ImageSegmentation.ModelConverter;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace PersonDetection.Backend.Application.Services.Implementations;
 
-public class PhotoProcessingService(YoloImageSegmentation _imageProcessing, ModelTypeProvider _modelTypeProvider) : IPhotoProcessingService
+public class PhotoProcessingService(INeuralService neuralService) : IPhotoProcessingService
 {
-    public async Task<string> ProcessPhotoAsync(string photo)
+    public async Task<string> ProcessPhotoAsync(string base64Image)
     {
-        var validatePhoto = ValidatePhoto(photo, out _);
+        var image = ConvertStringToImage(base64Image);
+
+        var yoloTask = new ImageToBoxPredictionsTask(image);
+
+        var processedPhoto = await neuralService.Yolo5ImagePlainPipeline.RunAsync(yoloTask);
+
+        if (processedPhoto?.ImageOutput().Image is null)
+        {
+            throw new InvalidPhotoException();
+        }
         
-        if (!validatePhoto)
-        {
-            throw new InvalidPhotoException();
-        }
-
-        var processedPhoto = await _imageProcessing.SegmentAsync(photo, _modelTypeProvider.ModelType);
-
-        if (processedPhoto is null)
-        {
-            throw new InvalidPhotoException();
-        }
-
-        return processedPhoto;
+        var base64 = await ConvertImageToStringAsync(processedPhoto.ImageOutput().Image!);
+        
+        return base64;
     }
 
-    public async Task<Photo> ProcessPhotoTransparentAsync(string photo)
+    private static Image<Rgba32> ConvertStringToImage(string base64)
     {
-        var validatePhoto = ValidatePhoto(photo, out var buffer);
-
-        if (!validatePhoto)
-        {
-            throw new InvalidPhotoException();
-        }
-        
-        var predictions = _imageProcessing.CalculateSegmentation(ref buffer, _modelTypeProvider.ModelType);
-        var imageData = await _imageProcessing.DrawSegmentationAsync(predictions);
-
-        return new Photo()
-        {
-            Content = imageData
-        };
+        return Image.Load<Rgba32>(Convert.FromBase64String(base64));
     }
 
-    private static bool ValidatePhoto(string photo, out byte[] buffer)
+    private static async Task<string> ConvertImageToStringAsync(Image image)
     {
-        if (string.IsNullOrEmpty(photo))
-        {
-            buffer = Array.Empty<byte>();
-            
-            return false;
-        }
+        var stream = new MemoryStream();
+        await image.SaveAsPngAsync(stream);
+        var base64 = Convert.ToBase64String(stream.ToArray());
         
-        buffer = new byte[photo.Length];
-        var isBase64 = Convert.TryFromBase64String(photo, buffer, out var bytesWritten);
-        
-        return isBase64 && bytesWritten != 0;
+        return base64;
     }
 }

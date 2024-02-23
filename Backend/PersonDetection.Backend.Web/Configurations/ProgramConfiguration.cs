@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Neural.Core;
+using Neural.Defaults;
+using Neural.Onnx.Common;
 using PersonDetection.Backend.Application;
 using PersonDetection.Backend.Application.Services;
 using PersonDetection.Backend.Infrastructure;
@@ -20,7 +23,61 @@ public static class ProgramConfiguration
     public static WebApplicationBuilder Configure(this WebApplicationBuilder builder)
     {
         builder.Services.Configure<JsonOptions>(options => { options.JsonSerializerOptions.WriteIndented = true; });
+        
+        builder.ConfigureCors();
 
+        builder.ConfigureNeuralHub();
+
+        builder.Services.AddOptions();
+        
+        builder.ConfigureErrorHandling();
+        
+        builder.Services.AddSingleton<IVideoPredictionsChannelService, VideoPredictionsChannelService>();
+        
+        builder.ConfigureApplicationLayers();
+        
+        builder.Services.AddAuthorization();
+            
+        builder.ConfigureSignalR();
+
+        return builder;
+    }
+
+    private static void ConfigureSignalR(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddSignalR(options =>
+        { 
+            options.EnableDetailedErrors = true;
+            options.MaximumReceiveMessageSize = 1024 * 1024 * 10;
+        });
+    }
+
+    private static void ConfigureApplicationLayers(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddApplication(builder.Configuration)
+            .AddInfrastructure(builder.Configuration);
+    }
+
+    private static void ConfigureErrorHandling(this WebApplicationBuilder builder)
+    {
+        builder.Services
+            .AddTransient<GlobalExceptionHandlerMiddleware>()
+            .AddProblemDetails();
+    }
+
+    private static void ConfigureNeuralHub(this WebApplicationBuilder builder)
+    {
+        var neuralHub = NeuralHubConfiguration
+            .FromDefaults()
+            .AddYolo5Models("Weights/yolov5n.onnx", 20)
+            .AddImageBoxPainterModels(30)
+            .Build();
+
+        builder.Services.AddSingleton(neuralHub);
+    }
+
+    private static WebApplicationBuilder ConfigureCors(this WebApplicationBuilder builder)
+    {
         var frontendOptions = builder.Services.GetConfigureOptions<FrontendOptions>(builder.Configuration);
 
         builder.Services.AddCors(options =>
@@ -34,21 +91,7 @@ public static class ProgramConfiguration
                     .AllowAnyHeader();
             });
         });
-
-        builder.Services
-            .AddOptions()
-            .AddTransient<GlobalExceptionHandlerMiddleware>()
-            .AddSingleton<IVideoPredictionsChannelService, VideoPredictionsChannelService>()
-            .AddProblemDetails()
-            .AddApplication(builder.Configuration)
-            .AddInfrastructure(builder.Configuration)
-            .AddAuthorization()
-            .AddSignalR(options =>
-            {
-                options.EnableDetailedErrors = true;
-                options.MaximumReceiveMessageSize = 1024 * 1024 * 10;
-            });
-
+        
         return builder;
     }
 

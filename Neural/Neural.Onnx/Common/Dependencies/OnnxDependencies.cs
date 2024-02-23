@@ -24,7 +24,8 @@ public class OnnxDependencies(InferenceSession _inferenceSession) : IDependencyC
     }
     
     private static async Task<InferenceSession> InitializeInferenceSessionAsync(
-        IFileSystemProvider fileSystemProvider, string modelPath)
+        IFileSystemProvider fileSystemProvider, 
+        string modelPath)
     {
         using var modelStream = new MemoryStream();
         

@@ -1,4 +1,5 @@
 using Neural.Core.Models;
+using Neural.Core.Models.Events;
 
 namespace Neural.Samples.SumOfNumbersCluster.Tasks.IntToInt;
 

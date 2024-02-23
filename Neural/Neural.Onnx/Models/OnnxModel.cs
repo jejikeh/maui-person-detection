@@ -1,5 +1,6 @@
 using Microsoft.ML.OnnxRuntime;
 using Neural.Core.Models;
+using Neural.Core.Models.Events;
 using Neural.Onnx.Common.Dependencies;
 
 namespace Neural.Onnx.Models;
@@ -19,10 +20,8 @@ public abstract class OnnxModel<TModelTask> : IModel<TModelTask, OnnxDependencie
         }
     }
     
-    public string Name { get; set; } = string.Empty;
-    
+    public string Name { get; set; } = nameof(OnnxModel<TModelTask>);
     public OnnxDependencies? DependencyContainer { get; set; }
-    
     public event EventHandler<ModelStatusChangedEventArgs>? StatusChanged;
     public InferenceSession? InferenceSession { get; set; }
 

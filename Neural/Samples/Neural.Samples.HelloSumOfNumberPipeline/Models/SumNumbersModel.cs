@@ -1,4 +1,5 @@
 using Neural.Core.Models;
+using Neural.Core.Models.Events;
 using Neural.Samples.HelloSumOfNumberPipeline.Common.Dependencies;
 using Neural.Samples.HelloSumOfNumberPipeline.Tasks.IntToInt;
 using NullReferenceException = System.NullReferenceException;

@@ -1,4 +1,5 @@
 using Neural.Core.Models;
+using Neural.Core.Models.Events;
 using Neural.Tests.Common.Mocks.Samples.HelloNumberCluster.Common.Dependencies;
 using Neural.Tests.Common.Mocks.Samples.HelloNumberCluster.Tasks.IntToString;
 

@@ -1,4 +1,5 @@
 using Neural.Core.Models;
+using Neural.Core.Models.Events;
 using Neural.Samples.SumOfNumbersCluster.Common.Dependencies;
 using Neural.Samples.SumOfNumbersCluster.Tasks.IntToInt;
 using NullReferenceException = System.NullReferenceException;

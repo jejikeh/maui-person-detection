@@ -18,6 +18,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\ImageProcessing\PersonDetection.ImageProcessing\PersonDetection.ImageProcessing.csproj" />
       <ProjectReference Include="..\..\ImageProcessing\PersonDetection.ImageSegmentation\PersonDetection.ImageSegmentation.csproj" />
+      <ProjectReference Include="..\..\Neural\Neural.Onnx\Neural.Onnx.csproj" />
       <ProjectReference Include="..\PersonDetection.Backend.Infrastructure\PersonDetection.Backend.Infrastructure.csproj" />
     </ItemGroup>
 
