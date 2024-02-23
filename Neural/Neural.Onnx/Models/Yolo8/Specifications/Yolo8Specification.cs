@@ -1,14 +1,10 @@
 using SixLabors.ImageSharp;
 
-namespace Neural.Onnx.Models.Yolo5.Specifications;
+namespace Neural.Onnx.Models.Yolo8.Specifications;
 
-public static class Yolo5Specification
+public static class Yolo8Specification
 {
-    public static Size InputSize { get; set; } = new Size(640, 640);
-    
-    public static string Output { get; set; } = "output";
-    
-    public static string[] Outputs { get; set; } = [Output];
+    public static Size InputSize = new(640, 640);
     
     public static YoloClass[] Classes { get; set; } = [
         YoloClass.Person,

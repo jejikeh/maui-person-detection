@@ -1,8 +1,8 @@
 using System.ComponentModel;
 
-namespace Neural.Onnx.Models.Yolo5.Specifications;
+namespace Neural.Onnx.Models;
 
-public enum Yolo5Class
+public enum YoloClass
 {
     [Description("person")]
     Person,

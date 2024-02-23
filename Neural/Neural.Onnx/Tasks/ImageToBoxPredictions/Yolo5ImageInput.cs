@@ -1,16 +1,16 @@
 using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
 using Neural.Core.Models;
+using Neural.Onnx.Common;
 using Neural.Onnx.Models.Yolo5.Specifications;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
 
 namespace Neural.Onnx.Tasks.ImageToBoxPredictions;
 
 public class Yolo5ImageInput(Image<Rgba32> _image) : IModelInput
 {
-    public readonly Image<Rgba32> Image = ResizeImage(_image, Yolo5Specification.InputSize);
+    public readonly Image<Rgba32> Image = _image.ResizeImage(Yolo5Specification.InputSize);
     
     public List<NamedOnnxValue> GetNamedOnnxValues()
     {
@@ -30,15 +30,5 @@ public class Yolo5ImageInput(Image<Rgba32> _image) : IModelInput
         });
         
         return tensor;
-    }
-
-    private static Image<Rgba32> ResizeImage(Image<Rgba32> image, Size size)
-    {
-        if (image.Width != size.Width || image.Height != size.Height)
-        {
-            image.Mutate(x => x.Resize(size.Width, size.Height));
-        }
-
-        return image;
     }
 }

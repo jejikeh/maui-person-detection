@@ -110,7 +110,7 @@ public static class Yolo5OutputSpecification
         return new RectangleF(xMin, yMin, xMax - xMin, yMax - yMin);
     }
 
-    private static Yolo5Class ExtractYolo5Class(int dimension)
+    private static YoloClass ExtractYolo5Class(int dimension)
     {
         return Yolo5Specification.Classes[dimension - _labelDimensionOffset];
     }

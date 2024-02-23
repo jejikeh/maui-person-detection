@@ -25,9 +25,9 @@ public class Yolo5BoxPredictionsOutput : IModelOutput
 
     private static DenseTensor<float>[] ExtractOutputTensors(IDisposableReadOnlyCollection<DisposableNamedOnnxValue> onnxValues)
     {
-        return Yolo5Specification.Outputs
+        return (Yolo5Specification.Outputs
             .Select(item => onnxValues.First(x => x.Name == item).Value as DenseTensor<float>)
-            .ToArray() ?? throw new ArgumentNullException(nameof(onnxValues));
+            .ToArray() ?? throw new ArgumentNullException(nameof(onnxValues)))!;
     }
 
     private static List<Yolo5Prediction> FilterOverlappingPredictions(List<Yolo5Prediction> predictions)

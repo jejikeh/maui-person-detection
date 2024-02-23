@@ -70,7 +70,6 @@ import { ScriptService } from '../script.service';
   position: absolute;
   top: 0px;
   left: 0px;
-  opacity: 0.87
 }
   `,
 })
