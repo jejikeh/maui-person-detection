@@ -13,17 +13,9 @@ public readonly struct IndexedBoundingBox : IComparable<IndexedBoundingBox>
     
     public int CompareTo(IndexedBoundingBox other) => Confidence.CompareTo(other.Confidence);
 
-    // public static IndexedBoundingBox[] ExtractIndexedBoundingBoxes(Tensor<float> tensor)
-    // {
-    //     var boxesCount = tensor.Dimensions[Yolo8OutputSpecification.BoxesLayer];
-    //     var boxes = new IndexedBoundingBox[boxesCount];
-    //
-    //     Parallel.For(0, boxesCount, boxIndex =>
-    //     {
-    //         for (var classIndex = 0; classIndex < Yolo8Specification.Classes.Length; classIndex++)
-    //         {
-    //             var confidence = tensor.GetConfidence(boxIndex, classIndex);
-    //         }
-    //     });
-    // }
+    public static SegmentationBoundBox[] ToSegmentationBoundBoxes(this IndexedBoundingBox[] boxes)
+    {
+        var segmentationBoundBox = new SegmentationBoundBox[];
+        
+    }
 }

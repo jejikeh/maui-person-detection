@@ -19,5 +19,12 @@ public class Yolo8SegmentationOutput : IModelOutput
 
         var boxesTensor = outputTensor[Yolo8OutputSpecification.BoxesTensorDimensionLayer].AsTensor<float>();
         var segmentationsTensor = outputTensor[Yolo8OutputSpecification.SegmentationLayer].AsTensor<float>();
+
+        var indexedBoundingBoxes = boxesTensor
+            .ExtractIndexedBoundingBoxes()
+            ;
+        
+        
+        
     }
 }
