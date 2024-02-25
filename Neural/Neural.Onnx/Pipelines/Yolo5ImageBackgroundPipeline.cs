@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Threading.Channels;
-using Neural.Onnx.Tasks.BoxPredictionsToImage;
-using Neural.Onnx.Tasks.ImageToBoxPredictions;
+using Neural.Onnx.Models.Yolo5.Tasks.BoxPredictionsToImage;
+using Neural.Onnx.Models.Yolo5.Tasks.ImageToBoxPredictions;
 using SixLabors.ImageSharp;
 
 namespace Neural.Onnx.Pipelines;
@@ -21,7 +21,7 @@ public class Yolo5ImageBackgroundPipeline : Yolo5ImagePipeline
 
         model.OnModelTaskComplete += predictionsTask =>
         {
-            var predictions = new BoxPredictionsToImageTasks(predictionsTask);
+            var predictions = new BoxPredictionsToImageTasks(predictionsTask as ImageToBoxPredictionsTask);
             
             var image = ImageBoxPainterCluster!.RunAsync(predictions);
             

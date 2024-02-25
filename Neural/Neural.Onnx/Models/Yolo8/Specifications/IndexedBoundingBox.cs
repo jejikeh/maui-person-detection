@@ -13,9 +13,9 @@ public readonly struct IndexedBoundingBox : IComparable<IndexedBoundingBox>
     
     public int CompareTo(IndexedBoundingBox other) => Confidence.CompareTo(other.Confidence);
 
-    public static SegmentationBoundBox[] ToSegmentationBoundBoxes(this IndexedBoundingBox[] boxes)
-    {
-        var segmentationBoundBox = new SegmentationBoundBox[];
-        
-    }
+    // public static SegmentationBoundBox[] ToSegmentationBoundBoxes(this IndexedBoundingBox[] boxes)
+    // {
+    //     var segmentationBoundBox = new SegmentationBoundBox[];
+    //     
+    // }
 }

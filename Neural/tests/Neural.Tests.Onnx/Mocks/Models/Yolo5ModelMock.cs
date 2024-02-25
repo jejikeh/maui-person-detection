@@ -5,7 +5,7 @@ namespace Neural.Tests.Onnx.Mocks.Models;
 
 public class Yolo5ModelMock : OnnxModel<IntToStringTaskMock>
 {
-    public override Task<IntToStringTaskMock> RunAsync(IntToStringTaskMock task)
+    protected override Task<IntToStringTaskMock> ProcessAsync(IntToStringTaskMock task)
     {
         throw new NotImplementedException();
     }

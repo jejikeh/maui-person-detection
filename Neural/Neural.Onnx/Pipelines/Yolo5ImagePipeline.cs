@@ -2,8 +2,8 @@ using Neural.Core;
 using Neural.Defaults.Models;
 using Neural.Onnx.Models.ImageBoxPainter;
 using Neural.Onnx.Models.Yolo5;
-using Neural.Onnx.Tasks.BoxPredictionsToImage;
-using Neural.Onnx.Tasks.ImageToBoxPredictions;
+using Neural.Onnx.Models.Yolo5.Tasks.BoxPredictionsToImage;
+using Neural.Onnx.Models.Yolo5.Tasks.ImageToBoxPredictions;
 
 namespace Neural.Onnx.Pipelines;
 

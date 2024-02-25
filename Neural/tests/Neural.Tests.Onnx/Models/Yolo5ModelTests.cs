@@ -4,9 +4,9 @@ using Neural.Defaults.Models;
 using Neural.Onnx.Common;
 using Neural.Onnx.Models.ImageBoxPainter;
 using Neural.Onnx.Models.Yolo5;
+using Neural.Onnx.Models.Yolo5.Tasks.BoxPredictionsToImage;
+using Neural.Onnx.Models.Yolo5.Tasks.ImageToBoxPredictions;
 using Neural.Onnx.Pipelines;
-using Neural.Onnx.Tasks.BoxPredictionsToImage;
-using Neural.Onnx.Tasks.ImageToBoxPredictions;
 using Neural.Tests.Common.Mocks;
 using Neural.Tests.Common.Utils;
 using Neural.Tests.Onnx.Utils;
@@ -124,7 +124,7 @@ public class Yolo5ModelTests
         
         // Assert
         result.Should().NotBeNull();
-        result!.ImageOutput().Image.Should().NotBeNull();
+        result!.TypedOutput.Image.Should().NotBeNull();
     }
     
     [Fact]

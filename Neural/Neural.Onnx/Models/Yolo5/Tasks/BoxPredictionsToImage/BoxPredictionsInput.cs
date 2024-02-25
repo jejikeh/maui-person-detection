@@ -3,7 +3,7 @@ using Neural.Onnx.Models.Yolo5.Specifications;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Neural.Onnx.Tasks.BoxPredictionsToImage;
+namespace Neural.Onnx.Models.Yolo5.Tasks.BoxPredictionsToImage;
 
 public class BoxPredictionsInput(Image<Rgba32> _inputImage, List<Yolo5Prediction>? _predictions) : IModelInput
 {

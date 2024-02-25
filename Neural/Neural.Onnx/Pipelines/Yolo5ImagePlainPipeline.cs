@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
-using Neural.Onnx.Tasks.BoxPredictionsToImage;
-using Neural.Onnx.Tasks.ImageToBoxPredictions;
+using Neural.Onnx.Models.Yolo5.Tasks.BoxPredictionsToImage;
+using Neural.Onnx.Models.Yolo5.Tasks.ImageToBoxPredictions;
 
 namespace Neural.Onnx.Pipelines;
 

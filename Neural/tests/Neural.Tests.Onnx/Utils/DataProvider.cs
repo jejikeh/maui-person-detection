@@ -1,4 +1,4 @@
-using Neural.Onnx.Tasks.ImageToBoxPredictions;
+using Neural.Onnx.Models.Yolo5.Tasks.ImageToBoxPredictions;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 

@@ -1,4 +1,5 @@
 using Neural.Core;
+using Neural.Core.Models;
 using Neural.Defaults.Models;
 using Neural.Samples.HelloSumOfNumberPipeline.Models;
 using Neural.Samples.HelloSumOfNumberPipeline.Tasks.IntToInt;

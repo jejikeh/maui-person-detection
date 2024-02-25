@@ -18,4 +18,9 @@
       <ProjectReference Include="..\Neural.Defaults\Neural.Defaults.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Models\Yolo5\Tasks\" />
+      <Folder Include="Models\Yolo8\Tensors\" />
+    </ItemGroup>
+
 </Project>

@@ -3,9 +3,9 @@ using Neural.Core.Models;
 using Neural.Onnx.Common.Dependencies;
 using Neural.Onnx.Models.ImageBoxPainter;
 using Neural.Onnx.Models.Yolo5;
+using Neural.Onnx.Models.Yolo5.Tasks.BoxPredictionsToImage;
+using Neural.Onnx.Models.Yolo5.Tasks.ImageToBoxPredictions;
 using Neural.Onnx.Services.Implementations;
-using Neural.Onnx.Tasks.BoxPredictionsToImage;
-using Neural.Onnx.Tasks.ImageToBoxPredictions;
 
 namespace Neural.Onnx.Common;
 

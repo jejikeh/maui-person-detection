@@ -15,103 +15,10 @@ public static class Yolo5OutputSpecification
     public static float ConfidenceThreshold { get; set; } = 0.2f;
     public static float DimensionValueThreshold { get; set; } = 0.2f;
     
-    private const int _xLayer = 0;
-    private const int _yLayer = 1;
-    private const int _widthLayer = 2;
-    private const int _heightLayer = 3;
+    public const int XLayer = 0;
+    public const int YLayer = 1;
+    public const int WidthLayer = 2;
+    public const int HeightLayer = 3;
     
-    private const int _labelDimensionOffset = 5;
-    
-    public static List<Yolo5Prediction> ExtractYoloPredictions(this DenseTensor<float> outputTensor)
-    {
-        var result = new ConcurrentBag<Yolo5Prediction>();
-        
-        // We do not calculate Scaling Factors and Paddings, since input image is already scaled
-
-        var outputsEntryCount = (int)outputTensor.Length / Dimensions;
-
-        Parallel.For(0, outputsEntryCount, prediction =>
-        {
-            if (outputTensor.IsConfidenceThresholdExceeded(prediction))
-            {
-                return;
-            }
-
-            outputTensor.ScaleTensorLayersAccordingToConfidence(prediction);
-            
-            outputTensor.ConvertToYoloPredictions(prediction, result.Add);
-        });
-        
-        return result.ToList();
-    }
-
-    private static bool IsConfidenceThresholdExceeded(this DenseTensor<float> tensor, int prediction)
-    {
-        return tensor.GetConfidence(prediction) <= ConfidenceThreshold;
-    }
-
-    private static bool IsConfidenceThresholdExceeded(this DenseTensor<float> tensor, int prediction, int dimension)
-    {
-        return tensor.GetConfidence(prediction, dimension) <= DimensionValueThreshold;
-    }
-
-    private static float GetConfidence(this DenseTensor<float> tensor, int prediction)
-    {
-        return tensor[BatchSize, prediction, ConfidenceLayer];
-    }
-
-    private static float GetConfidence(this DenseTensor<float> tensor, int prediction, int dimension)
-    {
-        return tensor[BatchSize, prediction, dimension];
-    }
-
-    private static DenseTensor<float> ScaleTensorLayersAccordingToConfidence(this DenseTensor<float> tensor, int prediction)
-    {
-        var confidence = tensor.GetConfidence(prediction);
-        
-        Parallel.For(ConfidenceLayer + 1, Dimensions, dimension =>
-        {
-            tensor[BatchSize, prediction, dimension] *= confidence;
-        });
-        
-        return tensor;
-    }
-
-    private static void ConvertToYoloPredictions(
-        this DenseTensor<float> tensor, 
-        int prediction,
-        Action<Yolo5Prediction> action)
-    {
-        Parallel.For(5, Dimensions, dimension =>
-        {
-            if (tensor.IsConfidenceThresholdExceeded(prediction, dimension))
-            {
-                return;
-            }
-
-            var boundingBox = tensor.ExtractBoundingBox(prediction);
-            var yolo5Class = ExtractYolo5Class(dimension);
-            
-            action(new Yolo5Prediction(
-                yolo5Class,
-                tensor.GetConfidence(prediction, dimension),
-                boundingBox));
-        });
-    }
-
-    private static RectangleF ExtractBoundingBox(this Tensor<float> tensor, int prediction)
-    {
-        var xMin = tensor[BatchSize, prediction, _xLayer] - tensor[BatchSize, prediction, _widthLayer] / 2;
-        var yMin = tensor[BatchSize, prediction, _yLayer] - tensor[BatchSize, prediction, _heightLayer] / 2;
-        
-        var xMax = tensor[BatchSize, prediction, _xLayer] + tensor[BatchSize, prediction, _widthLayer] / 2;
-        var yMax = tensor[BatchSize, prediction, _yLayer] + tensor[BatchSize, prediction, _heightLayer] / 2;
-        
-        return new RectangleF(xMin, yMin, xMax - xMin, yMax - yMin);
-    }
-
-    private static YoloClass ExtractYolo5Class(int dimension)
-    {
-        return Yolo5Specification.Classes[dimension - _labelDimensionOffset];
-    }
+    public const int LabelDimensionOffset = 5;
 }

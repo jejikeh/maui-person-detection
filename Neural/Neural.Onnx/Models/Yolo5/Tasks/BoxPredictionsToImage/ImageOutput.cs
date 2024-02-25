@@ -2,7 +2,7 @@ using Neural.Core.Models;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Neural.Onnx.Tasks.BoxPredictionsToImage;
+namespace Neural.Onnx.Models.Yolo5.Tasks.BoxPredictionsToImage;
 
 public class ImageOutput : IModelOutput
 {

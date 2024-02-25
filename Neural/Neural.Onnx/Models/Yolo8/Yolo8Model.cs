@@ -1,28 +1,23 @@
-using Neural.Core.Models;
 using Neural.Onnx.Tasks.ImageToSegmentation;
 
 namespace Neural.Onnx.Models.Yolo8;
 
 public class Yolo8Model : OnnxModel<ImageToSegmentationTask>
 {
-    public override Task<ImageToSegmentationTask> RunAsync(ImageToSegmentationTask task)
+    protected override Task<ImageToSegmentationTask> ProcessAsync(ImageToSegmentationTask task)
     {
-        if (InferenceSession is null)
-        {
-            throw new NullReferenceException(nameof(InferenceSession));
-        }
-        
-        Status = ModelStatus.Active;
-        
         var namedOnnxValues = task
             .Yolo8ImageInput()
             .GetNamedOnnxValues();
         
-        using var result = InferenceSession.Run(namedOnnxValues);
+        using var result = InferenceSession?.Run(namedOnnxValues);
+        
+        if (result == null)
+        {
+            throw new NullReferenceException(nameof(result));
+        }
         
         task.SetOutput(this, result);
-
-        Status = ModelStatus.Inactive;
         
         return Task.FromResult(task);
     }

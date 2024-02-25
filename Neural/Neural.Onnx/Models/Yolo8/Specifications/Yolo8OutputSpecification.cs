@@ -1,7 +1,6 @@
 using System.Collections.Concurrent;
 using Microsoft.ML.OnnxRuntime.Tensors;
 using Neural.Onnx.Common;
-using Neural.Onnx.Tasks.ImageToSegmentation;
 using SixLabors.ImageSharp;
 
 namespace Neural.Onnx.Models.Yolo8.Specifications;
@@ -10,7 +9,8 @@ public static class Yolo8OutputSpecification
 {
     public const int BoxesTensorDimensionLayer = 0;
     public const int SegmentationLayer = 1;
-    public const int BoxesHeightLayer = 2;
+    public const int Boxes = 2;
+    public const int BoxesWidthLayer = 3;
 
     public const int ConfidenceOffsetFromClass = 4;
     
@@ -26,7 +26,7 @@ public static class Yolo8OutputSpecification
     
     public static List<IndexedBoundingBox> ExtractIndexedBoundingBoxes(this Tensor<float> outputTensor)
     {
-        var boxesCount = outputTensor.Dimensions[BoxesHeightLayer];
+        var boxesCount = outputTensor.Dimensions[Boxes];
         var boxes = new ConcurrentBag<IndexedBoundingBox>();
 
         Parallel.For(0, boxesCount, box =>
@@ -60,53 +60,35 @@ public static class Yolo8OutputSpecification
         return boxes.ToList().FilterOverlappingBoxes();
     }
     
+    // @Cleanup: Refactor this. This is a very big function.
     private static List<IndexedBoundingBox> FilterOverlappingBoxes(this IReadOnlyList<IndexedBoundingBox> boxes)
     {
-        var boxCount = boxes.Count;
-        var activeCount = boxCount;
-        var notActiveBoxes = new bool[boxCount];
-        var selected = new ConcurrentBag<IndexedBoundingBox>();
+        var activeBoxes = new HashSet<int>(Enumerable.Range(0, boxes.Count));
 
-        for (var i = 0; i < boxCount; i++)
+        var selected = new List<IndexedBoundingBox>();
+        
+        while(activeBoxes.Count != 0)
         {
-            if (notActiveBoxes[i])
-            {
-                continue;
-            }
+            var currentBoxIndex = activeBoxes.First();
             
-            var boxA = boxes[i];
-            selected.Add(boxA);
+            activeBoxes.Remove(currentBoxIndex);
+            
+            var currentBox = boxes[currentBoxIndex];
+            selected.Add(currentBox);
 
-            for (var j = i + 1; j < boxCount; j++)
+            foreach (var otherBoxIndex in activeBoxes)
             {
-                if (notActiveBoxes[j])
+                var otherBox = boxes[otherBoxIndex];
+
+                // @Cleanup: Recheck this expression
+                if (currentBox.Bounds.IsOverlappingAboveThreshold(otherBox.Bounds, OverlapThreshold))
                 {
-                    continue;
+                    activeBoxes.Remove(otherBoxIndex);
                 }
-                
-                var boxB = boxes[j];
-
-                if (!boxA.Bounds.IsOverlappingAboveThreshold(boxB.Bounds, OverlapThreshold))
-                {
-                    continue;
-                }
-
-                notActiveBoxes[j] = true;
-                activeCount--;
-
-                if (activeCount <= 0)
-                {
-                    break;
-                }
-            }
-
-            if (activeCount <= 0)
-            {
-                break;
             }
         }
-
-        return selected.ToList();
+        
+        return selected;
     }
     
     private static Rectangle ExtractBoundingBox(this Tensor<float> tensor, int prediction)
@@ -139,41 +121,42 @@ public static class Yolo8OutputSpecification
         return outputTensor.Dimensions[SegmentationLayer] - ConfidenceOffsetFromClass - Yolo8Specification.Classes.Length;
     }
     
-    public static SegmentationBoundBox[] ToSegmentationBoundBoxes(this Tensor<float> outputTensor, IndexedBoundingBox[] boxes)
-    {
-        var segmentationBoundBox = new SegmentationBoundBox[boxes.Length];
-
-        var segmentationChannelCount = outputTensor.GetSegmentationChannelCount();
-
-        foreach (var box in boxes)
-        {
-            var maskWeights = outputTensor.ExtractMaskWeights(
-                box.Index,
-                segmentationChannelCount,
-                Yolo8Specification.Classes.Length + ConfidenceOffsetFromClass);
-            
-            var mask = 
-        }
-    }
-
-    public static float[] ExtractMaskWeights(this Tensor<float> output, int boxIndex, int maskChannelCount, int maskWeightOffset)
-    {
-        var maskWeights = new float[maskChannelCount];
-
-        for (var maskChannel = 0; maskChannel < maskChannelCount; maskChannel++)
-        {
-            maskWeights[maskChannel] = output[BoxesTensorDimensionLayer, maskWeightOffset + maskChannel, boxIndex];
-        }
-        
-        return maskWeights;
-    }
-
-    private static SegmentationMask ExtractMask(
-        this Tensor<float> output, 
-        IReadOnlyList<float> maskWeights,
-        Rectangle maskBound)
-    {
-        var maskChannels = output.Dimensions[SegmentationLayer] / ModelQuality;
-        var bounds = output.Dimensions[]
-    }
+    // public static SegmentationBoundBox[] ToSegmentationBoundBoxes(this Tensor<float> outputTensor, IndexedBoundingBox[] boxes)
+    // {
+    //     var segmentationBoundBox = new SegmentationBoundBox[boxes.Length];
+    //
+    //     var segmentationChannelCount = outputTensor.GetSegmentationChannelCount();
+    //
+    //     foreach (var box in boxes)
+    //     {
+    //         var maskWeights = outputTensor.ExtractMaskWeights(
+    //             box.Index,
+    //             segmentationChannelCount,
+    //             Yolo8Specification.Classes.Length + ConfidenceOffsetFromClass);
+    //         
+    //         var mask = 
+    //     }
+    // }
+    //
+    // public static float[] ExtractMaskWeights(this Tensor<float> output, int boxIndex, int maskChannelCount, int maskWeightOffset)
+    // {
+    //     var maskWeights = new float[maskChannelCount];
+    //
+    //     for (var maskChannel = 0; maskChannel < maskChannelCount; maskChannel++)
+    //     {
+    //         maskWeights[maskChannel] = output[BoxesTensorDimensionLayer, maskWeightOffset + maskChannel, boxIndex];
+    //     }
+    //     
+    //     return maskWeights;
+    // }
+    //
+    // private static SegmentationMask ExtractMask(
+    //     this Tensor<float> output, 
+    //     IReadOnlyList<float> maskWeights,
+    //     Rectangle maskBound)
+    // {
+    //     var maskChannels = output.Dimensions[SegmentationLayer] / ModelQuality;
+    //     var maskHeight = output.Dimensions[Boxes];
+    //     var maskWidth = output.Dimensions[Layer];
+    // }
 }
