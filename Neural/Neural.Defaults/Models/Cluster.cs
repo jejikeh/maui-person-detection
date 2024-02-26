@@ -8,7 +8,7 @@ public class Cluster<TModel, TModelTask> : ICluster<TModel, TModelTask>
     where TModel : class, IModel<TModelTask> 
     where TModelTask : class, IModelTask
 {
-    private readonly List<TModel> _models = [];
+    protected readonly List<TModel> Models = [];
     
     public bool Init(NeuralHub neuralHub)
     {
@@ -19,14 +19,14 @@ public class Cluster<TModel, TModelTask> : ICluster<TModel, TModelTask>
             return false;
         }
         
-        _models.AddRange(models);
+        Models.AddRange(models);
 
         return true;
     }
 
     public TModel? GetModelWithStatus(ModelStatus status)
     {
-        return _models.FirstOrDefault(model => model.Status == status);
+        return Models.FirstOrDefault(model => model.Status == status);
     }
     
     public async Task RunHandleAsync(TModelTask input, Func<TModelTask, Task> handleModelCompleted)
@@ -39,9 +39,9 @@ public class Cluster<TModel, TModelTask> : ICluster<TModel, TModelTask>
         }
     }
 
-    private async Task<TModel?> WaitUntilModelWithStatus(ModelStatus status)
+    protected async Task<TModel?> WaitUntilModelWithStatusAsync(ModelStatus status)
     {
-        if (_models.Count == 0)
+        if (Models.Count == 0)
         {
             return null;
         }
@@ -72,7 +72,7 @@ public class Cluster<TModel, TModelTask> : ICluster<TModel, TModelTask>
             }
         };
 
-        foreach (var model in _models)
+        foreach (var model in Models)
         {
             model.StatusChanged += handler;
         }
@@ -95,7 +95,9 @@ public class Cluster<TModel, TModelTask> : ICluster<TModel, TModelTask>
 
     public async Task<TModelTask?> RunAsync(TModelTask input)
     {
-        var model = await WaitUntilModelWithStatus(ModelStatus.Inactive);
+        var model = GetModelWithStatus(ModelStatus.Inactive);
+        
+        Console.WriteLine($"Model: {model?.Name}"); 
 
         if (model is null)
         {
@@ -104,15 +106,30 @@ public class Cluster<TModel, TModelTask> : ICluster<TModel, TModelTask>
         
         return await model.RunAsync(input);
     }
+    
+    public async IAsyncEnumerable<TModelTask?> RunAsync(IAsyncEnumerable<TModelTask> input)
+    {
+        await foreach (var inputTask in input)
+        {
+            var model = await WaitUntilModelWithStatusAsync(ModelStatus.Inactive);
+
+            if (model is null)
+            {
+                continue;
+            }
+
+            yield return await model.RunAsync(inputTask);
+        }
+    }
 
     public int Count()
     {
-        return _models.Count;
+        return Models.Count;
     }
 
     public async Task<TModelTask?> RunInBackgroundAsync(TModelTask input)
     {
-        var model = await WaitUntilModelWithStatus(ModelStatus.Inactive);
+        var model = await WaitUntilModelWithStatusAsync(ModelStatus.Inactive);
 
         var modelTask = model?.TryRunInBackground(input);
 

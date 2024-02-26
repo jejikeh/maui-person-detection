@@ -15,4 +15,9 @@ public class VideoPredictionsChannelService(IPhotoProcessingService _processingS
         
         await _messages.Writer.WriteAsync(processPhoto);
     }
+
+    public IAsyncEnumerable<string> StreamPhotoAsync(IAsyncEnumerable<string> photosStream)
+    {
+        return _processingService.ProcessPhotosStreamAsync(photosStream);
+    }
 }

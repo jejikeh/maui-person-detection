@@ -1,11 +1,11 @@
-using Neural.Onnx.Tasks.ImageToBoxPredictions;
+using Neural.Onnx.Models.Yolo5.Tasks.ImageToBoxPredictions;
 using PersonDetection.Backend.Application.Common.Exceptions;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace PersonDetection.Backend.Application.Services.Implementations;
 
-public class PhotoProcessingService(INeuralService neuralService) : IPhotoProcessingService
+public class PhotoProcessingService(INeuralService _neuralService) : IPhotoProcessingService
 {
     public async Task<string> ProcessPhotoAsync(string base64Image)
     {
@@ -13,16 +13,21 @@ public class PhotoProcessingService(INeuralService neuralService) : IPhotoProces
 
         var yoloTask = new ImageToBoxPredictionsTask(image);
 
-        var processedPhoto = await neuralService.Yolo5ImagePlainPipeline.RunAsync(yoloTask);
+        var processedPhoto = await _neuralService.Yolo5ImagePlainPipeline.RunAsync(yoloTask);
 
-        if (processedPhoto?.ImageOutput().Image is null)
+        if (processedPhoto?.TypedInput.InputImage is null)
         {
             throw new InvalidPhotoException();
         }
         
-        var base64 = await ConvertImageToStringAsync(processedPhoto.ImageOutput().Image!);
+        var base64 = await ConvertImageToStringAsync(processedPhoto.TypedInput.InputImage!);
         
         return base64;
+    }
+
+    public IAsyncEnumerable<string> ProcessPhotosStreamAsync(IAsyncEnumerable<string> photos)
+    {
+        return _neuralService.Yolo5ImageStreamPipeline.RunAsync(photos);
     }
 
     private static Image<Rgba32> ConvertStringToImage(string base64)

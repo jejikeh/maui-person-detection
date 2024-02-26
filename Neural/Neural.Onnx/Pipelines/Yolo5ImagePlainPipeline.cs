@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using Neural.Onnx.Models.Yolo5.Tasks.BoxPredictionsToImage;
 using Neural.Onnx.Models.Yolo5.Tasks.ImageToBoxPredictions;
 

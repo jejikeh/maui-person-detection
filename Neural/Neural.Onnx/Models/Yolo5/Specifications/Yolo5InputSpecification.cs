@@ -23,7 +23,7 @@ public static class Yolo5InputSpecification
             .FillTensor(image, x, y, BlueLayer);
     }
 
-    public static DenseTensor<float> FillTensor(this DenseTensor<float> tensor, Image<Rgba32> image, int x, int y, int layer)
+    private static DenseTensor<float> FillTensor(this DenseTensor<float> tensor, Image<Rgba32> image, int x, int y, int layer)
     {
         var pixelColorValue = layer switch
         {

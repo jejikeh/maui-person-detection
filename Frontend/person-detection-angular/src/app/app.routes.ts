@@ -1,16 +1,21 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { authRoutes } from './auth/auth.routes';
+import { StreamComponent } from './stream/stream.component';
 
 export const routes: Routes = [
   {
     path: '',
     redirectTo: 'home',
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
   {
     path: 'home',
-    component: HomeComponent
+    component: HomeComponent,
   },
-  ...authRoutes
+  {
+    path: 'stream',
+    component: StreamComponent,
+  },
+  ...authRoutes,
 ];

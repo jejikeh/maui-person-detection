@@ -69,8 +69,8 @@ public static class ProgramConfiguration
     {
         var neuralHub = NeuralHubConfiguration
             .FromDefaults()
-            .AddYolo5Models("Weights/yolov5n.onnx", 20)
-            .AddImageBoxPainterModels(30)
+            .AddYolo5Models("Weights/yolov5n.onnx", 25)
+            .AddImageBoxPainterModels(25)
             .Build();
 
         builder.Services.AddSingleton(neuralHub);

@@ -27,7 +27,8 @@
               "src/assets/selfie_segmentation.js",
               "src/assets/selfie_segmentation.tflite",
               "src/assets/selfie_segmentation.binarypb",
-              "src/assets/mediapipe.js"
+              "src/assets/mediapipe.js",
+              "src/assets/signalr-sendstream.js"
             ],
             "styles": [
               "src/styles.css"

@@ -4,4 +4,5 @@ interface Scripts {
 }
 export const ScriptStore: Scripts[] = [
   { name: 'mediapipe', src: '../../../assets/mediapipe.js' },
+  { name: 'signalr-sendstream', src: '../../../assets/signalr-sendstream.js' },
 ];

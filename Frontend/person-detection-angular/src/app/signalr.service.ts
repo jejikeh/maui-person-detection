@@ -14,12 +14,13 @@ export class SignalRService {
   private _localStream: MediaStream | undefined;
   private _localVideoStreamElement: ElementRef | undefined;
 
-  private _onMediaData = new BehaviorSubject<string>('');
+  private _onMediaData$ = new BehaviorSubject<string>('');
 
   public OnReceivedMask = new BehaviorSubject<string>('');
   public OnModelPerformance = new BehaviorSubject<string>('');
 
   public StreamImageData = 'ReceiveVideoData';
+  public UploadClientData = 'UploadClientData';
   public ModelPerformanceData = 'SendModelPerformance';
 
   constructor(localVideoStreamElement: ElementRef) {
@@ -45,9 +46,10 @@ export class SignalRService {
         mimeType: 'video/webm',
       });
 
-      this._onMediaData.subscribe((data) => {
+      this._onMediaData$.subscribe((data) => {
         this.handleMediaData(this._connection, data);
       });
+
       this.setupStream();
       this._mediaRecorder.start();
 
@@ -91,7 +93,7 @@ export class SignalRService {
       return;
     }
 
-    console.log(hub);
+    console.log(data);
 
     hub.stream(this.StreamImageData, data).subscribe({
       next: (request) => {
@@ -109,7 +111,7 @@ export class SignalRService {
     }
 
     this._mediaRecorder.ondataavailable = async (event) => {
-      this._onMediaData.next(this.captureBase64Image());
+      this._onMediaData$.next(this.captureBase64Image());
     };
   }
 

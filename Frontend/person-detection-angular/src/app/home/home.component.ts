@@ -2,9 +2,6 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  Inject,
-  NgZone,
-  Renderer2,
   ViewChild,
   inject,
 } from '@angular/core';
@@ -12,7 +9,6 @@ import { AuthService } from '../auth/auth.service';
 import { SignalRService } from '../signalr.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { DOCUMENT } from '@angular/common';
 import { ScriptService } from '../script.service';
 
 @Component({
@@ -80,15 +76,14 @@ export class HomeComponent implements AfterViewInit {
 
   private _http: HttpClient = inject(HttpClient);
   private _authService: AuthService = inject(AuthService);
-  private _signalR: SignalRService | undefined;
   private _scriptService: ScriptService = inject(ScriptService);
+  private _signalR: SignalRService | undefined;
 
   private _sumPerformance: number = 0;
   private _numReceivedPerformanceTimes: number = 0;
 
   @ViewChild('local_video') localVideo: ElementRef | undefined;
 
-  public receivedImage: string = '';
   public receivedOverlay: string = '';
 
   public modelPerformance: string = '';
