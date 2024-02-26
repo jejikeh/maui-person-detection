@@ -6,10 +6,35 @@ import { ScriptService } from '../script.service';
   standalone: true,
   imports: [],
   template: `
-    <video id="video-stream-source" controls autoplay></video>
-    <img id="output-image" width="640px" height="480px" />
+    <div class="layered-image">
+      <video
+        class="image-base"
+        id="video-stream-source"
+        controls
+        autoplay
+      ></video>
+      <img
+        class="image-overlay"
+        id="output-image"
+        width="640px"
+        height="480px"
+      />
+    </div>
   `,
-  styles: ``,
+  styles: `
+  .layered-image {
+  position: relative;
+}
+.layered-image img {
+  width: 640px;
+  height: 480px;
+}
+.image-overlay {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+  `,
 })
 export class StreamComponent {
   private _scriptService: ScriptService = inject(ScriptService);

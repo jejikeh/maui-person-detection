@@ -1,11 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Neural.Core;
 using Neural.Defaults;
 using Neural.Onnx.Common;
 using PersonDetection.Backend.Application;
-using PersonDetection.Backend.Application.Services;
 using PersonDetection.Backend.Infrastructure;
 using PersonDetection.Backend.Web.Common;
 using PersonDetection.Backend.Web.Endpoints;
@@ -67,10 +65,12 @@ public static class ProgramConfiguration
 
     private static void ConfigureNeuralHub(this WebApplicationBuilder builder)
     {
+        var modelCount = Environment.ProcessorCount / 2;
+        
         var neuralHub = NeuralHubConfiguration
             .FromDefaults()
-            .AddYolo5Models("Weights/yolov5n.onnx", 25)
-            .AddImageBoxPainterModels(25)
+            .AddYolo5Models("Weights/yolov5s.onnx", modelCount)
+            .AddImageBoxPainterModels(Environment.ProcessorCount)
             .Build();
 
         builder.Services.AddSingleton(neuralHub);

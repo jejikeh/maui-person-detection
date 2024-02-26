@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using Neural.Onnx.Models.Yolo5.Tasks.BoxPredictionsToImage;
-using Neural.Onnx.Models.Yolo5.Tasks.ImageToBoxPredictions;
 using SixLabors.ImageSharp;
 
 namespace Neural.Onnx.Pipelines;
@@ -8,26 +7,27 @@ namespace Neural.Onnx.Pipelines;
 public class Yolo5ImageStreamPipeline : Yolo5ImagePipeline
 {
     private readonly ConcurrentQueue<string> _imageStack = new ConcurrentQueue<string>();
-    
-    public async IAsyncEnumerable<string> RunAsync(IAsyncEnumerable<string> task)
+
+    public void RunInBackground(string task, Func<string, Task> handlePipelineCompleteAsync)
     {
         if (!ClustersInitialized())
         {
-            yield break;
+            return;
         }
         
-        await foreach (var input in task)
+        Yolo5Cluster!.RunInBackground(task, async prediction =>
         {
-                var prediction = await Yolo5Cluster!.RunAsync(new ImageToBoxPredictionsTask(input));
-                var image = await ImageBoxPainterCluster!.RunAsync(new BoxPredictionsToImageTasks(prediction));
+            var image = await ImageBoxPainterCluster!.RunAsync(new BoxPredictionsToImageTasks(prediction));
 
-                if (image?.TypedOutput.Image is null)
-                {
-                    continue;
-                }
+            if (image?.TypedOutput.Image is null)
+            {
+                return;
+            }
 
-                yield return await ConvertImageToStringAsync(image.TypedOutput.Image);
-        }
+            var outputContent = await ConvertImageToStringAsync(image.TypedOutput.Image);
+
+            await handlePipelineCompleteAsync(outputContent);
+        });
     }
     
     private static async Task<string> ConvertImageToStringAsync(Image image)

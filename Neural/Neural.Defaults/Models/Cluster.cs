@@ -97,8 +97,6 @@ public class Cluster<TModel, TModelTask> : ICluster<TModel, TModelTask>
     {
         var model = GetModelWithStatus(ModelStatus.Inactive);
         
-        Console.WriteLine($"Model: {model?.Name}"); 
-
         if (model is null)
         {
             return null;

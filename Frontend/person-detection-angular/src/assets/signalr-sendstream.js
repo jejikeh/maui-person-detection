@@ -66,7 +66,7 @@ connection.start().then(() => {
             mediaRecorder.ondataavailable = handleDataAvailable
             mediaRecorder.start();
 
-            setInterval(() => mediaRecorder.requestData(), 100)
+            setInterval(() => mediaRecorder.requestData(), 200)
         })
 })
 

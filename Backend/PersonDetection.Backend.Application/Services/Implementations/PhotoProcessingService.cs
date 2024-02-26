@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.SignalR;
 using Neural.Onnx.Models.Yolo5.Tasks.ImageToBoxPredictions;
 using PersonDetection.Backend.Application.Common.Exceptions;
 using SixLabors.ImageSharp;
@@ -25,9 +26,9 @@ public class PhotoProcessingService(INeuralService _neuralService) : IPhotoProce
         return base64;
     }
 
-    public IAsyncEnumerable<string> ProcessPhotosStreamAsync(IAsyncEnumerable<string> photos)
+    public void RunInBackground(string photo, Func<string, Task> handlePipelineCompleteAsync)
     {
-        return _neuralService.Yolo5ImageStreamPipeline.RunAsync(photos);
+        _neuralService.Yolo5ImageStreamPipeline.RunInBackground(photo, handlePipelineCompleteAsync);
     }
 
     private static Image<Rgba32> ConvertStringToImage(string base64)
