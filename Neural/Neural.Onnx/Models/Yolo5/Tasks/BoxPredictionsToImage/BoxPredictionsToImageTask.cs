@@ -7,7 +7,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Neural.Onnx.Models.Yolo5.Tasks.BoxPredictionsToImage;
 
-public class BoxPredictionsToImageTasks(ImageToBoxPredictionsTask _imageToBoxPredictionsTask) 
+public class BoxPredictionsToImageTask(ImageToBoxPredictionsTask _imageToBoxPredictionsTask) 
     : ModelTask<BoxPredictionsInput, ImageOutput>
 {
     public override IModelInput Input { get; set; } = new BoxPredictionsInput(

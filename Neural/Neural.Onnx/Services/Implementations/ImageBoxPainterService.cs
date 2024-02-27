@@ -1,5 +1,7 @@
 using Neural.Onnx.Common;
+using Neural.Onnx.Models;
 using Neural.Onnx.Models.Yolo5.Specifications;
+using Neural.Onnx.Models.Yolo8.Specifications;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
@@ -10,40 +12,93 @@ namespace Neural.Onnx.Services.Implementations;
 
 public class ImageBoxPainterService : IImageBoxPainterService
 {
+    private const int _scoreDigits = 2;
+    private const int _leftRectangleOffset = 3;
+    private const int _topRectangleOffset = 23;
+    
+    private const int _strokeBoxWidth = 3;
+    private const int _strokeTextWidth = 1;
+    
     private const int _fontSize = 16;
     private static Font? _font;
     
-    public void PaintPredictions(Image<Rgba32> image, List<Yolo5Prediction> predictions)
+    private static readonly SolidBrush _redBrush = new SolidBrush(Color.Red);
+    private static readonly SolidPen _redPenForBoxes = new SolidPen(_redBrush, _strokeBoxWidth);
+    private static readonly SolidPen _redPenForText = new SolidPen(_redBrush, _strokeTextWidth);
+
+    public void PaintPredictions(Image<Rgba32> image, IEnumerable<Yolo5Prediction> predictions)
     {
         if (_font is null)
         {
             InitializeFont();
         }
 
-        foreach (var prediction in predictions)
+        predictions.AsParallel().ForAll(prediction =>
         {
-            var score = Math.Round(prediction.Score, 2);
-            var x = prediction.Rectangle.Left - 3; 
-            var y = prediction.Rectangle.Top - 23;
-
-            image.Mutate(
-                imageProcessingContext => 
-                    imageProcessingContext.DrawPolygon(
-                        new SolidPen(new SolidBrush(Color.Red), 3), 
-                        new PointF(prediction.Rectangle.Left, prediction.Rectangle.Top), 
-                        new PointF(prediction.Rectangle.Right, prediction.Rectangle.Top), 
-                        new PointF(prediction.Rectangle.Right, prediction.Rectangle.Bottom), 
-                        new PointF(prediction.Rectangle.Left, prediction.Rectangle.Bottom)));
-            
-            image.Mutate(
-                imageProcessingContext => 
-                    imageProcessingContext.DrawText($"{prediction.Class.DisplayName()} ({score})", 
-                        _font!, 
-                        new SolidBrush(Color.Red), 
-                        new PointF(x, y)));
-        }
+            image.Mutate(imageProcessingContext =>
+            {
+                DrawBoxes(imageProcessingContext, prediction);
+                DrawText(imageProcessingContext, prediction);
+            });
+        });
     }
-    
+
+    public void PaintPredictions(Image<Rgba32> image, IEnumerable<SegmentationBoundBox> predictions)
+    {
+        var size = image.Size;
+        using var masksLayer = new Image<Rgba32>(size.Width, size.Height, Color.Transparent);
+        
+        foreach (var box in predictions)
+        {
+            if (box.Class != YoloClass.Person)
+            {
+                continue;
+            }
+            
+            using var mask = new Image<Rgba32>(box.Bounds.Width, box.Bounds.Height, Color.Transparent);
+
+            for (var x = 0; x < box.Mask.Width; x++)
+            {
+                for (var y = 0; y < box.Mask.Height; y++)
+                {
+                    var value = box.Mask[x, y];
+
+                    if (value > 0.74f)
+                    {
+                        mask[x, y] = Color.LightGreen;
+                    }
+                }
+            }
+
+            masksLayer.Mutate(x => x.DrawImage(mask, box.Bounds.Location, 1f));
+        }
+
+        image.Mutate(x => x.DrawImage(masksLayer, 0.7f));
+    }
+
+    private static void DrawText(IImageProcessingContext imageProcessingContext, Yolo5Prediction prediction)
+    {
+        var score = Math.Round(prediction.Score, _scoreDigits);
+        
+        var textX = prediction.Rectangle.Left - _leftRectangleOffset; 
+        var textY = prediction.Rectangle.Top - _topRectangleOffset;
+            
+        imageProcessingContext.DrawText($"{prediction.Class.DisplayName()} ({score})", 
+            _font!, 
+            _redPenForText, 
+            new PointF(textX, textY));
+    }
+
+    private static void DrawBoxes(IImageProcessingContext imageProcessingContext, Yolo5Prediction prediction)
+    {
+        imageProcessingContext.DrawPolygon(
+            _redPenForBoxes,
+            new PointF(prediction.Rectangle.Left, prediction.Rectangle.Top),
+            new PointF(prediction.Rectangle.Right, prediction.Rectangle.Top),
+            new PointF(prediction.Rectangle.Right, prediction.Rectangle.Bottom),
+            new PointF(prediction.Rectangle.Left, prediction.Rectangle.Bottom));
+    }
+
     private static void InitializeFont()
     {
         // I cant just iterate over SystemFonts.Families and pick random one.

@@ -1,11 +1,11 @@
 using Neural.Onnx.Models.Yolo5.Tasks.BoxPredictionsToImage;
 using Neural.Onnx.Models.Yolo5.Tasks.ImageToBoxPredictions;
 
-namespace Neural.Onnx.Pipelines;
+namespace Neural.Onnx.Pipelines.Yolo5;
 
 public class Yolo5ImagePlainPipeline : Yolo5ImagePipeline
 {
-    public async Task<BoxPredictionsToImageTasks?> RunAsync(ImageToBoxPredictionsTask task)
+    public async Task<BoxPredictionsToImageTask?> RunAsync(ImageToBoxPredictionsTask task)
     {
         if (!ClustersInitialized())
         {
@@ -19,7 +19,7 @@ public class Yolo5ImagePlainPipeline : Yolo5ImagePipeline
             return null;
         }
         
-        var image = await ImageBoxPainterCluster!.RunAsync(new BoxPredictionsToImageTasks(predictions));
+        var image = await ImageBoxPainterCluster!.RunAsync(new BoxPredictionsToImageTask(predictions));
         
         return image;
     }

@@ -10,7 +10,7 @@ namespace Neural.Onnx.Models.Yolo5.Tasks.ImageToBoxPredictions;
 
 public class Yolo5BoxPredictionsOutput : IModelOutput
 {
-    public List<Yolo5Prediction>? Predictions { get; private set; }
+    public IEnumerable<Yolo5Prediction>? Predictions { get; private set; }
     
     public void Set(object value)
     {

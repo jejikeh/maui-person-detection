@@ -5,6 +5,8 @@ namespace Neural.Onnx.Models.Yolo8.Specifications;
 public static class Yolo8Specification
 {
     public static Size InputSize = new(640, 640);
+
+    public static string[] OnnxOutputNames = ["images"];
     
     public static YoloClass[] Classes { get; set; } = [
         YoloClass.Person,

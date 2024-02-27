@@ -16,44 +16,63 @@ namespace PersonDetection.Backend.Web.Configurations;
 
 public static class ProgramConfiguration
 {
+    private const long _signalRMaximumReceiveMessageSize = 1024 * 1024 * 10;
+
     private static readonly string _allowFrontendPolicyName = "_allowFrontend";
     
     public static WebApplicationBuilder Configure(this WebApplicationBuilder builder)
     {
-        builder.Services.Configure<JsonOptions>(options => { options.JsonSerializerOptions.WriteIndented = true; });
+        builder.ConfigureJsonOptions();
         
         builder.ConfigureCors();
-
-        builder.ConfigureNeuralHub();
-
-        builder.Services.AddOptions();
         
         builder.ConfigureErrorHandling();
-        
-        builder.Services.AddSingleton<IVideoPredictionsChannelService, VideoPredictionsChannelService>();
-        
-        builder.ConfigureApplicationLayers();
+
+        builder.ConfigureServices();
         
         builder.Services.AddAuthorization();
             
-        builder.ConfigureSignalR();
+        return builder;
+    }
+
+    private static WebApplicationBuilder ConfigureJsonOptions(this WebApplicationBuilder builder)
+    {
+        builder.Services.Configure<JsonOptions>(options => { options.JsonSerializerOptions.WriteIndented = true; });
 
         return builder;
     }
 
-    private static void ConfigureSignalR(this WebApplicationBuilder builder)
+    private static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder builder)
+    {
+        builder
+            .ConfigureSignalR()
+            .ConfigureNeuralHub()
+            .ConfigureApplicationLayers();
+        
+        builder.Services.AddOptions();
+        
+        builder.Services.AddSingleton<IVideoPredictionsChannelService, VideoPredictionsChannelService>();
+
+        return builder;
+    }
+
+    private static WebApplicationBuilder ConfigureSignalR(this WebApplicationBuilder builder)
     {
         builder.Services.AddSignalR(options =>
         { 
             options.EnableDetailedErrors = true;
-            options.MaximumReceiveMessageSize = 1024 * 1024 * 10;
+            options.MaximumReceiveMessageSize = _signalRMaximumReceiveMessageSize;
         });
+
+        return builder;
     }
 
-    private static void ConfigureApplicationLayers(this WebApplicationBuilder builder)
+    private static WebApplicationBuilder ConfigureApplicationLayers(this WebApplicationBuilder builder)
     {
         builder.Services.AddApplication(builder.Configuration)
             .AddInfrastructure(builder.Configuration);
+
+        return builder;
     }
 
     private static void ConfigureErrorHandling(this WebApplicationBuilder builder)
@@ -63,17 +82,19 @@ public static class ProgramConfiguration
             .AddProblemDetails();
     }
 
-    private static void ConfigureNeuralHub(this WebApplicationBuilder builder)
+    private static WebApplicationBuilder ConfigureNeuralHub(this WebApplicationBuilder builder)
     {
         var modelCount = Environment.ProcessorCount / 2;
         
         var neuralHub = NeuralHubConfiguration
             .FromDefaults()
-            .AddYolo5Models("Weights/yolov5s.onnx", modelCount)
-            .AddImageBoxPainterModels(Environment.ProcessorCount)
+            .AddYolo8Models("Weights/yolov8n-seg-quantize.onnx", modelCount)
+            .AddImageSegmentationPainterModels(Environment.ProcessorCount)
             .Build();
 
         builder.Services.AddSingleton(neuralHub);
+
+        return builder;
     }
 
     private static WebApplicationBuilder ConfigureCors(this WebApplicationBuilder builder)

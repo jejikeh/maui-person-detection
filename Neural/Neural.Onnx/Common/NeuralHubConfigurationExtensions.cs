@@ -5,7 +5,10 @@ using Neural.Onnx.Models.ImageBoxPainter;
 using Neural.Onnx.Models.Yolo5;
 using Neural.Onnx.Models.Yolo5.Tasks.BoxPredictionsToImage;
 using Neural.Onnx.Models.Yolo5.Tasks.ImageToBoxPredictions;
+using Neural.Onnx.Models.Yolo8;
+using Neural.Onnx.Models.Yolo8.SegmentationsPredictionsToImage;
 using Neural.Onnx.Services.Implementations;
+using Neural.Onnx.Tasks.ImageToSegmentation;
 
 namespace Neural.Onnx.Common;
 
@@ -36,6 +39,11 @@ public static class NeuralHubConfigurationExtensions
         return builder.AddOnnxModel<Yolo5Model, ImageToBoxPredictionsTask>(modelPath);
     }
     
+    public static NeuralHubBuilder AddYolo8Model(this NeuralHubBuilder builder, string modelPath)
+    {
+        return builder.AddOnnxModel<Yolo8Model, ImageToSegmentationTask>(modelPath);
+    }
+    
     public static NeuralHubBuilder AddYolo5Models(this NeuralHubBuilder builder, string modelPath, int count)
     {
         for (var i = 0; i < count; i++)
@@ -46,9 +54,19 @@ public static class NeuralHubConfigurationExtensions
         return builder;
     }
     
+    public static NeuralHubBuilder AddYolo8Models(this NeuralHubBuilder builder, string modelPath, int count)
+    {
+        for (var i = 0; i < count; i++)
+        {
+            builder.AddYolo8Model(modelPath);
+        }
+        
+        return builder;
+    }
+    
     public static NeuralHubBuilder AddImageBoxPainterModel(this NeuralHubBuilder builder)
     {
-        return builder.AddModel<ImageBoxPainterModel, BoxPredictionsToImageTasks, ImageBoxPainterDependencies>(
+        return builder.AddModel<ImageBoxPainterModel, BoxPredictionsToImageTask, ImageBoxPainterDependencies>(
             new ImageBoxPainterDependencies(new ImageBoxPainterService()));
     }
     
@@ -56,7 +74,18 @@ public static class NeuralHubConfigurationExtensions
     {
         for (var i = 0; i < count; i++)
         {
-            builder.AddModel<ImageBoxPainterModel, BoxPredictionsToImageTasks, ImageBoxPainterDependencies>(
+            builder.AddModel<ImageBoxPainterModel, BoxPredictionsToImageTask, ImageBoxPainterDependencies>(
+                new ImageBoxPainterDependencies(new ImageBoxPainterService()));
+        }
+        
+        return builder;
+    }
+    
+    public static NeuralHubBuilder AddImageSegmentationPainterModels(this NeuralHubBuilder builder, int count)
+    {
+        for (var i = 0; i < count; i++)
+        {
+            builder.AddModel<ImageSegmentationPainterModel, SegmentationPredictionsToImageTask, ImageBoxPainterDependencies>(
                 new ImageBoxPainterDependencies(new ImageBoxPainterService()));
         }
         
@@ -65,6 +94,6 @@ public static class NeuralHubConfigurationExtensions
 
     public static NeuralHubBuilder AddImageBoxPainterModel(this NeuralHubBuilder builder, ImageBoxPainterDependencies imageBoxPainterDependencies)
     {
-        return builder.AddModel<ImageBoxPainterModel, BoxPredictionsToImageTasks, ImageBoxPainterDependencies>(imageBoxPainterDependencies);
+        return builder.AddModel<ImageBoxPainterModel, BoxPredictionsToImageTask, ImageBoxPainterDependencies>(imageBoxPainterDependencies);
     }
 }

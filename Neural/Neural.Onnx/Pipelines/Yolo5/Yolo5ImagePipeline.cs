@@ -4,17 +4,17 @@ using Neural.Onnx.Clusters;
 using Neural.Onnx.Models.ImageBoxPainter;
 using Neural.Onnx.Models.Yolo5.Tasks.BoxPredictionsToImage;
 
-namespace Neural.Onnx.Pipelines;
+namespace Neural.Onnx.Pipelines.Yolo5;
 
 public abstract class Yolo5ImagePipeline : IPipeline
 {
     protected Yolo5Cluster? Yolo5Cluster;
-    protected Cluster<ImageBoxPainterModel, BoxPredictionsToImageTasks>? ImageBoxPainterCluster;
+    protected Cluster<ImageBoxPainterModel, BoxPredictionsToImageTask>? ImageBoxPainterCluster;
     
     public bool Init(NeuralHub neuralHub)
     {
         Yolo5Cluster = neuralHub.ShapeCluster<Yolo5Cluster>();
-        ImageBoxPainterCluster = neuralHub.ShapeCluster<Cluster<ImageBoxPainterModel, BoxPredictionsToImageTasks>>();
+        ImageBoxPainterCluster = neuralHub.ShapeCluster<Cluster<ImageBoxPainterModel, BoxPredictionsToImageTask>>();
         
         return ClustersInitialized();
     }

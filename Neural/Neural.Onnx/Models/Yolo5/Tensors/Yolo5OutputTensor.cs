@@ -18,7 +18,7 @@ public class Yolo5OutputTensor
             .First()!;
     }
 
-    public List<Yolo5Prediction> ExtractYoloPredictions()
+    private List<Yolo5Prediction> ExtractYoloPredictions()
     {
         var result = new ConcurrentBag<Yolo5Prediction>();
         
@@ -41,35 +41,36 @@ public class Yolo5OutputTensor
         return result.ToList();
     }
     
-    public List<Yolo5Prediction> ExtractFilterOverlappingPredictions()
+    public IEnumerable<Yolo5Prediction> ExtractFilterOverlappingPredictions()
     {
         var predictions = ExtractYoloPredictions();
-        var result = new List<Yolo5Prediction>(predictions);
+        var result = new HashSet<Yolo5Prediction>();
 
-        foreach (var prediction in predictions)
+        foreach (var prediction in predictions.OrderByDescending(yolo5Prediction => yolo5Prediction.Score))
         {
-            foreach (var otherPrediction in result.ToList().Where(yolo5Prediction => yolo5Prediction != prediction))
+            if (!result.Any(yolo5Prediction =>
+                    RectanglesOverlapExcessively(yolo5Prediction.Rectangle, prediction.Rectangle)))
             {
-                var rectangle1 = prediction.Rectangle;
-                var rectangle2 = otherPrediction.Rectangle;
-
-                var overlapRectangle = RectangleF.Intersect(rectangle1, rectangle2);
-                
-                if (!overlapRectangle.IsOverlappingAboveThreshold(
-                        rectangle1, 
-                        rectangle2,
-                        Yolo5OutputSpecification.OverlapThreshold))
-                {
-                    continue;
-                }
-                
-                if (prediction.Score >= otherPrediction.Score)
-                {
-                    result.Remove(otherPrediction);
-                }
+                result.Add(prediction);
             }
         }
 
         return result;
+    }
+    
+    private static bool RectanglesOverlapExcessively(RectangleF rectangle1, RectangleF rectangle2)
+    {
+        if (!rectangle1.IntersectsWith(rectangle2))
+        {
+            return false;
+        }
+        
+        var overlapRectangle = RectangleF.Intersect(rectangle1, rectangle2);
+
+        return overlapRectangle.IsOverlappingAboveThreshold(
+            rectangle1,
+            rectangle2,
+            Yolo5OutputSpecification.OverlapThreshold
+        );
     }
 }

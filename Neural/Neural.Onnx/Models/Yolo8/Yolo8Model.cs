@@ -7,14 +7,14 @@ public class Yolo8Model : OnnxModel<ImageToSegmentationTask>
     protected override Task<ImageToSegmentationTask> ProcessAsync(ImageToSegmentationTask task)
     {
         var namedOnnxValues = task
-            .Yolo8ImageInput()
+            .TypedInput
             .GetNamedOnnxValues();
         
         using var result = InferenceSession?.Run(namedOnnxValues);
         
         if (result == null)
         {
-            throw new NullReferenceException(nameof(result));
+            return Task.FromResult(task);
         }
         
         task.SetOutput(this, result);

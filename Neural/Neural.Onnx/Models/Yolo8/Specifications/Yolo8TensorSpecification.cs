@@ -14,8 +14,8 @@ public static class Yolo8TensorSpecification
         return new DenseTensor<float>([
             BatchSize,
             ColorChannels, 
-            Yolo5Specification.InputSize.Height, 
-            Yolo5Specification.InputSize.Width
+            Yolo5Specification.InputSize.Width, 
+            Yolo5Specification.InputSize.Height
         ]);
     }
 }

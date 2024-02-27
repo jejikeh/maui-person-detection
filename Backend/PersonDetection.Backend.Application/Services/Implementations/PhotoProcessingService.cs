@@ -1,5 +1,4 @@
-using Microsoft.AspNetCore.SignalR;
-using Neural.Onnx.Models.Yolo5.Tasks.ImageToBoxPredictions;
+using Neural.Onnx.Tasks.ImageToSegmentation;
 using PersonDetection.Backend.Application.Common.Exceptions;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -12,9 +11,9 @@ public class PhotoProcessingService(INeuralService _neuralService) : IPhotoProce
     {
         var image = ConvertStringToImage(base64Image);
 
-        var yoloTask = new ImageToBoxPredictionsTask(image);
+        var yoloTask = new ImageToSegmentationTask(image);
 
-        var processedPhoto = await _neuralService.Yolo5ImagePlainPipeline.RunAsync(yoloTask);
+        var processedPhoto = await _neuralService.Yolo8ImagePlainPipeline.RunAsync(yoloTask);
 
         if (processedPhoto?.TypedInput.InputImage is null)
         {
@@ -28,7 +27,7 @@ public class PhotoProcessingService(INeuralService _neuralService) : IPhotoProce
 
     public void RunInBackground(string photo, Func<string, Task> handlePipelineCompleteAsync)
     {
-        _neuralService.Yolo5ImageStreamPipeline.RunInBackground(photo, handlePipelineCompleteAsync);
+        _neuralService.Yolo8ImageStreamPipeline.RunInBackground(photo, handlePipelineCompleteAsync);
     }
 
     private static Image<Rgba32> ConvertStringToImage(string base64)
