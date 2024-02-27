@@ -21,10 +21,10 @@ public class Yolo5ImageInput(Image<Rgba32> _image) : IModelInput
     {
         var tensor = Yolo5TensorSpecification.Tensor();
 
-        var chunkSize = Environment.ProcessorCount; // or adjust as needed
+        var chunkSize = Environment.ProcessorCount;
         var chunkCount = CalculateChunkCount(chunkSize);
 
-        var tasks = Enumerable.Range(0, chunkCount).Select(async chunkIndex =>
+        var tasks = Enumerable.Range(0, chunkCount).AsParallel().Select(async chunkIndex =>
         {
             var startRow = chunkIndex * chunkSize;
             var endRow = Math.Min(startRow + chunkSize, Yolo5Specification.InputSize.Height);
@@ -38,7 +38,6 @@ public class Yolo5ImageInput(Image<Rgba32> _image) : IModelInput
             }
         });
 
-        // Wait for all tasks to complete
         Task.WaitAll(tasks.ToArray());
 
         return tensor;

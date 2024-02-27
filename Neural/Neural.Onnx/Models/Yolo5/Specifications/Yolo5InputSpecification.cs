@@ -34,7 +34,7 @@ public static class Yolo5InputSpecification
         } / _maxColorValue;
 
         tensor[BatchLayer, layer, y, x] = pixelColorValue;
-        
+
         return tensor;
     }
 }
