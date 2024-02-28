@@ -54,4 +54,14 @@ public static class RectangleExtensions
         RectangleF rectangle1, 
         RectangleF rectangle2, 
         float threshold) => intersection.CalculateOverlapArea(rectangle1, rectangle2) > threshold;
+    
+    public static Rectangle CenterRectangle(this Rectangle rectangle)
+    {
+        var xMin = rectangle.X - rectangle.Width / 2;
+        var yMin = rectangle.Y - rectangle.Height / 2;
+        var xMax = rectangle.X + rectangle.Width / 2;
+        var yMax = rectangle.Y + rectangle.Height / 2;
+        
+        return Rectangle.FromLTRB(xMin, yMin, xMax, yMax);
+    }
 }

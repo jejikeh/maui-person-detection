@@ -1,4 +1,5 @@
 using Microsoft.ML.OnnxRuntime.Tensors;
+using Neural.Onnx.Common;
 using SixLabors.ImageSharp;
 
 namespace Neural.Onnx.Models.Yolo8.Specifications;
@@ -13,9 +14,29 @@ public readonly struct IndexedBoundingBox : IComparable<IndexedBoundingBox>
     
     public int CompareTo(IndexedBoundingBox other) => Confidence.CompareTo(other.Confidence);
 
-    // public static SegmentationBoundBox[] ToSegmentationBoundBoxes(this IndexedBoundingBox[] boxes)
-    // {
-    //     var segmentationBoundBox = new SegmentationBoundBox[];
-    //     
-    // }
+    public static List<IndexedBoundingBox> FilterOverlappingBoxes(IReadOnlyList<IndexedBoundingBox> boxes)
+    {
+        var filteredIndexes = new List<int>();
+        
+        foreach(var (boxIndex, box) in boxes.Select((value, index) => (index, value)))
+        {
+            if (filteredIndexes.Contains(boxIndex))
+            {
+                continue;
+            }
+            
+            filteredIndexes.Add(boxIndex);
+
+            filteredIndexes.RemoveAll(otherBoxIndex =>
+            {
+                var otherBox = boxes[otherBoxIndex];
+                    
+                return box.Bounds.IsOverlappingAboveThreshold(
+                    otherBox.Bounds, 
+                    Yolo8OutputSpecification.OverlapThreshold);
+            });
+        }
+        
+        return filteredIndexes.Select(boxes.ElementAt).ToList();
+    }
 }

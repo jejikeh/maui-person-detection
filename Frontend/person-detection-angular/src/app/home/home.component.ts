@@ -89,7 +89,7 @@ export class HomeComponent implements AfterViewInit {
   public modelPerformance: string = '';
   public AverageModelPerformance: string = '';
 
-  public CurrentModel = 'UnQuantized';
+  public CurrentModel = '';
 
   ngOnInit() {
     this._authService.identify().add(() => {

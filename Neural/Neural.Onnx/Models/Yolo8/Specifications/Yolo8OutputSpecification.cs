@@ -22,84 +22,17 @@ public static class Yolo8OutputSpecification
 
     public const float ModelQuality = 2f;
 
-    private const int _xLayer = 0;
-    private const int _yLayer = 1;
-    private const int _widthLayer = 2;
-    private const int _heightLayer = 3;
-    
-    public static List<IndexedBoundingBox> ExtractIndexedBoundingBoxes(this Tensor<float> outputTensor)
-    {
-        var boxesCount = outputTensor.Dimensions[Boxes];
-        var boxes = new ConcurrentBag<IndexedBoundingBox>();
-
-        Parallel.For(0, boxesCount, box =>
-        {
-            for (var classIndex = 0; classIndex < Yolo8Specification.Classes.Length; classIndex++) 
-            {
-                if (outputTensor.IsConfidenceThresholdExceeded(classIndex, box))
-                {
-                    continue;
-                }
-
-                var bounds = outputTensor.ExtractBoundingBox(box);
-
-                var name = Yolo8Specification.Classes[classIndex];
-
-                if (bounds.IsEmpty)
-                {
-                    return;
-                }
-
-                boxes.Add(new IndexedBoundingBox
-                {
-                    Index = box,
-                    Class = name,
-                    Bounds = bounds,
-                    Confidence = outputTensor.GetConfidence(classIndex, box),
-                });
-            }
-        });
-        
-        return boxes.ToList().FilterOverlappingBoxes();
-    }
-    
-    // @Cleanup: Refactor this. This is a very big function.
-    private static List<IndexedBoundingBox> FilterOverlappingBoxes(this IReadOnlyList<IndexedBoundingBox> boxes)
-    {
-        var activeBoxes = new HashSet<int>(Enumerable.Range(0, boxes.Count));
-
-        var selected = new List<IndexedBoundingBox>();
-        
-        while(activeBoxes.Count != 0)
-        {
-            var currentBoxIndex = activeBoxes.First();
-            
-            activeBoxes.Remove(currentBoxIndex);
-            
-            var currentBox = boxes[currentBoxIndex];
-            selected.Add(currentBox);
-
-            foreach (var otherBoxIndex in activeBoxes)
-            {
-                var otherBox = boxes[otherBoxIndex];
-
-                // @Cleanup: Recheck this expression
-                if (currentBox.Bounds.IsOverlappingAboveThreshold(otherBox.Bounds, OverlapThreshold))
-                {
-                    activeBoxes.Remove(otherBoxIndex);
-                }
-            }
-        }
-        
-        return selected;
-    }
+    public const int XLayer = 0;
+    public const int YLayer = 1;
+    public const int WidthLayer = 2;
+    public const int HeightLayer = 3;
     
     private static Rectangle ExtractBoundingBox(this Tensor<float> tensor, int prediction)
     {
-        var x = tensor[BoxesTensorDimensionLayer, _xLayer, prediction];
-        var y = tensor[BoxesTensorDimensionLayer, _yLayer, prediction];
-        var width = tensor[BoxesTensorDimensionLayer, _widthLayer, prediction];
-        var height = tensor[BoxesTensorDimensionLayer, _heightLayer, prediction];
+        var x = tensor[BoxesTensorDimensionLayer, XLayer, prediction];
+        var y = tensor[BoxesTensorDimensionLayer, YLayer, prediction];
+        var width = tensor[BoxesTensorDimensionLayer, WidthLayer, prediction];
+        var height = tensor[BoxesTensorDimensionLayer, HeightLayer, prediction];
         
         var xMin = (int)(x - width / 2);
         var yMin = (int)(y - height / 2);
