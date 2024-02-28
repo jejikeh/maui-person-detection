@@ -8,6 +8,6 @@ namespace Neural.Onnx.Models;
 public abstract class OnnxModel<TModelTask> : Model<TModelTask, OnnxDependencies> 
     where TModelTask : IModelTask
 {
-    public InferenceSession? InferenceSession => 
+    protected InferenceSession? InferenceSession => 
         DependencyContainer?.InferenceSession;
 }

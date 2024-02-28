@@ -10,7 +10,8 @@ public readonly struct IndexedBoundingBox : IComparable<IndexedBoundingBox>
     public required Rectangle Bounds { get; init; }
     public required float Confidence { get; init; }
     
-    public int CompareTo(IndexedBoundingBox other) => Confidence.CompareTo(other.Confidence);
+    public int CompareTo(IndexedBoundingBox other) => 
+        Confidence.CompareTo(other.Confidence);
 
     public static List<IndexedBoundingBox> FilterOverlappingBoxes(IReadOnlyList<IndexedBoundingBox> boxes)
     {

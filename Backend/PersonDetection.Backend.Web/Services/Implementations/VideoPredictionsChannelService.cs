@@ -27,7 +27,8 @@ public class VideoPredictionsChannelService(
         {
             _processingService.RunInBackground(
                 photo,
-                async processedImage => await _hubContext.Clients.All.SendAsync(_sendPhotoMethodName, processedImage));
+                async processedImage => 
+                    await _hubContext.Clients.All.SendAsync(_sendPhotoMethodName, processedImage));
         }
     }
 }

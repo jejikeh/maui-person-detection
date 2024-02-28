@@ -23,6 +23,7 @@ public class ImageBoxPainterService : IImageBoxPainterService
     private static Font? _font;
     
     private static readonly SolidBrush _redBrush = new SolidBrush(Color.Red);
+    
     private static readonly SolidPen _redPenForBoxes = new SolidPen(_redBrush, _strokeBoxWidth);
     private static readonly SolidPen _redPenForText = new SolidPen(_redBrush, _strokeTextWidth);
 

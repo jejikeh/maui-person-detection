@@ -6,7 +6,6 @@ namespace Neural.Onnx.Models.Yolo8.Specifications;
 public static class Yolo8TensorSpecification
 {
     public static int BatchSize { get; set; } = 1;
-
     public static int ColorChannels { get; set; } = 3;
     
     public static DenseTensor<float> Tensor()

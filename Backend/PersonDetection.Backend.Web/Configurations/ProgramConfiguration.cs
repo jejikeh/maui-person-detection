@@ -17,9 +17,8 @@ namespace PersonDetection.Backend.Web.Configurations;
 public static class ProgramConfiguration
 {
     private const long _signalRMaximumReceiveMessageSize = 1024 * 1024 * 10;
+    private const string _allowFrontendPolicyName = "_allowFrontend";
 
-    private static readonly string _allowFrontendPolicyName = "_allowFrontend";
-    
     public static WebApplicationBuilder Configure(this WebApplicationBuilder builder)
     {
         builder.ConfigureJsonOptions();
@@ -37,7 +36,10 @@ public static class ProgramConfiguration
 
     private static WebApplicationBuilder ConfigureJsonOptions(this WebApplicationBuilder builder)
     {
-        builder.Services.Configure<JsonOptions>(options => { options.JsonSerializerOptions.WriteIndented = true; });
+        builder.Services.Configure<JsonOptions>(options =>
+        {
+            options.JsonSerializerOptions.WriteIndented = true;
+        });
 
         return builder;
     }
@@ -84,17 +86,22 @@ public static class ProgramConfiguration
 
     private static WebApplicationBuilder ConfigureNeuralHub(this WebApplicationBuilder builder)
     {
+        var onnxOptions = builder.Services.GetConfigureOptions<OnnxOptions>(builder.Configuration);
+        
         var modelCount = Environment.ProcessorCount / 2;
         
-        var neuralHub = NeuralHubConfiguration
-            .FromDefaults()
-            .AddYolo8Models("Weights/yolov8n-seg-quantize.onnx", modelCount)
-            .AddImageSegmentationPainterModels(Environment.ProcessorCount)
-            .AddYolo5Models("Weights/yolov5n.onnx", modelCount)
+        var neuralHubBuilder = NeuralHubConfiguration.FromDefaults();
+            
+        neuralHubBuilder
+            .AddYolo8Models(onnxOptions.Yolo8OnnxModelPath, modelCount)
+            .AddImageSegmentationPainterModels(Environment.ProcessorCount);
+            
+        neuralHubBuilder
+            .AddYolo5Models(onnxOptions.Yolo5OnnxModelPath, modelCount)
             .AddImageBoxPainterModels(Environment.ProcessorCount)
             .Build();
 
-        builder.Services.AddSingleton(neuralHub);
+        builder.Services.AddSingleton(neuralHubBuilder.Build());
 
         return builder;
     }
