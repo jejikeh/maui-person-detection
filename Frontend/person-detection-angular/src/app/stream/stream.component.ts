@@ -17,7 +17,7 @@ import { ScriptService } from '../script.service';
         class="image-overlay"
         id="output-image"
         width="640px"
-        height="480px"
+        height="640px"
       />
     </div>
   `,
@@ -27,7 +27,7 @@ import { ScriptService } from '../script.service';
 }
 .layered-image img {
   width: 640px;
-  height: 480px;
+  height: 640px;
 }
 .image-overlay {
   position: absolute;

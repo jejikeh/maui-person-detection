@@ -11,7 +11,7 @@ public class Yolo8Cluster : Cluster<Yolo8Model, ImageToSegmentationTask>
 {
     public async void RunInBackground(string input, Func<ImageToSegmentationTask, Task> handleModelCompleteAsync)
     {
-        var model = await WaitUntilModelWithStatusAsync(ModelStatus.Inactive);
+        var model = GetModelWithStatus(ModelStatus.Inactive);
         
         var modelTask = model?.TryRunInBackground(new ImageToSegmentationTask(input));
         

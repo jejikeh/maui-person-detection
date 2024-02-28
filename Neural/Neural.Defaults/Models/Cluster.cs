@@ -1,4 +1,5 @@
 using Neural.Core;
+using Neural.Core.Common;
 using Neural.Core.Models;
 using Neural.Core.Models.Events;
 
@@ -26,7 +27,24 @@ public class Cluster<TModel, TModelTask> : ICluster<TModel, TModelTask>
 
     public TModel? GetModelWithStatus(ModelStatus status)
     {
-        return Models.FirstOrDefault(model => model.Status == status);
+        var model = Models.FirstOrDefault(model => model.Status == status);
+
+        if (model is not null)
+        {
+            return model;
+        }
+        
+        // Force change status of the model
+        model = Models.LastOrDefault();
+        
+        if (model is null)
+        {
+            throw new InvalidModelInitializationException("Cluster seems to be empty!");
+        }
+            
+        model.Status = status;
+
+        return model;
     }
     
     public async Task RunHandleAsync(TModelTask input, Func<TModelTask, Task> handleModelCompleted)

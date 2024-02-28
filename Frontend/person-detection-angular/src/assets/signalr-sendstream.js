@@ -73,7 +73,7 @@ connection.start().then(() => {
 function captureBase64Image() {
     const canvas = document.createElement('canvas');
     canvas.width = 640;
-    canvas.height = 480;
+    canvas.height = 640;
 
     canvas
       .getContext('2d')

@@ -1,6 +1,4 @@
-using Neural.Onnx.Models.Yolo5.Tasks.BoxPredictionsToImage;
 using Neural.Onnx.Models.Yolo8.SegmentationsPredictionsToImage;
-using Neural.Onnx.Pipelines.Yolo5;
 using SixLabors.ImageSharp;
 
 namespace Neural.Onnx.Pipelines.Yolo8;

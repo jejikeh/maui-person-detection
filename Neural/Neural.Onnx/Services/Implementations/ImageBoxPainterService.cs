@@ -46,34 +46,31 @@ public class ImageBoxPainterService : IImageBoxPainterService
     public void PaintPredictions(Image<Rgba32> image, IEnumerable<SegmentationBoundBox> predictions)
     {
         var size = image.Size;
-        using var masksLayer = new Image<Rgba32>(size.Width, size.Height, Color.Transparent);
-        
-        foreach (var box in predictions)
+        using var masksLayer = new Image<Rgba32>(size.Width, size.Height);  // Skip initialization for performance
+
+        foreach (var box in predictions.Where(b => b.Class == YoloClass.Person))  // Filter early for efficiency
         {
-            if (box.Class != YoloClass.Person)
-            {
-                continue;
-            }
-            
-            using var mask = new Image<Rgba32>(box.Bounds.Width, box.Bounds.Height, Color.Transparent);
+            var maskBounds = box.Bounds;
 
-            for (var x = 0; x < box.Mask.Width; x++)
+            int maskStartX = maskBounds.X;
+            int maskEndX = maskStartX + maskBounds.Width;
+            int maskStartY = maskBounds.Y;
+            int maskEndY = maskStartY + maskBounds.Height;
+
+            for (var x = maskStartX; x < maskEndX; x++)
             {
-                for (var y = 0; y < box.Mask.Height; y++)
+                for (var y = maskStartY; y < maskEndY; y++)
                 {
-                    var value = box.Mask[x, y];
-
+                    var value = box.Mask[x - maskStartX, y - maskStartY];
                     if (value > 0.74f)
                     {
-                        mask[x, y] = Color.LightGreen;
+                        masksLayer[x, y] = Color.LightGreen;
                     }
                 }
             }
-
-            masksLayer.Mutate(x => x.DrawImage(mask, box.Bounds.Location, 1f));
         }
 
-        image.Mutate(x => x.DrawImage(masksLayer, 0.7f));
+        image.Mutate(context => context.DrawImage(masksLayer, 0.7f));
     }
 
     private static void DrawText(IImageProcessingContext imageProcessingContext, Yolo5Prediction prediction)
