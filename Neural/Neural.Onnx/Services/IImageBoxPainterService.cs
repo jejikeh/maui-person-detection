@@ -8,5 +8,5 @@ namespace Neural.Onnx.Services;
 public interface IImageBoxPainterService
 {
     public void PaintPredictions(Image<Rgba32> image, IEnumerable<Yolo5Prediction> predictions);
-    public void PaintPredictions(Image<Rgba32> image, IEnumerable<SegmentationBoundBox> predictions);
+    public void PaintPersonPredictions(Image<Rgba32> image, IEnumerable<SegmentationBoundBox> predictions);
 }

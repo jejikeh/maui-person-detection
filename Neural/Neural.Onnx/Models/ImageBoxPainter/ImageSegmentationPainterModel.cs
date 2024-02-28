@@ -16,7 +16,7 @@ public class ImageSegmentationPainterModel : Model<SegmentationPredictionsToImag
         var inputImage = task.TypedInput.InputImage;
         var predictions = task.TypedInput.Predictions;
         
-        ImageBoxPainterService?.PaintPredictions(inputImage, predictions);
+        ImageBoxPainterService?.PaintPersonPredictions(inputImage, predictions);
         
         task.SetOutput(this, inputImage);
         

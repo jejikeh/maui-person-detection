@@ -19,6 +19,7 @@ public static class Yolo8OutputSpecification
 
     public const float ConfidenceThreshold = 0.5f;
     public const float OverlapThreshold = 0.1f;
+    public const float LuminancePixelThreshold = 0.5f;
 
     public const float ModelQuality = 2f;
 
@@ -90,8 +91,8 @@ public static class Yolo8OutputSpecification
 
         return segmentationBoundBox;
     }
-    
-    public static float[] ExtractMaskWeights(this Tensor<float> output, int boxIndex, int maskChannelCount, int maskWeightOffset)
+
+    private static float[] ExtractMaskWeights(this Tensor<float> output, int boxIndex, int maskChannelCount, int maskWeightOffset)
     {
         var maskWeights = new float[maskChannelCount];
     
@@ -108,50 +109,24 @@ public static class Yolo8OutputSpecification
         IReadOnlyList<float> maskWeights,
         Rectangle maskBound)
     {
-        var maskChannels = output.Dimensions[SegmentationLayer] / ModelQuality;
+        var bitmap = output.FillBitmapImage(maskWeights);
+
         var maskHeight = output.Dimensions[Boxes];
         var maskWidth = output.Dimensions[BoxesWidthLayer];
         
-        using var bitmap = new Image<L8>(maskWidth, maskHeight);
+        bitmap.CropImageInsideMaskBound(maskBound, maskWidth, maskHeight);
 
-        var pixel = new L8(0);
-        
-        for (var y = 0; y < maskHeight; y++)
-        {
-            for (var x = 0; x < maskWidth; x++)
-            {
-                var value = 0f;
+        return CalculateMaskConfidence(maskBound, bitmap);
+    }
 
-                for (var i = 0; i < maskChannels; i++)
-                {
-                    value += output[0, i, y, x] * maskWeights[i];
-                }
-
-                value = Sigmoid(value);
-                pixel.PackedValue = GetLuminance(value);
-
-                bitmap[x, y] = pixel;
-            }
-        }
-
-        var paddingCropRectangle = new Rectangle(
-            0,
-            0,
-            maskWidth,
-            maskHeight);
-
-        bitmap.Mutate(x =>
-        {
-            x.Crop(paddingCropRectangle);
-            x.Resize(Yolo8Specification.InputSize);
-            x.Crop(maskBound);
-        });
-
+    private static SegmentationMask CalculateMaskConfidence(Rectangle maskBound, Image<L8> bitmap)
+    {
         var final = new float[maskBound.Width, maskBound.Height];
 
-        EnumeratePixels(bitmap, (point, l8) =>
+        bitmap.EnumeratePixels((point, l8) =>
         {
             var confidence = GetConfidence(l8.PackedValue);
+            
             final[point.X, point.Y] = confidence;
         });
 
@@ -160,7 +135,51 @@ public static class Yolo8OutputSpecification
             Mask = final
         };
     }
-    
+
+    private static Image<L8> FillBitmapImage(this Tensor<float> output, IReadOnlyList<float> maskWeights)
+    {
+        var maskChannels = output.Dimensions[SegmentationLayer] / ModelQuality;
+        
+        var maskHeight = output.Dimensions[Boxes];
+        var maskWidth = output.Dimensions[BoxesWidthLayer];
+        
+        var bitmap = new Image<L8>(maskWidth, maskHeight);
+
+        var pixel = new L8(0);
+        
+        for (var y = 0; y < maskHeight; y++)
+        {
+            for (var x = 0; x < maskWidth; x++)
+            {
+                var luminance = output.CalculateTensorLuminance(maskWeights, maskChannels, y, x);
+                pixel.PackedValue = LuminanceToByte(luminance);
+
+                bitmap[x, y] = pixel;
+            }
+        }
+
+        return bitmap;
+    }
+
+    private static float CalculateTensorLuminance(
+        this Tensor<float> output, 
+        IReadOnlyList<float> maskWeights, 
+        float maskChannels, 
+        int y, 
+        int x)
+    {
+        var value = 0f;
+
+        for (var channel = 0; channel < maskChannels; channel++)
+        {
+            value += output[BoxesTensorDimensionLayer, channel, y, x] * maskWeights[channel];
+        }
+
+        value = Sigmoid(value);
+
+        return value;
+    }
+
     private static float Sigmoid(float value)
     {
         var k = MathF.Exp(value);
@@ -168,48 +187,13 @@ public static class Yolo8OutputSpecification
         return k / (1.0f + k);
     }
 
-    private static byte GetLuminance(float confidence)
+    private static byte LuminanceToByte(float luminance)
     {
-        return (byte)((confidence * 255 - 255) * -1);
+        return (byte)((luminance * 255 - 255) * -1);
     }
 
-    private static float GetConfidence(byte luminance)
+    private static float GetConfidence(byte confidence)
     {
-        return (luminance - 255) * -1 / 255f;
-    }
-
-    private static void EnumeratePixels<TPixel>(Image<TPixel> image, Action<Point, TPixel> iterator) where TPixel : unmanaged, IPixel<TPixel>
-    {
-        var width = image.Width;
-        var height = image.Height;
-
-        if (image.DangerousTryGetSinglePixelMemory(out var memory))
-        {
-            Parallel.For(0, width * height, index =>
-            {
-                var x = index % width;
-                var y = index / width;
-
-                var point = new Point(x, y);
-                var pixel = memory.Span[index];
-
-                iterator(point, pixel);
-            });
-        }
-        else
-        {
-            Parallel.For(0, image.Height, y =>
-            {
-                var row = image.DangerousGetPixelRowMemory(y).Span;
-
-                for (var x = 0; x < image.Width; x++)
-                {
-                    var point = new Point(x, y);
-                    var pixel = row[x];
-
-                    iterator(point, pixel);
-                }
-            });
-        }
+        return (confidence - 255) * -1 / 255f;
     }
 }

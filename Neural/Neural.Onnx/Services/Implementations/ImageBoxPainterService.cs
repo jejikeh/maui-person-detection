@@ -43,7 +43,7 @@ public class ImageBoxPainterService : IImageBoxPainterService
         });
     }
 
-    public void PaintPredictions(Image<Rgba32> image, IEnumerable<SegmentationBoundBox> predictions)
+    public void PaintPersonPredictions(Image<Rgba32> image, IEnumerable<SegmentationBoundBox> predictions)
     {
         var size = image.Size;
         var masksLayer = new Image<Rgba32>(size.Width, size.Height);
