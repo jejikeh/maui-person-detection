@@ -2,6 +2,8 @@ using System.Reflection;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Neural.Onnx.Services;
+using Neural.Onnx.Services.Implementations;
 using PersonDetection.Backend.Application.Services;
 using PersonDetection.Backend.Application.Services.Implementations;
 using PersonDetection.ImageSegmentation.ModelConverter;
@@ -14,7 +16,7 @@ public static class ApplicationInjection
     {
         return serviceCollection
             .AddSingleton<ModelTypeProvider>()
-            .AddSingleton<INeuralService, NeuralService>()
+            .AddSingleton<IOnnxNeuralService, OnnxNeuralService>()
             .AddScoped<IAuthorizationService, AuthorizationService>()
             .AddSingleton<IPhotoProcessingService, PhotoProcessingService>()
             .AddValidations();

@@ -46,28 +46,11 @@ public class ImageBoxPainterService : IImageBoxPainterService
     public void PaintPredictions(Image<Rgba32> image, IEnumerable<SegmentationBoundBox> predictions)
     {
         var size = image.Size;
-        using var masksLayer = new Image<Rgba32>(size.Width, size.Height);  // Skip initialization for performance
+        var masksLayer = new Image<Rgba32>(size.Width, size.Height);
 
-        foreach (var box in predictions.Where(b => b.Class == YoloClass.Person))  // Filter early for efficiency
+        foreach (var box in predictions.Where(b => b.Class == YoloClass.Person))
         {
-            var maskBounds = box.Bounds;
-
-            int maskStartX = maskBounds.X;
-            int maskEndX = maskStartX + maskBounds.Width;
-            int maskStartY = maskBounds.Y;
-            int maskEndY = maskStartY + maskBounds.Height;
-
-            for (var x = maskStartX; x < maskEndX; x++)
-            {
-                for (var y = maskStartY; y < maskEndY; y++)
-                {
-                    var value = box.Mask[x - maskStartX, y - maskStartY];
-                    if (value > 0.74f)
-                    {
-                        masksLayer[x, y] = Color.LightGreen;
-                    }
-                }
-            }
+            masksLayer.DrawSegmentationBox(box);
         }
 
         image.Mutate(context => context.DrawImage(masksLayer, 0.7f));
@@ -79,7 +62,7 @@ public class ImageBoxPainterService : IImageBoxPainterService
         
         var textX = prediction.Rectangle.Left - _leftRectangleOffset; 
         var textY = prediction.Rectangle.Top - _topRectangleOffset;
-            
+        
         imageProcessingContext.DrawText($"{prediction.Class.DisplayName()} ({score})", 
             _font!, 
             _redPenForText, 

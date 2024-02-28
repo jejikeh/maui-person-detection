@@ -90,6 +90,8 @@ public static class ProgramConfiguration
             .FromDefaults()
             .AddYolo8Models("Weights/yolov8n-seg-quantize.onnx", modelCount)
             .AddImageSegmentationPainterModels(Environment.ProcessorCount)
+            .AddYolo5Models("Weights/yolov5n.onnx", modelCount)
+            .AddImageBoxPainterModels(Environment.ProcessorCount)
             .Build();
 
         builder.Services.AddSingleton(neuralHub);

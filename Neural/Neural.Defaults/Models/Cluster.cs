@@ -113,7 +113,7 @@ public class Cluster<TModel, TModelTask> : ICluster<TModel, TModelTask>
 
     public async Task<TModelTask?> RunAsync(TModelTask input)
     {
-        var model = GetModelWithStatus(ModelStatus.Inactive);
+        var model = await WaitUntilModelWithStatusAsync(ModelStatus.Inactive);
         
         if (model is null)
         {

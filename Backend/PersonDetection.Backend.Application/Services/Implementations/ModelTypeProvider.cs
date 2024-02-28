@@ -1,13 +1,17 @@
-using PersonDetection.ImageSegmentation.ModelConverter;
+using PersonDetection.Backend.Application.Common.Models;
 
 namespace PersonDetection.Backend.Application.Services.Implementations;
 
 public class ModelTypeProvider
 {
-    public ModelType ModelType { get; private set; }
+    public OnnxModelType ModelType { get; private set; }
 
-    public ModelType SwitchModelType()
+    public OnnxModelType SwitchModelType()
     {
-        return ModelType = ModelType == ModelType.UnQuantized ? ModelType.Quantized : ModelType.UnQuantized;
+        ModelType = ModelType == OnnxModelType.Yolo5 
+            ? OnnxModelType.Yolo8 
+            : OnnxModelType.Yolo5;
+
+        return ModelType;
     }
 }

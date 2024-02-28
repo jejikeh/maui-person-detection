@@ -121,6 +121,8 @@ export class HomeComponent implements AfterViewInit {
     this._signalR?.OnReceivedMask.subscribe((data) => {
       this.receivedOverlay = data;
     });
+
+    this.switchModel();
   }
 
   public start() {
