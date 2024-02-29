@@ -23,13 +23,17 @@ public class PhotoProcessingService(
         switch (_modelTypeProvider.ModelType)
         {
             case OnnxModelType.Yolo5:
+            {
                 _onnxNeuralService.Yolo5ImageStreamRunInBackground(photo, handlePipelineCompleteAsync);
                 
                 break;
+            }
             case OnnxModelType.Yolo8:
+            {
                 _onnxNeuralService.Yolo8ImageStreamRunInBackground(photo, handlePipelineCompleteAsync);
                 
                 break;
+            }
             default:
                 throw new ArgumentOutOfRangeException();
         }

@@ -15,6 +15,7 @@ public static class InjectionsConfiguration
     public static IServiceCollection AddInjections(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
         var clientOptions = new ClientOptions();
+        
         configuration
             .GetSection(nameof(ClientOptions))
             .Bind(clientOptions);
@@ -44,9 +45,9 @@ public static class InjectionsConfiguration
     private static IServiceCollection AddDeviceAccessServices(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton(Connectivity.Current);
+        serviceCollection.AddSingleton(FileSaver.Default);
         serviceCollection.AddHttpClient();
         serviceCollection.AddMemoryCache();
-        serviceCollection.AddSingleton(FileSaver.Default);
         
         return serviceCollection;
     }

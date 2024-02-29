@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Neural.Defaults;
 using Neural.Onnx.Common;
+using Neural.Onnx.Common.Options;
 using PersonDetection.Backend.Application;
 using PersonDetection.Backend.Infrastructure;
 using PersonDetection.Backend.Web.Common;
@@ -87,6 +88,7 @@ public static class ProgramConfiguration
     private static WebApplicationBuilder ConfigureNeuralHub(this WebApplicationBuilder builder)
     {
         var onnxOptions = builder.Services.GetConfigureOptions<OnnxOptions>(builder.Configuration);
+        var painterOptions = builder.Services.GetConfigureOptions<ImageBoxPainterOptions>(builder.Configuration);
         
         var modelCount = Environment.ProcessorCount / 2;
         
@@ -94,11 +96,11 @@ public static class ProgramConfiguration
             
         neuralHubBuilder
             .AddYolo8Models(onnxOptions.Yolo8OnnxModelPath, modelCount)
-            .AddImageSegmentationPainterModels(Environment.ProcessorCount);
+            .AddImageSegmentationPainterModels(painterOptions, Environment.ProcessorCount);
             
         neuralHubBuilder
             .AddYolo5Models(onnxOptions.Yolo5OnnxModelPath, modelCount)
-            .AddImageBoxPainterModels(Environment.ProcessorCount)
+            .AddImageBoxPainterModels(painterOptions, Environment.ProcessorCount)
             .Build();
 
         builder.Services.AddSingleton(neuralHubBuilder.Build());
