@@ -2,17 +2,6 @@ const webm9MimeCodec = 'video/webm'
 const videoSource = document.getElementById('video-stream-source')
 const videoReceiver = document.getElementById('output-image')
 
-const BufferStates = {
-  Sending: 0,
-  Receiving: 1
-}
-
-const maxBufferStreamCount = 10;
-let bufferState = BufferStates.Sending
-
-let bufferStreamIndex = 0;
-let bufferStreamReceived = 0;
-
 const connection = new signalR.HubConnectionBuilder()
     .withUrl("http://localhost:12532/video")
     .build();
@@ -25,16 +14,6 @@ connection.start().then(() => {
     connection.on("SendPhoto", (data) => {
       try {
         videoReceiver.src = 'data:image/png;base64, ' + data
-
-        console.log("Receiving: " + bufferStreamReceived)
-
-        bufferStreamReceived++
-
-        if (bufferStreamReceived === maxBufferStreamCount) {
-            bufferStreamReceived = 0
-            bufferStreamIndex = 0
-            bufferState = BufferStates.Sending
-        }
       }
       catch(error) {
         console.log(error)
@@ -43,17 +22,7 @@ connection.start().then(() => {
 
     async function handleDataAvailable(event) {
         const ab64 = captureBase64Image();
-
-        console.log("Sending: " + bufferStreamIndex)
-
-        if (true) {
-            subject.next(ab64);
-            bufferStreamIndex++;
-        }
-
-        if (bufferStreamIndex == maxBufferStreamCount) {
-            bufferState = BufferStates.Receiving
-        }
+        subject.next(ab64);
     }
 
     navigator.mediaDevices.getUserMedia({video: true, audio: false})
