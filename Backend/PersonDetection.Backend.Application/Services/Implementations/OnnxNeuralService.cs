@@ -43,6 +43,11 @@ public class OnnxNeuralService : IOnnxNeuralService
         return processedPhoto;
     }
     
+    public void Yolo8ImageStreamRunInBackground(string photo, Func<string, Task> handlePipelineCompleteAsync)
+    {
+        _yolo8ImageStreamPipeline.RunInBackground(photo, handlePipelineCompleteAsync);
+    }
+
     public async Task<BoxPredictionsToImageTask> Yolo5PlainImageProcessing(ImageToBoxPredictionsTask yoloTask)
     {
         var processedPhoto = await _yolo5ImagePlainPipeline.RunAsync(yoloTask);
@@ -54,10 +59,17 @@ public class OnnxNeuralService : IOnnxNeuralService
 
         return processedPhoto;
     }
-    
-    public void Yolo8ImageStreamRunInBackground(string photo, Func<string, Task> handlePipelineCompleteAsync)
+
+    public async Task<BoxPredictionsToImageTask> Yolo5PlainTransparentImageProcessing(ImageToBoxPredictionsTask yoloTask)
     {
-        _yolo8ImageStreamPipeline.RunInBackground(photo, handlePipelineCompleteAsync);
+        var processedPhoto = await _yolo5ImagePlainPipeline.RunTransparentAsync(yoloTask);
+
+        if (processedPhoto?.TypedInput.InputImage is null)
+        {
+            throw new InvalidPhotoException();
+        }
+
+        return processedPhoto;
     }
     
     public void Yolo5ImageStreamRunInBackground(string photo, Func<string, Task> handlePipelineCompleteAsync)

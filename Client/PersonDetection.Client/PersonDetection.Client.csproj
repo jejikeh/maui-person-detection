@@ -70,10 +70,13 @@
         <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+        <PackageReference Condition="'$(TargetFramework)' != 'net8.0-maccatalyst'" Include="Microsoft.ML.OnnxRuntime" Version="1.16.3" />
+        <PackageReference Condition="'$(TargetFramework)' != 'net8.0-maccatalyst'" Include="Microsoft.ML.OnnxRuntime.Managed" Version="1.16.3" />
         <PackageReference Include="Refractored.MvvmHelpers" Version="1.6.2" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Condition="'$(TargetFramework)' != 'net8.0-maccatalyst'" Include="..\..\Neural\Neural.Onnx\Neural.Onnx.csproj" />
       <ProjectReference Include="..\PersonDetection.Client.Application\PersonDetection.Client.Application.csproj" />
       <ProjectReference Include="..\PersonDetection.Client.Infrastructure\PersonDetection.Client.Infrastructure.csproj" />
     </ItemGroup>

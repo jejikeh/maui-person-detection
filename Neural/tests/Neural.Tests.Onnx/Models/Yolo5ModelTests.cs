@@ -2,11 +2,12 @@ using FluentAssertions;
 using Neural.Defaults;
 using Neural.Defaults.Models;
 using Neural.Onnx.Common;
+using Neural.Onnx.Common.Options;
 using Neural.Onnx.Models.ImageBoxPainter;
 using Neural.Onnx.Models.Yolo5;
 using Neural.Onnx.Models.Yolo5.Tasks.BoxPredictionsToImage;
 using Neural.Onnx.Models.Yolo5.Tasks.ImageToBoxPredictions;
-using Neural.Onnx.Pipelines;
+using Neural.Onnx.Pipelines.Yolo5;
 using Neural.Tests.Common.Mocks;
 using Neural.Tests.Common.Utils;
 using Neural.Tests.Onnx.Utils;
@@ -84,7 +85,7 @@ public class Yolo5ModelTests
         var neuralHub = NeuralHubConfiguration
             .FromDefaults()
             .AddYolo5Models(Paths.Yolo5ModelPath, modelCount)
-            .AddImageBoxPainterModels(modelCount)
+            .AddImageBoxPainterModels(new ImageBoxPainterOptions(), modelCount)
             .Build();
 
         var yolo5 = neuralHub.GetModels<Yolo5Model>().First();
@@ -96,7 +97,7 @@ public class Yolo5ModelTests
         // Act
         var result = await yolo5.RunAsync(task);
         
-        var imageTask = await imageBoxPainter.RunAsync(new BoxPredictionsToImageTasks(result));
+        var imageTask = await imageBoxPainter.RunAsync(new BoxPredictionsToImageTask(result));
         
         // Assert
         result.Should().NotBeNull();
@@ -112,7 +113,7 @@ public class Yolo5ModelTests
         var neuralHub = NeuralHubConfiguration
             .FromDefaults()
             .AddYolo5Models(Paths.Yolo5ModelPath, modelCount)
-            .AddImageBoxPainterModels(modelCount)
+            .AddImageBoxPainterModels(new ImageBoxPainterOptions(), modelCount)
             .Build();
 
         var yolo5Pipeline = neuralHub.ExtractPipeline<Yolo5ImagePlainPipeline>();
@@ -120,34 +121,10 @@ public class Yolo5ModelTests
         var inputImage = DataProvider.LoadImageToBoxPredictionsTask(Paths.ValidImages);
         
         // Act
-        var result = await yolo5Pipeline!.RunAsync(inputImage);
+        var result = await yolo5Pipeline!.RunTransparentAsync(inputImage);
         
         // Assert
         result.Should().NotBeNull();
         result!.TypedOutput.Image.Should().NotBeNull();
-    }
-    
-    [Fact]
-    public async void GivenConcurrentPipeline_WhenProcessingImages_ThenShouldReturnValidImages()
-    {
-        // Arrange
-        var modelCount = FakeData.IntFromSmallRange();
-        
-        var neuralHub = NeuralHubConfiguration
-            .FromDefaults()
-            .AddYolo5Models(Paths.Yolo5ModelPath, modelCount)
-            .AddImageBoxPainterModels(modelCount)
-            .Build();
-
-        var yolo5Pipeline = neuralHub.ExtractPipeline<Yolo5ImageConcurrentPipeline>();
-        
-        var inputImages = DataProvider.LoadImageToBoxPredictionsTasks(Paths.ValidImages);
-        
-        // Act
-        var images = await yolo5Pipeline!.RunAsync(inputImages);
-        
-        // Assert
-        images.Should().NotBeNull();
-        images.Length.Should().Be(inputImages.Count);
     }
 }
