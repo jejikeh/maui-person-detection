@@ -7,8 +7,8 @@ namespace PersonDetection.Backend.Web.Hubs;
 
 public class VideoHub(IVideoPredictionsChannelService _predictionsChannelService) : Hub
 {
-    private static readonly string _sendModelPerformanceMethodName = "SendModelPerformance";
-    
+    private const string _sendModelPerformanceMethodName = "SendModelPerformance";
+
     private readonly Stopwatch _stopwatch = new Stopwatch();
     
     public async Task<ChannelReader<string>> ReceiveVideoData(string data)

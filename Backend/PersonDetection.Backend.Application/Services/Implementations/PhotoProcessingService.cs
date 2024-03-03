@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Neural.Onnx.Models.Yolo5.Tasks.ImageToBoxPredictions;
 using Neural.Onnx.Tasks.ImageToSegmentation;
 using PersonDetection.Backend.Application.Common.Models;

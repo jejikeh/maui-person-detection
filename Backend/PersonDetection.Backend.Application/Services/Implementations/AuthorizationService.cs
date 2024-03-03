@@ -3,6 +3,7 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using PersonDetection.Backend.Application.Common.Exceptions;
+using PersonDetection.Backend.Application.Common.Models.Dtos;
 using PersonDetection.Backend.Application.Common.Models.Requests.Login;
 using PersonDetection.Backend.Application.Common.Models.Requests.Register;
 
@@ -30,7 +31,7 @@ public class AuthorizationService(
         
         await _signInManager.SignInAsync(user, true);
         
-        return Results.Ok();
+        return Results.Ok(UserDto.FromIdentityUser(user));
     }
 
     public async Task<IResult> LoginAsync(LoginRequest loginRequest, IValidator<LoginRequest> validator)
@@ -43,7 +44,14 @@ public class AuthorizationService(
             true, 
             false);
         
-        return result.Succeeded ? Results.Ok() : Results.Unauthorized();
+        if (!result.Succeeded)
+        {
+            return Results.Unauthorized();
+        }
+        
+        var user = await _userManager.FindByNameAsync(loginRequest.UserName);
+        
+        return Results.Ok(UserDto.FromIdentityUser(user!));
     }
 
     public async Task<IResult> LogoutAsync()
