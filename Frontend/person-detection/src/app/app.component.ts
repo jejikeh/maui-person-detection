@@ -1,8 +1,9 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { AuthService } from './auth/services/auth.service';
 import { NavbarComponent } from './components/navbar.component';
+import { LoginCardComponent } from './auth/components/login-card.components';
 
 @Component({
   selector: 'app-root',
@@ -10,10 +11,15 @@ import { NavbarComponent } from './components/navbar.component';
   host: {
     class: 'block p-10',
   },
-  template: `
-    <navbar />
-    <router-outlet></router-outlet>
-  `,
-  imports: [CommonModule, RouterOutlet, NavbarComponent],
+  template: ` <navbar /><router-outlet></router-outlet> `,
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    NavbarComponent,
+    NgIf,
+    LoginCardComponent,
+  ],
 })
-export class AppComponent {}
+export class AppComponent {
+  auth = inject(AuthService);
+}

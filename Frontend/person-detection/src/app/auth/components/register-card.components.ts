@@ -30,7 +30,7 @@ import { UserInterface } from '../interfaces/user.interface';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-register-card',
+  selector: 'register-card',
   standalone: true,
   imports: [
     BrnCommandImports,
@@ -123,9 +123,17 @@ export class RegisterCardComponent {
     password: ['', Validators.required],
   });
 
+  ngOnInit() {
+    if (this.auth.currentUser() !== null) {
+      this.router.navigateByUrl('/');
+    }
+  }
+
   onSubmit() {
     this.http
-      .post<UserInterface>(this.api.Register(), this.registerForm.value)
+      .post<UserInterface>(this.api.Register(), this.registerForm.value, {
+        withCredentials: true,
+      })
       .subscribe({
         next: (data) => {
           this.auth.currentUser.set(data);

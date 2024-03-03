@@ -12,4 +12,12 @@ export class ApiRoutesService {
   public Login(): string {
     return environment.api + 'login';
   }
+
+  public User(): string {
+    return environment.api + 'user';
+  }
+
+  public Logout(): string {
+    return environment.api + 'logout';
+  }
 }

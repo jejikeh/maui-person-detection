@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
@@ -52,6 +53,25 @@ public class AuthorizationService(
         var user = await _userManager.FindByNameAsync(loginRequest.UserName);
         
         return Results.Ok(UserDto.FromIdentityUser(user!));
+    }
+
+    public IResult Identify(ClaimsPrincipal claimsPrincipal)
+    {
+        var userName = claimsPrincipal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Name);
+        
+        if (userName is null)
+        {
+            throw new InvalidCredentialsException();
+        }
+        
+        var email = claimsPrincipal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email);
+        
+        if (email is null)
+        {
+            throw new InvalidCredentialsException();
+        }
+        
+        return Results.Ok(new UserDto(userName.Value, email.Value));
     }
 
     public async Task<IResult> LogoutAsync()

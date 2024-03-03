@@ -30,7 +30,7 @@ import { UserInterface } from '../interfaces/user.interface';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-login-card',
+  selector: 'login-card',
   standalone: true,
   imports: [
     BrnCommandImports,
@@ -112,9 +112,17 @@ export class LoginCardComponent {
     password: ['', Validators.required],
   });
 
+  ngOnInit() {
+    if (this.auth.currentUser() !== null) {
+      this.router.navigateByUrl('/');
+    }
+  }
+
   onSubmit() {
     this.http
-      .post<UserInterface>(this.api.Login(), this.loginForm.value)
+      .post<UserInterface>(this.api.Login(), this.loginForm.value, {
+        withCredentials: true,
+      })
       .subscribe({
         next: (data) => {
           console.log(data.userName);
