@@ -50,9 +50,7 @@ type Framework = { label: string; value: string };
         brnPopoverTrigger
         hlmBtn
       >
-        {{
-          currentFramework() ? currentFramework()?.label : 'Select framework...'
-        }}
+        {{ currentModel() ? currentModel()?.label : 'Select demo...' }}
         <hlm-icon size="sm" name="lucideChevronsUpDown" />
       </button>
       <brn-cmd
@@ -69,16 +67,14 @@ type Framework = { label: string; value: string };
         <brn-cmd-list hlm>
           <brn-cmd-group hlm>
             <button
-              *ngFor="let framework of frameworks"
+              *ngFor="let framework of model"
               brnCmdItem
               [value]="framework.value"
               (selected)="commandSelected(framework)"
               hlm
             >
               <hlm-icon
-                [class.opacity-0]="
-                  currentFramework()?.value !== framework.value
-                "
+                [class.opacity-0]="currentModel()?.value !== framework.value"
                 name="lucideCheck"
                 hlmCmdIcon
               />
@@ -91,45 +87,41 @@ type Framework = { label: string; value: string };
   `,
 })
 export class DemosComboboxComponent {
-  public frameworks = [
+  public model = [
     {
-      label: 'AnalogJs',
-      value: 'analogjs',
+      label: 'YOLOv5 Server Streaming',
+      value: 'yolov5-ss',
     },
     {
-      label: 'Angular',
-      value: 'angular',
+      label: 'YOLOv8 Server Streaming',
+      value: 'yolov8-ss',
     },
     {
-      label: 'Vue',
-      value: 'vue',
+      label: 'YOLOv5 Client Streaming',
+      value: 'yolov5-cs',
     },
     {
-      label: 'Nuxt',
-      value: 'nuxt',
+      label: 'YOLOv8 Client Streaming',
+      value: 'yolov8-cs',
     },
     {
-      label: 'React',
-      value: 'react',
-    },
-    {
-      label: 'NextJs',
-      value: 'nextjs',
+      label: 'Mediapipe',
+      value: 'mediapipe',
     },
   ];
-  public currentFramework = signal<Framework | undefined>(undefined);
+  public currentModel = signal<Framework | undefined>(undefined);
   public state = signal<'closed' | 'open'>('closed');
 
   stateChanged(state: 'open' | 'closed') {
     this.state.set(state);
   }
 
-  commandSelected(framework: Framework) {
+  commandSelected(model: Framework) {
     this.state.set('closed');
-    if (this.currentFramework()?.value === framework.value) {
-      this.currentFramework.set(undefined);
+    if (this.currentModel()?.value === model.value) {
+      this.currentModel.set(undefined);
     } else {
-      this.currentFramework.set(framework);
+      this.currentModel.set(model);
     }
   }
 }

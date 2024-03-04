@@ -1,6 +1,12 @@
-import { Component, inject } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  ViewChild,
+  effect,
+  inject,
+} from '@angular/core';
 import { AuthService } from '../auth/services/auth.service';
-import { NgIf } from '@angular/common';
+import { NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
 import { LoginCardComponent } from '../auth/components/login-card.components';
 import { DemosComboboxComponent } from './components/ui/demos-combobox.component';
 import {
@@ -12,6 +18,7 @@ import {
 } from '@spartan-ng/ui-typography-helm';
 import { HlmAspectRatioDirective } from '@spartan-ng/ui-aspectratio-helm';
 import { HlmSeparatorDirective } from '@spartan-ng/ui-separator-helm';
+import { YoloV5ServerStreamingComponent } from './components/yolov5-server-streaming';
 
 @Component({
   selector: 'app-home',
@@ -22,6 +29,9 @@ import { HlmSeparatorDirective } from '@spartan-ng/ui-separator-helm';
     DemosComboboxComponent,
     HlmAspectRatioDirective,
     HlmSeparatorDirective,
+    NgSwitchCase,
+    NgSwitch,
+    YoloV5ServerStreamingComponent,
   ],
   host: {
     class: 'block p-10',
@@ -69,29 +79,16 @@ import { HlmSeparatorDirective } from '@spartan-ng/ui-separator-helm';
         </p>
       </div>
 
-      <brn-separator hlmSeparator class="my-4" />
+      <brn-separator hlmSeparator />
 
       <div class="mt-4">
         <h3 class="${hlmH3}">Angular Application</h3>
         <div class="overflow-hidden rounded-xl drop-shadow max-w-xl">
-          <img alt="Mac Application" src="/assets/mac-application.png" />
+          <img alt="Mac Application" src="/assets/web-application.png" />
         </div>
         <p class="${hlmP}">
           Utilizing Angular framework for building the web interface with
           Tailwind CSS and Spartan. Uses ASP.Core Web API.
-        </p>
-      </div>
-
-      <div class="mt-4">
-        <h3 class="${hlmH3}">Cross-platform Maui Application</h3>
-        <div class="overflow-hidden rounded-xl drop-shadow max-w-xl">
-          <img alt="Mac Application" src="/assets/mac-application.png" />
-        </div>
-        <p class="${hlmP}">
-          Maui Person Detection demonstrate maui application with onnxruntime
-          YOLOv5 Object Detection integration. The supported platforms are
-          Android and Mac. However, on the Mac version does not work
-          OnnxRuntime, so application uses ASP.Core API.
         </p>
       </div>
     </div>
@@ -106,14 +103,30 @@ import { HlmSeparatorDirective } from '@spartan-ng/ui-separator-helm';
             below to try it out:
           </p>
           <div class="mt-4">
-            <demos-combobox />
+            <demos-combobox #demosCombobox />
           </div>
         </div>
-        <div></div>
+        <div>
+          <ng-container
+            class="overflow-hidden rounded-xl drop-shadow max-w-xl"
+            [ngSwitch]="demosCombobox.currentModel()?.value"
+          >
+            <ng-container *ngSwitchCase="'yolov5-ss'"
+              ><yolov5-server-streaming />
+            </ng-container>
+          </ng-container>
+        </div>
       </div>
     </div>
   `,
 })
 export class HomeComponent {
   auth = inject(AuthService);
+
+  @ViewChild('demosCombobox', { static: false })
+  buttonToggle!: DemosComboboxComponent;
+
+  s = effect(() => {
+    console.log(this.buttonToggle.currentModel()?.value);
+  });
 }
