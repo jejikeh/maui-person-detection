@@ -125,8 +125,8 @@ export class LoginCardComponent {
       })
       .subscribe({
         next: (data) => {
-          console.log(data.userName);
           this.auth.currentUser.set(data);
+          this.router.navigateByUrl('/');
         },
         error: (error) => {
           const errors = error.error.errors as RegisterErrorInterface;

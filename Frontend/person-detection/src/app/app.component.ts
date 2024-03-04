@@ -8,9 +8,6 @@ import { LoginCardComponent } from './auth/components/login-card.components';
 @Component({
   selector: 'app-root',
   standalone: true,
-  host: {
-    class: 'block p-10',
-  },
   template: ` <navbar /><router-outlet></router-outlet> `,
   imports: [
     CommonModule,
