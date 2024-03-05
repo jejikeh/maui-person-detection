@@ -19,6 +19,7 @@ import {
 import { HlmAspectRatioDirective } from '@spartan-ng/ui-aspectratio-helm';
 import { HlmSeparatorDirective } from '@spartan-ng/ui-separator-helm';
 import { YoloV5ServerStreamingComponent } from './components/yolov5-server-streaming';
+import { ModelType } from '../common/models.types';
 
 @Component({
   selector: 'app-home',
@@ -111,8 +112,8 @@ import { YoloV5ServerStreamingComponent } from './components/yolov5-server-strea
             class="overflow-hidden rounded-xl drop-shadow max-w-xl"
             [ngSwitch]="demosCombobox.currentModel()?.value"
           >
-            <ng-container *ngSwitchCase="'yolov5-ss'"
-              ><yolov5-server-streaming />
+            <ng-container *ngSwitchCase="modelType.YOLOv5">
+              <yolov5-server-streaming />
             </ng-container>
           </ng-container>
         </div>
@@ -121,6 +122,7 @@ import { YoloV5ServerStreamingComponent } from './components/yolov5-server-strea
   `,
 })
 export class HomeComponent {
+  modelType = ModelType;
   auth = inject(AuthService);
 
   @ViewChild('demosCombobox', { static: false })

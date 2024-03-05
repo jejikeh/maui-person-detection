@@ -35,7 +35,7 @@ import { HlmIconComponent } from '../../../components/ui-icon-helm/src/lib/hlm-i
         </div>
       </nav>
 
-      <div class="flex space-x-2">
+      <div class="flex space-x-2" *ngIf="auth.currentUser() !== null">
         <a hlmBtn variant="link">{{ auth.currentUser()?.userName }}</a>
         <a routerLink="/" hlmBtn variant="link" (click)="logout()">Logout</a>
       </div>

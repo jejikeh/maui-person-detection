@@ -167,7 +167,6 @@ public static class ProgramConfiguration
         app.MapPost("logout", LogoutEndpoint.Handler).RequireAuthorization();
         app.MapPost("register", RegisterEndpoint.HandlerAsync);
         app.MapPost("photo", PhotoEndpoint.HandlerAsync);
-        app.MapPost("model/switch", SwitchModelTypeEndpoint.HandlerAsync);
 
         return app;
     }
@@ -180,4 +179,4 @@ public static class ProgramConfiguration
 
         return options;
     }
-}
+} 

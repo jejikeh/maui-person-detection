@@ -8,21 +8,12 @@ using Tensorflow;
 
 namespace PersonDetection.Backend.Application.Services.Implementations;
 
-public class PhotoProcessingService(
-    IOnnxNeuralService _onnxNeuralService, 
-    ModelTypeProvider _modelTypeProvider) : IPhotoProcessingService
+public class PhotoProcessingService(IOnnxNeuralService _onnxNeuralService) : IPhotoProcessingService
 {
-    public async Task<string> ProcessTransparentPhotoAsync(string base64Image)
-    {
-        var base64OutputImage = await PlainImageProcessing(base64Image);
-        
-        return base64OutputImage;
-    }
-
     public async Task<string> ProcessPhotoAsync(string base64Image)
     {
         var image = ConvertStringToImage(base64Image);
-
+        
         var yoloTask = new ImageToBoxPredictionsTask(image);
         var predictions = await _onnxNeuralService.Yolo5PlainImageProcessing(yoloTask);
 
@@ -31,9 +22,9 @@ public class PhotoProcessingService(
         return base64OutputImage;
     }
 
-    public void RunInBackground(string photo, Func<string, Task> handlePipelineCompleteAsync)
+    public void RunInBackground(string photo, OnnxModelType modelType, Func<string, Task> handlePipelineCompleteAsync)
     {
-        switch (_modelTypeProvider.ModelType)
+        switch (modelType)
         {
             case OnnxModelType.Yolo5:
             {
@@ -52,13 +43,13 @@ public class PhotoProcessingService(
         }
     }
 
-    private async Task<string> PlainImageProcessing(string base64Image)
+    private async Task<string> PlainImageProcessing(string base64Image, OnnxModelType modelType)
     {
         var image = ConvertStringToImage(base64Image);
 
         string base64OutputImage;
 
-        switch (_modelTypeProvider.ModelType)
+        switch (modelType)
         {
             case OnnxModelType.Yolo5:
             {

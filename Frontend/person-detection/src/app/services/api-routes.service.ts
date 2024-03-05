@@ -20,4 +20,8 @@ export class ApiRoutesService {
   public Logout(): string {
     return environment.api + 'logout';
   }
+
+  public VideoHub(): string {
+    return environment.api + 'video';
+  }
 }

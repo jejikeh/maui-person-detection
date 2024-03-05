@@ -16,8 +16,9 @@ import {
   lucideCheck,
   lucideSearch,
 } from '@ng-icons/lucide';
+import { ModelType } from '../../../common/models.types';
 
-type Framework = { label: string; value: string };
+type Framework = { label: string; value: ModelType };
 
 @Component({
   selector: 'demos-combobox',
@@ -89,24 +90,16 @@ type Framework = { label: string; value: string };
 export class DemosComboboxComponent {
   public model = [
     {
-      label: 'YOLOv5 Server Streaming',
-      value: 'yolov5-ss',
+      label: 'YOLOv5',
+      value: ModelType.YOLOv5,
     },
     {
-      label: 'YOLOv8 Server Streaming',
-      value: 'yolov8-ss',
-    },
-    {
-      label: 'YOLOv5 Client Streaming',
-      value: 'yolov5-cs',
-    },
-    {
-      label: 'YOLOv8 Client Streaming',
-      value: 'yolov8-cs',
+      label: 'YOLOv8',
+      value: ModelType.YOLOv8,
     },
     {
       label: 'Mediapipe',
-      value: 'mediapipe',
+      value: ModelType.MediaPipe,
     },
   ];
   public currentModel = signal<Framework | undefined>(undefined);
