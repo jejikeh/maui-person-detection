@@ -11,13 +11,7 @@ import { HlmIconComponent } from '../../../components/ui-icon-helm/src/lib/hlm-i
 @Component({
   selector: 'navbar',
   standalone: true,
-  imports: [
-    NgIf,
-    HlmButtonDirective,
-    HlmButtonDirective,
-    RouterLink,
-    HlmIconComponent,
-  ],
+  imports: [NgIf, HlmButtonDirective, RouterLink, HlmIconComponent],
   host: {
     class:
       'block sticky w-full top-0 z-40 bg-background/95 bg-blur-lg sm:px-4 border-b border-border',

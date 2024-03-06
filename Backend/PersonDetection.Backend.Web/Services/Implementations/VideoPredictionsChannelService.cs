@@ -11,7 +11,7 @@ public class VideoPredictionsChannelService(
 {
     private static readonly string _sendPhotoMethodName = "ProcessPhotoOutput";
     
-    public async Task StreamPhotoAsync(IAsyncEnumerable<string> photosStream, OnnxModelType modelType)
+    public async Task StreamPhotoAsync(string connectionId, IAsyncEnumerable<string> photosStream, OnnxModelType modelType)
     {
         await foreach (var photo in photosStream)
         {
@@ -19,7 +19,7 @@ public class VideoPredictionsChannelService(
                 photo,
                 modelType,
                 async processedImage => 
-                    await _hubContext.Clients.All.SendAsync(_sendPhotoMethodName, processedImage));
+                    await _hubContext.Clients.Client(connectionId).SendAsync(_sendPhotoMethodName, processedImage));
         }
     }
 }

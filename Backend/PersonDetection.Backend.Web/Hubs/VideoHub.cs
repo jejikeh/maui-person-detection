@@ -10,11 +10,11 @@ public class VideoHub(IVideoPredictionsChannelService _predictionsChannelService
 {
     public async Task ProcessYolo5Photo(IAsyncEnumerable<string> photos)
     { 
-        await _predictionsChannelService.StreamPhotoAsync(photos, OnnxModelType.Yolo5);
+        await _predictionsChannelService.StreamPhotoAsync(Context.ConnectionId, photos, OnnxModelType.Yolo5);
     }
     
     public async Task ProcessYolo8Photo(IAsyncEnumerable<string> photos)
     { 
-        await _predictionsChannelService.StreamPhotoAsync(photos, OnnxModelType.Yolo8);
+        await _predictionsChannelService.StreamPhotoAsync(Context.ConnectionId, photos, OnnxModelType.Yolo8);
     }
 } 

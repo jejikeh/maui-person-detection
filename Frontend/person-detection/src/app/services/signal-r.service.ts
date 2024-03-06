@@ -32,16 +32,8 @@ export class SignalRService {
 
   receivePhoto(): Observable<string> {
     return new Observable<string>((observer) => {
-      this.hubConnection.stream('ReceivePhoto').subscribe({
-        next: (data) => {
-          observer.next(data);
-        },
-        error: (error) => {
-          observer.error(error);
-        },
-        complete: () => {
-          observer.complete();
-        },
+      this.hubConnection.on('ProcessPhotoOutput', (data) => {
+        observer.next('data:image/png;base64, ' + data);
       });
     });
   }

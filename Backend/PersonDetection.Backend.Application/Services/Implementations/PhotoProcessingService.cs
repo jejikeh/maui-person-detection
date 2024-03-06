@@ -1,10 +1,8 @@
-using System.Diagnostics.CodeAnalysis;
 using Neural.Onnx.Models.Yolo5.Tasks.ImageToBoxPredictions;
 using Neural.Onnx.Tasks.ImageToSegmentation;
 using PersonDetection.Backend.Application.Common.Models;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
-using Tensorflow;
 
 namespace PersonDetection.Backend.Application.Services.Implementations;
 
@@ -70,7 +68,7 @@ public class PhotoProcessingService(IOnnxNeuralService _onnxNeuralService) : IPh
                 break;
             }
             default:
-                throw new InvalidArgumentError();
+                throw new ArgumentOutOfRangeException();
         }
 
         return base64OutputImage;

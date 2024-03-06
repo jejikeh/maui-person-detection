@@ -1,19 +1,30 @@
-import { Component, ViewChild } from '@angular/core';
+import {
+  Component,
+  Input,
+  ViewChild,
+  WritableSignal,
+  signal,
+} from '@angular/core';
 
 @Component({
   selector: 'video-capture',
   standalone: true,
   imports: [],
   template: `
-    <video
-      #video
-      [autoplay]="true"
-      [muted]="true"
-      class="rounded shadow"
-    ></video>
+    <div class="relative">
+      <video
+        #video
+        [autoplay]="true"
+        [muted]="true"
+        class="rounded shadow absolute z-0"
+      ></video>
+      <img [src]="overlayBase64()" class="absolute z-10" />
+    </div>
   `,
 })
-export class VideoCaptureComponent {
+export class CamOverlayCaptureComponent {
+  @Input() overlayBase64!: WritableSignal<string>;
+
   @ViewChild('video', { static: true }) video!: any;
 
   mediaRecorder!: MediaRecorder | undefined;
@@ -21,7 +32,13 @@ export class VideoCaptureComponent {
   constructor() {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices
-        .getUserMedia({ video: true })
+        .getUserMedia({
+          video: {
+            width: 640,
+            height: 640,
+          },
+          audio: false,
+        })
         .then((stream) => {
           this.video.nativeElement.srcObject = stream;
           this.mediaRecorder = new MediaRecorder(stream, {
@@ -39,7 +56,7 @@ export class VideoCaptureComponent {
   captureBase64Image(): string {
     const canvas = document.createElement('canvas');
     canvas.width = 640;
-    canvas.height = 480;
+    canvas.height = 640;
 
     canvas.getContext('2d')?.drawImage(this.video?.nativeElement, 0, 0);
 

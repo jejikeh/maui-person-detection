@@ -5,5 +5,5 @@ namespace PersonDetection.Backend.Web.Services;
 
 public interface IVideoPredictionsChannelService
 {
-    public Task StreamPhotoAsync(IAsyncEnumerable<string> photosStream, OnnxModelType modelType);
+    public Task StreamPhotoAsync(string connectionId, IAsyncEnumerable<string> photosStream, OnnxModelType modelType);
 }
