@@ -18,8 +18,9 @@ import {
 } from '@spartan-ng/ui-typography-helm';
 import { HlmAspectRatioDirective } from '@spartan-ng/ui-aspectratio-helm';
 import { HlmSeparatorDirective } from '@spartan-ng/ui-separator-helm';
-import { YoloV5ServerStreamingComponent } from './components/yolov5-server-streaming';
 import { ModelType } from '../common/models.types';
+import { YoloV5ServerStreamingComponent } from './components/yolov5-server-streaming';
+import { YoloV8ServerStreamingComponent } from './components/yolov8-server-streaming';
 
 @Component({
   selector: 'app-home',
@@ -33,9 +34,10 @@ import { ModelType } from '../common/models.types';
     NgSwitchCase,
     NgSwitch,
     YoloV5ServerStreamingComponent,
+    YoloV8ServerStreamingComponent,
   ],
   host: {
-    class: 'block p-10',
+    class: 'block p-10 mb-10',
   },
   template: `
     <div *ngIf="auth.currentUser() === null">
@@ -93,7 +95,7 @@ import { ModelType } from '../common/models.types';
         </p>
       </div>
     </div>
-    <div class="mt-10 ">
+    <div class="mt-10" style="padding-bottom: 640px">
       <h2 class="${hlmH2}">Run</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10">
         <div>
@@ -114,6 +116,9 @@ import { ModelType } from '../common/models.types';
           >
             <ng-container *ngSwitchCase="modelType.YOLOv5">
               <yolov5-server-streaming />
+            </ng-container>
+            <ng-container *ngSwitchCase="modelType.YOLOv8">
+              <yolov8-server-streaming />
             </ng-container>
           </ng-container>
         </div>

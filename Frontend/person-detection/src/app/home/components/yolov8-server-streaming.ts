@@ -8,7 +8,7 @@ import { Observable, Subscriber, Subscription, interval, timer } from 'rxjs';
 import { NgIf } from '@angular/common';
 
 @Component({
-  selector: 'yolov5-server-streaming',
+  selector: 'yolov8-server-streaming',
   standalone: true,
   imports: [
     DemosComboboxComponent,
@@ -17,7 +17,7 @@ import { NgIf } from '@angular/common';
     NgIf,
   ],
   template: `
-    <h1 class="${hlmH1}">YOLOv5 Server Streaming</h1>
+    <h1 class="${hlmH1}">YOLOv8 Server Streaming</h1>
     <button
       hlmBtn
       *ngIf="!subscription || subscription?.closed === true"
@@ -39,7 +39,7 @@ import { NgIf } from '@angular/common';
     </div>
   `,
 })
-export class YoloV5ServerStreamingComponent {
+export class YoloV8ServerStreamingComponent {
   @ViewChild('videoCapture', { static: true })
   videoCapture!: CamOverlayCaptureComponent;
 
@@ -54,7 +54,7 @@ export class YoloV5ServerStreamingComponent {
   constructor() {
     this.signalr.startConnection().subscribe(() => {
       console.log('connected');
-      this.subject = this.signalr.createSubject('ProcessYolo5Photo');
+      this.subject = this.signalr.createSubject('ProcessYolo8Photo');
     });
 
     this.signalr.receivePhoto().subscribe((data) => {
