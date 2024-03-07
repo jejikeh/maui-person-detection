@@ -17,9 +17,30 @@ export class SignalRService {
   }
 
   startConnection(): Observable<void> {
+    if (this.hubConnection.state === signalR.HubConnectionState.Connected) {
+      return new Observable<void>((observer) => {
+        observer.next();
+        observer.complete();
+      });
+    }
+
     return new Observable<void>((observer) => {
       this.hubConnection
         .start()
+        .then(() => {
+          observer.next();
+          observer.complete();
+        })
+        .catch((error) => {
+          observer.error(error);
+        });
+    });
+  }
+
+  stopConnection(): Observable<void> {
+    return new Observable<void>((observer) => {
+      this.hubConnection
+        .stop()
         .then(() => {
           observer.next();
           observer.complete();

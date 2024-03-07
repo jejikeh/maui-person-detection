@@ -132,8 +132,4 @@ export class HomeComponent {
 
   @ViewChild('demosCombobox', { static: false })
   buttonToggle!: DemosComboboxComponent;
-
-  s = effect(() => {
-    console.log(this.buttonToggle.currentModel()?.value);
-  });
 }

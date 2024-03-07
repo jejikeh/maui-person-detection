@@ -1,10 +1,23 @@
-import { Component, ViewChild, inject, signal } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  ViewChild,
+  inject,
+  signal,
+} from '@angular/core';
 import { DemosComboboxComponent } from './ui/demos-combobox.component';
 import { hlmH1 } from '@spartan-ng/ui-typography-helm';
 import { CamOverlayCaptureComponent } from './ui/cam-overlay-capture.component';
 import { SignalRService } from '../../services/signal-r.service';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
-import { Observable, Subscriber, Subscription, interval, timer } from 'rxjs';
+import {
+  Observable,
+  Subject,
+  Subscriber,
+  Subscription,
+  interval,
+  timer,
+} from 'rxjs';
 import { NgIf } from '@angular/common';
 
 @Component({
@@ -46,7 +59,7 @@ export class YoloV8ServerStreamingComponent {
   signalr = inject(SignalRService);
   subject: signalR.Subject<string> | undefined;
 
-  receivedPhoto = signal<string>('');
+  receivedPhoto = '';
 
   intervalHandle: Observable<number> | undefined;
   subscription: Subscription | undefined;
@@ -58,22 +71,19 @@ export class YoloV8ServerStreamingComponent {
     });
 
     this.signalr.receivePhoto().subscribe((data) => {
-      this.receivedPhoto.set(data);
+      this.receivedPhoto = data;
     });
   }
 
   start() {
-    this.intervalHandle = interval(200);
+    this.intervalHandle = interval(300);
     this.subscription = this.intervalHandle.subscribe(() => {
       const data = this.videoCapture.captureBase64Image();
       this.subject?.next(data);
     });
-
-    this.subject?.next(this.videoCapture.captureBase64Image());
   }
 
   stop() {
-    this.receivedPhoto.set('');
     this.subscription?.unsubscribe();
   }
 }

@@ -1,10 +1,12 @@
 import {
   Component,
+  EventEmitter,
   Input,
   ViewChild,
   WritableSignal,
   signal,
 } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'video-capture',
@@ -18,16 +20,16 @@ import {
         [muted]="true"
         class="rounded shadow absolute z-0"
       ></video>
-      <img [src]="overlayBase64()" class="absolute z-10" />
+      <img [src]="overlayBase64" class="absolute z-10" />
     </div>
   `,
 })
 export class CamOverlayCaptureComponent {
-  @Input() overlayBase64!: WritableSignal<string>;
+  @Input() overlayBase64!: string;
 
   @ViewChild('video', { static: true }) video!: any;
 
-  mediaRecorder!: MediaRecorder | undefined;
+  mediaRecorder: MediaRecorder | undefined;
 
   constructor() {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -51,6 +53,10 @@ export class CamOverlayCaptureComponent {
           console.log('Something went wrong!', err);
         });
     }
+  }
+
+  ngOnDestroy() {
+    this.mediaRecorder?.stop();
   }
 
   captureBase64Image(): string {
