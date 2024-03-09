@@ -142,7 +142,6 @@ export class RegisterCardComponent {
         error: (error) => {
           const errors = error.error.errors as RegisterErrorInterface;
           console.log(errors.Email);
-          // @Incomplete: Show UI here.
         },
         complete: () => {},
       });

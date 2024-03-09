@@ -40,39 +40,6 @@ public class PhotoProcessingService(IOnnxNeuralService _onnxNeuralService) : IPh
                 throw new ArgumentOutOfRangeException();
         }
     }
-
-    private async Task<string> PlainImageProcessing(string base64Image, OnnxModelType modelType)
-    {
-        var image = ConvertStringToImage(base64Image);
-
-        string base64OutputImage;
-
-        switch (modelType)
-        {
-            case OnnxModelType.Yolo5:
-            {
-                var yoloTask = new ImageToBoxPredictionsTask(image);
-                var predictions = await _onnxNeuralService.Yolo5PlainTransparentImageProcessing(yoloTask);
-
-                base64OutputImage = await ConvertImageToStringAsync(predictions.TypedInput.InputImage);
-
-                break;
-            }
-            case OnnxModelType.Yolo8:
-            {
-                var yoloTask = new ImageToSegmentationTask(image);
-                var segmentation = await _onnxNeuralService.Yolo8PlainImageProcessing(yoloTask);
-
-                base64OutputImage = await ConvertImageToStringAsync(segmentation.TypedInput.InputImage);
-
-                break;
-            }
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-
-        return base64OutputImage;
-    }
     
     private static Image<Rgba32> ConvertStringToImage(string base64)
     {

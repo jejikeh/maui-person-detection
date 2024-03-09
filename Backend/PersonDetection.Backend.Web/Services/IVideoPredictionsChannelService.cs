@@ -1,4 +1,3 @@
-using System.Threading.Channels;
 using PersonDetection.Backend.Application.Common.Models;
 
 namespace PersonDetection.Backend.Web.Services;

@@ -9,7 +9,7 @@ public class VideoPredictionsChannelService(
     IPhotoProcessingService _processingService,
     IHubContext<VideoHub> _hubContext) : IVideoPredictionsChannelService
 {
-    private static readonly string _sendPhotoMethodName = "ProcessPhotoOutput";
+    private const string _sendPhotoMethodName = "ProcessPhotoOutput";
 
     public async Task StreamPhotoAsync(string connectionId, IAsyncEnumerable<string> photosStream, OnnxModelType modelType)
     {
