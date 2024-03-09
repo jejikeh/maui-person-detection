@@ -43,6 +43,6 @@ export class Mediapipe {
   scripts = inject(ScriptService);
 
   start() {
-    this.scripts.load('mediapipe');
+    this.scripts.loadScript('mediapipe');
   }
 }

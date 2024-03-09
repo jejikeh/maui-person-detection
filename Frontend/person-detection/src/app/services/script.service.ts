@@ -32,6 +32,7 @@ export class ScriptService {
         let script = document.createElement('script');
         script.type = 'text/javascript';
         script.src = this.scripts[name].src;
+
         if (script.readyState) {
           script.onreadystatechange = () => {
             if (
