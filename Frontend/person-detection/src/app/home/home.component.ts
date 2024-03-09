@@ -21,6 +21,7 @@ import { HlmSeparatorDirective } from '@spartan-ng/ui-separator-helm';
 import { ModelType } from '../common/models.types';
 import { YoloV5ServerStreamingComponent } from './components/yolov5-server-streaming';
 import { YoloV8ServerStreamingComponent } from './components/yolov8-server-streaming';
+import { Mediapipe } from './components/mediapipe';
 
 @Component({
   selector: 'app-home',
@@ -35,6 +36,7 @@ import { YoloV8ServerStreamingComponent } from './components/yolov8-server-strea
     NgSwitch,
     YoloV5ServerStreamingComponent,
     YoloV8ServerStreamingComponent,
+    Mediapipe,
   ],
   host: {
     class: 'block p-10 mb-10',
@@ -119,6 +121,9 @@ import { YoloV8ServerStreamingComponent } from './components/yolov8-server-strea
             </ng-container>
             <ng-container *ngSwitchCase="modelType.YOLOv8">
               <yolov8-server-streaming />
+            </ng-container>
+            <ng-container *ngSwitchCase="modelType.Mediapipe">
+              <mediapipe />
             </ng-container>
           </ng-container>
         </div>

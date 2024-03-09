@@ -22,7 +22,14 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/assets/selfie_segmentation_solution_simd_wasm_bin.js",
+              "src/assets/selfie_segmentation_solution_simd_wasm_bin.wasm",
+              "src/assets/selfie_segmentation.js",
+              "src/assets/selfie_segmentation.tflite",
+              "src/assets/selfie_segmentation.binarypb",
+              "src/assets/mediapipe.js",
+              "src/assets/signalr-sendstream.js"
             ],
             "styles": [
               "src/styles.css"

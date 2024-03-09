@@ -99,7 +99,7 @@ export class DemosComboboxComponent {
     },
     {
       label: 'Mediapipe',
-      value: ModelType.MediaPipe,
+      value: ModelType.Mediapipe,
     },
   ];
   public currentModel = signal<Framework | undefined>(undefined);

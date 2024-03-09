@@ -79,8 +79,6 @@ export class YoloV5ServerStreamingComponent {
       const data = this.videoCapture.captureBase64Image();
       this.subject?.next(data);
     });
-
-    // this.subject?.next(this.videoCapture.captureBase64Image());
   }
 
   stop() {
