@@ -55,7 +55,7 @@ public class AuthorizationService(
         return Results.Ok(UserDto.FromIdentityUser(user!));
     }
 
-    public IResult Identify(ClaimsPrincipal claimsPrincipal)
+    public async Task<IResult> IdentifyAsync(ClaimsPrincipal claimsPrincipal)
     {
         var userName = claimsPrincipal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Name);
         
@@ -67,6 +67,13 @@ public class AuthorizationService(
         var email = claimsPrincipal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email);
         
         if (email is null)
+        {
+            throw new InvalidCredentialsException();
+        }
+        
+        var user = await _userManager.FindByNameAsync(userName.Value);
+        
+        if (user is null)
         {
             throw new InvalidCredentialsException();
         }

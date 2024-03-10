@@ -6,10 +6,10 @@ namespace PersonDetection.Backend.Web.Endpoints;
 
 public static class IdentifyEndpoint
 {
-    public static IResult Handler(
+    public static Task<IResult> Handler(
         ClaimsPrincipal claimsPrincipal,
         [FromServices] IAuthorizationService authorizationService)
     {
-        return authorizationService.Identify(claimsPrincipal);
+        return authorizationService.IdentifyAsync(claimsPrincipal);
     }
 }

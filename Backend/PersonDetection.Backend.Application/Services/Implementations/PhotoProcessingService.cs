@@ -21,13 +21,6 @@ public class PhotoProcessingService(IOnnxNeuralService _onnxNeuralService, IImag
         return base64OutputImage;
     }
 
-    public async Task ProcessAndSavePhotoAsync(string base64Image)
-    {
-        var output = await ProcessPhotoAsync(base64Image);
-        
-        await imageBucketService.SavePhotoAsync(Guid.NewGuid().ToString(), output);
-    }
-
     public void RunInBackground(string photo, OnnxModelType modelType, Func<string, Task> handlePipelineCompleteAsync)
     {
         switch (modelType)

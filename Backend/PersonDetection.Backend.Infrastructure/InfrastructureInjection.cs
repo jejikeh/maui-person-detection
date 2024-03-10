@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using PersonDetection.Backend.Infrastructure.Common;
 using PersonDetection.Backend.Infrastructure.Common.Options;
+using PersonDetection.Backend.Infrastructure.Services;
+using PersonDetection.Backend.Infrastructure.Services.Implementations;
 
 namespace PersonDetection.Backend.Infrastructure;
 
@@ -14,6 +16,8 @@ public static class InfrastructureInjection
     {
         InjectIdentityDb(serviceCollection, configuration);
         InjectImageBucket(serviceCollection, configuration);
+
+        serviceCollection.AddScoped<IGalleryRepository, GalleryRepository>();
 
         return serviceCollection;
     }
@@ -25,7 +29,7 @@ public static class InfrastructureInjection
         serviceCollection.AddImageBucket(imageBucketOptions);
     }
 
-    private static void InjectIdentityDb(IServiceCollection serviceCollection, IConfiguration configuration)
+    private static void InjectIdentityDb(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
         var personDetectionContextOptions = serviceCollection.GetConfigureOptions<PersonDetectionContextOptions>(configuration);
         var identityOptions = serviceCollection.GetConfigureOptions<IdentityModelOptions>(configuration);

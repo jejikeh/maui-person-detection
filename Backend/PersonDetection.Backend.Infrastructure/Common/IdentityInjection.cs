@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PersonDetection.Backend.Infrastructure.Common.Options;
+using PersonDetection.Backend.Infrastructure.Models;
 
 namespace PersonDetection.Backend.Infrastructure.Common;
 
@@ -18,7 +19,7 @@ public static class IdentityInjection
     
     public static IServiceCollection UseIdentityServices(this IServiceCollection services, IdentityModelOptions identityOptions)
     {
-        services.AddIdentity<IdentityUser, IdentityRole>(options =>
+        services.AddIdentity<User, IdentityRole>(options =>
             {
                 options.User = identityOptions.User;
                 options.Password = identityOptions.Password;

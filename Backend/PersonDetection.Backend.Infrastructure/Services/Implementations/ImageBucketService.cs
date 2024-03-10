@@ -1,3 +1,4 @@
+using CommunityToolkit.HighPerformance.Helpers;
 using Minio;
 using Minio.DataModel.Args;
 
@@ -20,13 +21,27 @@ public class ImageBucketService(IMinioClient _minioClient) : IImageBucketService
             .WithContentType("image/png")
             .WithObjectSize(photoMemoryStream.Length);
         
-        var response = await _minioClient.PutObjectAsync(putObjectArgs);
-        
-        Console.WriteLine(response);
+        await _minioClient.PutObjectAsync(putObjectArgs);
     }
 
-    public Task<List<string>> GetPhotosAsync(int page, int count)
+    public async Task<string> GetPhotoAsync(string photoName)
     {
+        var photo = string.Empty;
+
+        var getObjectArgs = new GetObjectArgs()
+            .WithBucket(_bucketName)
+            .WithObject(photoName)
+            .WithCallbackStream((stream) =>
+            {
+                using var memoryStream = new MemoryStream();
+                
+                stream.CopyTo(memoryStream);
+                
+                photo = Convert.ToBase64String(memoryStream.ToArray());
+            });
         
+        await _minioClient.GetObjectAsync(getObjectArgs);
+        
+        return photo;
     }
 }
