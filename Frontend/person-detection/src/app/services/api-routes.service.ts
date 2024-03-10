@@ -24,4 +24,8 @@ export class ApiRoutesService {
   public VideoHub(): string {
     return environment.api + 'video';
   }
+
+  public SaveToGallery(): string {
+    return environment.api + 'gallery';
+  }
 }

@@ -13,6 +13,8 @@ import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { Observable, Subscriber, Subscription, interval, timer } from 'rxjs';
 import { NgIf } from '@angular/common';
 import { Subject } from '@microsoft/signalr';
+import { HttpClient } from '@angular/common/http';
+import { ApiRoutesService } from '../../services/api-routes.service';
 
 @Component({
   selector: 'yolov5-server-streaming',
@@ -41,6 +43,14 @@ import { Subject } from '@microsoft/signalr';
     >
       Stop
     </button>
+    <button
+      hlmBtn
+      *ngIf="subscription?.closed === false"
+      class="btn btn-primary mt-4"
+      (click)="capture()"
+    >
+      Capture
+    </button>
     <div class="mt-4">
       <video-capture [overlayBase64]="receivedPhoto" #videoCapture />
     </div>
@@ -52,6 +62,9 @@ export class YoloV5ServerStreamingComponent {
 
   signalr = inject(SignalRService);
   subject: signalR.Subject<string> | undefined;
+
+  api = inject(ApiRoutesService);
+  http = inject(HttpClient);
 
   receivedPhoto = '';
 
@@ -83,5 +96,22 @@ export class YoloV5ServerStreamingComponent {
 
   stop() {
     this.subscription?.unsubscribe();
+  }
+
+  capture() {
+    const data = this.videoCapture.captureBase64Image();
+    this.http
+      .post(
+        this.api.SaveToGallery(),
+        {
+          content: data,
+        },
+        {
+          withCredentials: true,
+        }
+      )
+      .subscribe((data) => {
+        console.log(data);
+      });
   }
 }

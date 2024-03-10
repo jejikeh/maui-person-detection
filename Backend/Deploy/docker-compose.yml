@@ -12,6 +12,20 @@ services:
       - database-data:/data/db
     networks:
       - dev
+    
+  minio:
+    image: docker.io/bitnami/minio:2022
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    networks:
+      - dev
+    volumes:
+      - 'minio_data:/data'
+    environment:
+      - MINIO_ROOT_USER=person-detection
+      - MINIO_ROOT_PASSWORD=person-detection
+      - MINIO_DEFAULT_BUCKETS=person-detection
 
 networks:
   dev:
@@ -19,3 +33,5 @@ networks:
 
 volumes:
   database-data:
+  minio_data:
+    driver: local
