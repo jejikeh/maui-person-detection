@@ -159,20 +159,6 @@ public static class ProgramConfiguration
         
         return app;
     }
-
-    private static WebApplication MapEndpoints(this WebApplication app)
-    {
-        app.MapGet("user", IdentifyEndpoint.Handler);
-        app.MapPost("login", LoginEndpoint.HandlerAsync);
-        app.MapPost("logout", LogoutEndpoint.Handler).RequireAuthorization();
-        app.MapPost("register", RegisterEndpoint.HandlerAsync);
-        
-        app.MapPost("photo", PhotoEndpoint.HandlerAsync);
-        
-        app.MapPost("gallery", GalleryEndpoints.SaveToGalleryHandlerAsync);
-
-        return app;
-    }
     
     private static T GetConfigureOptions<T>(this IServiceCollection serviceCollection, IConfiguration configuration) where T : class, new()
     {

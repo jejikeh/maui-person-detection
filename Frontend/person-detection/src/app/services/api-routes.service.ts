@@ -28,4 +28,12 @@ export class ApiRoutesService {
   public SaveToGallery(): string {
     return environment.api + 'gallery';
   }
+
+  public GetGallery(page: number): string {
+    return environment.api + 'gallery?page=' + page + '&size=3';
+  }
+
+  public DeletePhoto(index: number): string {
+    return environment.api + 'gallery?photoId=' + index;
+  }
 }

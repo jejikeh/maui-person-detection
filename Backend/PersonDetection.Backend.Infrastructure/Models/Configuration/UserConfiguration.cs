@@ -10,7 +10,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder
             .HasMany(user => user.Photos)
             .WithOne(photo => photo.Owner)
-            .HasForeignKey(photo => photo.OwnerId)
-            .IsRequired();
+            .HasForeignKey(photo => photo.OwnerId);
     }
 }

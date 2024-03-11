@@ -7,21 +7,19 @@ using PersonDetection.Backend.Application.Common.Exceptions;
 using PersonDetection.Backend.Application.Common.Models.Dtos;
 using PersonDetection.Backend.Application.Common.Models.Requests.Login;
 using PersonDetection.Backend.Application.Common.Models.Requests.Register;
+using PersonDetection.Backend.Infrastructure.Models;
 
 namespace PersonDetection.Backend.Application.Services.Implementations;
 
 public class AuthorizationService(
-    UserManager<IdentityUser> _userManager,
-    SignInManager<IdentityUser> _signInManager) : IAuthorizationService
+    UserManager<User> _userManager,
+    SignInManager<User> _signInManager) : IAuthorizationService
 {
     public async Task<IResult> RegisterAsync(RegisterRequest registerRequest, IValidator<RegisterRequest> validator)
     {
         await ValidateModelAsync(registerRequest, validator);
 
-        var user = new IdentityUser(registerRequest.UserName)
-        {
-            Email = registerRequest.Email
-        };
+        var user = new User(registerRequest.UserName, registerRequest.Email);
         
         var createUserResult = await _userManager.CreateAsync(user, registerRequest.Password);
 

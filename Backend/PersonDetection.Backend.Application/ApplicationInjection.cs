@@ -15,7 +15,7 @@ public static class ApplicationInjection
             .AddSingleton<IOnnxNeuralService, OnnxNeuralService>()
             .AddScoped<IAuthorizationService, AuthorizationService>()
             .AddSingleton<IPhotoProcessingService, PhotoProcessingService>()
-            .AddSingleton<IGalleryService, GalleryService>()
+            .AddScoped<IGalleryService, GalleryService>()
             .AddValidations();
     }
 
