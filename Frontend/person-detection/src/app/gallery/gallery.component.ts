@@ -1,24 +1,10 @@
-import {
-  Component,
-  ElementRef,
-  ViewChild,
-  effect,
-  inject,
-  signal,
-} from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { AuthService } from '../auth/services/auth.service';
 import { NgFor, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
 import { LoginCardComponent } from '../auth/components/login-card.components';
-import {
-  hlmH1,
-  hlmH2,
-  hlmH3,
-  hlmLead,
-  hlmP,
-} from '@spartan-ng/ui-typography-helm';
+import { hlmH1, hlmLead } from '@spartan-ng/ui-typography-helm';
 import { HlmAspectRatioDirective } from '@spartan-ng/ui-aspectratio-helm';
 import { HlmSeparatorDirective } from '@spartan-ng/ui-separator-helm';
-import { ModelType } from '../common/models.types';
 import { HttpClient } from '@angular/common/http';
 import { ApiRoutesService } from '../services/api-routes.service';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
