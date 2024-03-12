@@ -8,13 +8,15 @@ public static class MapEndpointsConfiguration
         app.MapPost("login", IdentityEndpoints.LoginHandlerAsync);
         app.MapPost("logout", IdentityEndpoints.LogoutHandlerAsync).RequireAuthorization();
         app.MapPost("register", IdentityEndpoints.RegisterHandlerAsync);
-        
+
         app.MapPost("photo", PhotoEndpoint.HandlerAsync);
-        
+
         app.MapPost("gallery", GalleryEndpoints.SaveToGalleryHandlerAsync).RequireAuthorization();
         app.MapGet("gallery", GalleryEndpoints.GetPhotosHandlerAsync).RequireAuthorization();
         app.MapDelete("gallery", GalleryEndpoints.DeletePhotoHandlerAsync).RequireAuthorization();
-        
+
+        app.MapGet("health-check", () => Results.Ok());
+
         return app;
     }
 }
