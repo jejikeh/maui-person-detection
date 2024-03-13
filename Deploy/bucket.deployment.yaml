@@ -37,3 +37,18 @@ spec:
           volumeMounts:
             - name: storage
               mountPath: "/storage"
+        - name: createbuckets
+          image: jejikeh/nc-mc
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              # Wait for MinIO to start
+              while ! curl -s http://minio-service:9000 >/dev/null; do
+                echo 'Waiting for MinIO to start...'
+                sleep 1
+              done
+
+              ./mc alias set myminio http://minio-service:9000 Gtld8JI91dkIwKpO ykTxNCXp25YFBlUHHvhbiuck32FDpruU;
+              ./mc mb myminio/person-detection;
+              ./mc anonymous set public myminio/person-detection;
+              exit 0;

@@ -25,3 +25,10 @@ COPY --from=publish /app/publish .
 # COPY localhost.crt /usr/local/share/ca-certificates
 # RUN chmod 644 /usr/local/share/ca-certificates/localhost.crt && update-ca-certificates
 ENTRYPOINT ["dotnet", "PersonDetection.Backend.Web.dll"]
+
+RUN echo "deb http://deb.debian.org/debian/ bookworm main contrib" > /etc/apt/sources.list && \
+    echo "deb-src http://deb.debian.org/debian/ bookworm main contrib" >> /etc/apt/sources.list && \
+    echo "deb http://security.debian.org/ bookworm-security main contrib" >> /etc/apt/sources.list && \
+    echo "deb-src http://security.debian.org/ bookworm-security main contrib" >> /etc/apt/sources.list
+RUN sed -i'.bak' 's/$/ contrib/' /etc/apt/sources.list
+RUN apt-get update; apt-get install -y ttf-mscorefonts-installer fontconfig
