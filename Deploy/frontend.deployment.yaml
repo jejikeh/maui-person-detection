@@ -22,7 +22,5 @@ spec:
           ports:
             - containerPort: 80
               name: http
-            - containerPort: 443
-              name: https
           imagePullPolicy: Always
       restartPolicy: Always

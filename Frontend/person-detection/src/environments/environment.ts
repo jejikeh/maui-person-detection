@@ -1,3 +1,3 @@
 export const environment = {
-  api: 'http://localhost:9080/',
+  api: 'http://backend-service.default.svc.cluster.local/',
 };
