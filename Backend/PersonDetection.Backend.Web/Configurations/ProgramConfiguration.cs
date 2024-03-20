@@ -118,7 +118,7 @@ public static class ProgramConfiguration
             options.AddPolicy(_allowFrontendPolicyName, policy =>
             {
                 policy
-                    .AllowAnyOrigin()
+                    .SetIsOriginAllowed(anyHost => true)
                     .AllowCredentials()
                     .AllowAnyMethod()
                     .AllowAnyHeader();
