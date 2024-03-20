@@ -2,8 +2,6 @@ using Microsoft.Extensions.Configuration;
 using PersonDetection.Client.Application.Services;
 using PersonDetection.Client.Infrastructure.Common.Options;
 using PersonDetection.Client.Infrastructure.Services;
-using PersonDetection.ImageProcessing;
-using PersonDetection.ImageProcessing.Services;
 
 namespace PersonDetection.Client.Infrastructure;
 
@@ -13,7 +11,6 @@ public static class InfrastructureInjection
     {
         return serviceCollection
             .AddSingleton<IPhotoGallery, PhotoGallery>()
-            .AddSingleton<IFileSystemStreamProvider, MauiFileSystemStreamProvider>()
             .AddSingleton<PhotoSaverService>()
             .AddInfrastructureOptions(configuration);
     }
@@ -24,13 +21,6 @@ public static class InfrastructureInjection
             .AddSingleton<HttpClientProvider>()
             .AddScoped<CacheHttpClientService>()
             .AddScoped<IPhotoProcessService, HttpPhotoProcessService>();
-    }
-
-    public static IServiceCollection AddYoloServices(this IServiceCollection serviceCollection, IConfiguration configuration)
-    {
-        return serviceCollection
-            .AddYoloImageProcessing(configuration)
-            .AddSingleton<IPhotoProcessService, YoloPhotoProcessService>();
     }
 
     private static IServiceCollection AddInfrastructureOptions(this IServiceCollection serviceCollection, IConfiguration configuration)
