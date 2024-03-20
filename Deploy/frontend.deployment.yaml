@@ -24,16 +24,3 @@ spec:
               name: http
           imagePullPolicy: Always
       restartPolicy: Always
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: frontend-service
-spec:
-  selector:
-    app.kubernetes.io/name: frontend
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
-  type: LoadBalancer
