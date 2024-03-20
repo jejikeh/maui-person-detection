@@ -34,10 +34,23 @@ public static class NeuralHubConfigurationExtensions
         return builder
             .AddModel<TModel, TModelTask, OnnxDependencies>(OnnxDependencies.FromBuilder(builder, modelPath));
     }
+    
+    public static NeuralHubBuilder AddOnnxModel<TModel, TModelTask>(this NeuralHubBuilder builder, byte[] modelBytes)
+        where TModel : class, IModel<TModelTask, OnnxDependencies> 
+        where TModelTask : IModelTask
+    {
+        return builder
+            .AddModel<TModel, TModelTask, OnnxDependencies>(OnnxDependencies.FromBytes(modelBytes));
+    }
 
     public static NeuralHubBuilder AddYolo5Model(this NeuralHubBuilder builder, string modelPath)
     {
         return builder.AddOnnxModel<Yolo5Model, ImageToBoxPredictionsTask>(modelPath);
+    }
+    
+    public static NeuralHubBuilder AddYolo5Model(this NeuralHubBuilder builder, byte[] modelBytes)
+    {
+        return builder.AddOnnxModel<Yolo5Model, ImageToBoxPredictionsTask>(modelBytes);
     }
     
     public static NeuralHubBuilder AddYolo8Model(this NeuralHubBuilder builder, string modelPath)
@@ -50,6 +63,16 @@ public static class NeuralHubConfigurationExtensions
         for (var i = 0; i < count; i++)
         {
             builder.AddYolo5Model(modelPath);
+        }
+        
+        return builder;
+    }
+    
+    public static NeuralHubBuilder AddYolo5Models(this NeuralHubBuilder builder, byte[] modelBytes, int count)
+    {
+        for (var i = 0; i < count; i++)
+        {
+            builder.AddYolo5Model(modelBytes);
         }
         
         return builder;

@@ -8,10 +8,19 @@ namespace Neural.Onnx.Common.Dependencies;
 public class OnnxDependencies(InferenceSession _inferenceSession) : IDependencyContainer
 {
     public InferenceSession InferenceSession { get; set; } = _inferenceSession;
+    
+    public static OnnxDependencies FromBytes(byte[] modelBytes)
+    {
+        var inferenceSession = new InferenceSession(modelBytes, new SessionOptions());
+        
+        return new OnnxDependencies(inferenceSession);
+    }
 
     public static OnnxDependencies FromBuilder(NeuralHubBuilder builder, string modelPath)
     {
-        return FromBuilderAsync(builder, modelPath).Result;
+        var onnxDependencies = FromBuilderAsync(builder, modelPath).Result;
+        
+        return onnxDependencies;
     }
     
     public static async Task<OnnxDependencies> FromBuilderAsync(NeuralHubBuilder builder, string modelPath)
