@@ -12,7 +12,7 @@ namespace PersonDetection.Client.Configuration;
 
 public static class InjectionsConfiguration
 {
-    public static IServiceCollection AddInjections(this IServiceCollection serviceCollection, IConfiguration configuration)
+    public static IServiceCollection AddInjections(this MauiAppBuilder builder, IConfiguration configuration)
     {
         var clientOptions = new ClientOptions();
         
@@ -20,11 +20,11 @@ public static class InjectionsConfiguration
             .GetSection(nameof(ClientOptions))
             .Bind(clientOptions);
 
-        serviceCollection.AddSingleton(Options.Create(clientOptions));
+        builder.Services.AddSingleton(Options.Create(clientOptions));
     
-        serviceCollection
-            .AddDeviceAccessServices()
+        builder
             .AddPlatformServiceImplementations()
+            .AddDeviceAccessServices()
             .AddServices()
             .AddPages()
             .AddViewModels()
@@ -32,7 +32,7 @@ public static class InjectionsConfiguration
             .AddInfrastructure(configuration)
             .AddPhotoProcessServices(configuration, clientOptions.PhotoProcessProvider);
 
-        return serviceCollection;
+        return builder.Services;
     }
 
     private static IServiceCollection AddServices(this IServiceCollection serviceCollection)
