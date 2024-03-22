@@ -22,6 +22,8 @@ spec:
           image: minio/minio:latest
           args:
             - server
+            - --console-address
+            - :9001
             - /storage
           env:
             # Minio access key and secret key
