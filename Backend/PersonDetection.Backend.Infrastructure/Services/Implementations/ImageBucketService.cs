@@ -9,8 +9,6 @@ public class ImageBucketService(IMinioClient _minioClient, IOptions<ImageBucketO
 {
     public async Task SavePhotoAsync(string photoName, string photo)
     {
-        await CreateBucketIfNotExistsAsync();
-
         var bytes = Convert.FromBase64String(photo);
 
         using var photoMemoryStream = new MemoryStream(bytes);
@@ -44,22 +42,5 @@ public class ImageBucketService(IMinioClient _minioClient, IOptions<ImageBucketO
         await _minioClient.GetObjectAsync(getObjectArgs);
 
         return photo;
-    }
-
-    private async Task CreateBucketIfNotExistsAsync()
-    {
-        var exists = await _minioClient.BucketExistsAsync(
-            new BucketExistsArgs()
-            .WithBucket(options.Value.BucketName));
-
-        if (exists)
-        {
-            return;
-        }
-
-        var makeBucketArgs = new MakeBucketArgs()
-            .WithBucket(options.Value.BucketName);
-
-        await _minioClient.MakeBucketAsync(makeBucketArgs);
     }
 }
