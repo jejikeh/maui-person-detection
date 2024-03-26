@@ -5,9 +5,9 @@ using PersonDetection.Client.Infrastructure.Common;
 
 namespace PersonDetection.Client.Infrastructure.Services;
 
-public class CacheHttpClientService(HttpClientProvider httpClientProvider)
+public class CacheHttpClientService(HttpClientProvider _httpClientProvider)
 {
-    private readonly HttpClient _httpClient = httpClientProvider.CreateClient();
+    private readonly HttpClient _httpClient = _httpClientProvider.CreateClient();
     private static readonly JsonSerializerOptions JsonSerializerOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase

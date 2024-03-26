@@ -3,6 +3,7 @@ using PersonDetection.Client.Application.Services;
 using PersonDetection.Client.Infrastructure.Common.Options;
 using PersonDetection.Client.Infrastructure.Services;
 using PersonDetection.ImageProcessing;
+using PersonDetection.ImageProcessing.Services;
 
 namespace PersonDetection.Client.Infrastructure;
 
@@ -12,6 +13,7 @@ public static class InfrastructureInjection
     {
         return serviceCollection
             .AddSingleton<IPhotoGallery, PhotoGallery>()
+            .AddSingleton<IFileSystemStreamProvider, MauiFileSystemStreamProvider>()
             .AddSingleton<PhotoSaverService>()
             .AddInfrastructureOptions(configuration);
     }

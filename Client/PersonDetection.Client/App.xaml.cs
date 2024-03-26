@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Options;
 using PersonDetection.Client.Common.Options;
 using PersonDetection.Client.Services;
 

@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="FluentValidation" Version="11.9.0" />
+      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0" />
+      <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.1" />
+      <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.3.0" />
+      <PackageReference Include="SixLabors.ImageSharp" Version="3.1.2" />
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.3.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\ImageProcessing\PersonDetection.ImageProcessing\PersonDetection.ImageProcessing.csproj" />
+      <ProjectReference Include="..\..\ImageProcessing\PersonDetection.ImageSegmentation\PersonDetection.ImageSegmentation.csproj" />
+      <ProjectReference Include="..\..\Neural\Neural.Onnx\Neural.Onnx.csproj" />
+      <ProjectReference Include="..\PersonDetection.Backend.Infrastructure\PersonDetection.Backend.Infrastructure.csproj" />
+    </ItemGroup>
+
+</Project>
