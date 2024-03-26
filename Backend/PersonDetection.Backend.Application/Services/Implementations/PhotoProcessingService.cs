@@ -1,12 +1,13 @@
 using Neural.Onnx.Models.Yolo5.Tasks.ImageToBoxPredictions;
 using Neural.Onnx.Tasks.ImageToSegmentation;
 using PersonDetection.Backend.Application.Common.Models;
+using PersonDetection.Backend.Infrastructure.Services;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace PersonDetection.Backend.Application.Services.Implementations;
 
-public class PhotoProcessingService(IOnnxNeuralService _onnxNeuralService) : IPhotoProcessingService
+public class PhotoProcessingService(IOnnxNeuralService _onnxNeuralService, IImageBucketService imageBucketService) : IPhotoProcessingService
 {
     public async Task<string> ProcessPhotoAsync(string base64Image)
     {

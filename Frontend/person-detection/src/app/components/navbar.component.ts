@@ -24,7 +24,7 @@ import { HlmIconComponent } from '../../../components/ui-icon-helm/src/lib/hlm-i
         <div *ngIf="auth.currentUser() !== null">
           <div class="hidden sm:flex sm:space-x-2">
             <a routerLink="/" hlmBtn variant="link">Home</a>
-            <a routerLink="/Gallery" hlmBtn variant="link">Gallery</a>
+            <a routerLink="/gallery" hlmBtn variant="link">Gallery</a>
           </div>
         </div>
       </nav>

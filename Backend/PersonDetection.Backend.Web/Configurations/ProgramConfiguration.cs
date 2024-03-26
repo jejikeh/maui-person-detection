@@ -19,6 +19,7 @@ public static class ProgramConfiguration
 {
     private const long _signalRMaximumReceiveMessageSize = 1024 * 1024 * 10;
     private const string _allowFrontendPolicyName = "_allowFrontend";
+    private const int _modelCountDelimiter = 2;
 
     public static WebApplicationBuilder Configure(this WebApplicationBuilder builder)
     {
@@ -90,14 +91,14 @@ public static class ProgramConfiguration
         var onnxOptions = builder.Services.GetConfigureOptions<OnnxOptions>(builder.Configuration);
         var painterOptions = builder.Services.GetConfigureOptions<ImageBoxPainterOptions>(builder.Configuration);
         
-        var modelCount = Environment.ProcessorCount / 2;
+        var modelCount = Environment.ProcessorCount / _modelCountDelimiter;
         
         var neuralHubBuilder = NeuralHubConfiguration.FromDefaults();
-            
+        
         neuralHubBuilder
             .AddYolo8Models(onnxOptions.Yolo8OnnxModelPath, modelCount)
             .AddImageSegmentationPainterModels(painterOptions, Environment.ProcessorCount);
-            
+        
         neuralHubBuilder
             .AddYolo5Models(onnxOptions.Yolo5OnnxModelPath, modelCount)
             .AddImageBoxPainterModels(painterOptions, Environment.ProcessorCount)
@@ -157,17 +158,6 @@ public static class ProgramConfiguration
             Console.WriteLine(ex);
         }
         
-        return app;
-    }
-
-    private static WebApplication MapEndpoints(this WebApplication app)
-    {
-        app.MapGet("user", IdentifyEndpoint.Handler);
-        app.MapPost("login", LoginEndpoint.HandlerAsync);
-        app.MapPost("logout", LogoutEndpoint.Handler).RequireAuthorization();
-        app.MapPost("register", RegisterEndpoint.HandlerAsync);
-        app.MapPost("photo", PhotoEndpoint.HandlerAsync);
-
         return app;
     }
     
