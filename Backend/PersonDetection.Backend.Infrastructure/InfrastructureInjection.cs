@@ -4,8 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using PersonDetection.Backend.Infrastructure.Common.Options;
-using PersonDetection.Backend.Infrastructure.Services;
-using PersonDetection.ImageProcessing.Services;
 
 namespace PersonDetection.Backend.Infrastructure;
 
@@ -17,7 +15,6 @@ public static class InfrastructureInjection
         var identityOptions = serviceCollection.GetConfigureOptions<IdentityModelOptions>(configuration);
 
         return serviceCollection
-            .AddSingleton<IFileSystemStreamProvider, CoreFileSystemStreamProvider>()
             .AddInfrastructureOptions(configuration)
             .UseIdentityServices(identityOptions)
             .AddDbContext(personDetectionContextOptions);

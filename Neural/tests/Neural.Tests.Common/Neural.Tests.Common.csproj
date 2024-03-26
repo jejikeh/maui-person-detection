@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Bogus" Version="35.4.0" />
+      <PackageReference Include="FluentAssertions" Version="7.0.0-alpha.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Neural.Core\Neural.Core.csproj" />
+      <ProjectReference Include="..\..\Neural.Defaults\Neural.Defaults.csproj" />
+      <ProjectReference Include="..\..\Neural.Onnx\Neural.Onnx.csproj" />
+    </ItemGroup>
+
+</Project>

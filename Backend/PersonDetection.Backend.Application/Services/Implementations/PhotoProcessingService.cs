@@ -11,13 +11,25 @@ public class PhotoProcessingService(
     IOnnxNeuralService _onnxNeuralService, 
     ModelTypeProvider _modelTypeProvider) : IPhotoProcessingService
 {
-    public async Task<string> ProcessPhotoAsync(string base64Image)
+    public async Task<string> ProcessTransparentPhotoAsync(string base64Image)
     {
         var base64OutputImage = await PlainImageProcessing(base64Image);
         
         return base64OutputImage;
     }
-    
+
+    public async Task<string> ProcessPhotoAsync(string base64Image)
+    {
+        var image = ConvertStringToImage(base64Image);
+
+        var yoloTask = new ImageToBoxPredictionsTask(image);
+        var predictions = await _onnxNeuralService.Yolo5PlainImageProcessing(yoloTask);
+
+        var base64OutputImage = await ConvertImageToStringAsync(predictions.TypedInput.InputImage);
+
+        return base64OutputImage;
+    }
+
     public void RunInBackground(string photo, Func<string, Task> handlePipelineCompleteAsync)
     {
         switch (_modelTypeProvider.ModelType)
@@ -50,7 +62,7 @@ public class PhotoProcessingService(
             case OnnxModelType.Yolo5:
             {
                 var yoloTask = new ImageToBoxPredictionsTask(image);
-                var predictions = await _onnxNeuralService.Yolo5PlainImageProcessing(yoloTask);
+                var predictions = await _onnxNeuralService.Yolo5PlainTransparentImageProcessing(yoloTask);
 
                 base64OutputImage = await ConvertImageToStringAsync(predictions.TypedInput.InputImage);
 

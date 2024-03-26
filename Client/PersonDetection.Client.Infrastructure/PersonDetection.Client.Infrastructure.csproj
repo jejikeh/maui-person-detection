@@ -18,8 +18,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\ImageProcessing\PersonDetection.ImageProcessing\PersonDetection.ImageProcessing.csproj"/>
-        
+      <ProjectReference Condition="'$(TargetFramework)' != 'net8.0-maccatalyst'" Include="..\..\Neural\Neural.Core\Neural.Core.csproj" />
+      <ProjectReference Condition="'$(TargetFramework)' != 'net8.0-maccatalyst'" Include="..\..\Neural\Neural.Onnx\Neural.Onnx.csproj" />
       <ProjectReference Include="..\PersonDetection.Client.Application\PersonDetection.Client.Application.csproj" />
     </ItemGroup>
 </Project>

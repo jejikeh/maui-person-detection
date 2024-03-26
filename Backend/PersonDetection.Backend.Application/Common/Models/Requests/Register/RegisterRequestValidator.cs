@@ -9,19 +9,21 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
     public RegisterRequestValidator(IOptions<IdentityModelOptions> options)
     {
         RuleFor(registerRequest => registerRequest.UserName)
-            .NotEmpty().WithMessage("Username is required")
-            .MaximumLength(50).WithMessage("Nickname must not exceed 50 characters");
-        
+            .NotEmpty()
+            .WithMessage(ValidationErrorMessages.Username.IsRequired)
+            .MaximumLength(options.Value.MaxUserNameLength)
+            .WithMessage(ValidationErrorMessages.Username.TooLong(options.Value.MaxUserNameLength));
+
         RuleFor(registerRequest => registerRequest.Email)
             .NotEmpty()
-            .WithMessage("Email is required")
+            .WithMessage(ValidationErrorMessages.Email.IsRequired)
             .EmailAddress()
-            .WithMessage("Invalid email address");
+            .WithMessage(ValidationErrorMessages.Email.Invalid);
 
         RuleFor(registerRequest => registerRequest.Password)
             .NotEmpty()
-            .WithMessage("Password is required")
+            .WithMessage(ValidationErrorMessages.Password.IsRequired)
             .MinimumLength(options.Value.Password.RequiredLength)
-            .WithMessage($"Password must be at least {options.Value.Password.RequiredLength} characters long");
+            .WithMessage(ValidationErrorMessages.Password.WrongLength(options.Value.Password.RequiredLength));
     }
 }
