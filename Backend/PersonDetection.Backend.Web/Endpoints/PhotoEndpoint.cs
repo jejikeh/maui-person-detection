@@ -9,9 +9,13 @@ public static class PhotoEndpoint
     public static async Task<IResult> HandlerAsync([FromBody] Photo photo,
         [FromServices] IPhotoProcessingService photoProcessingService)
     {
-        return Results.Ok(new Photo()
+        var processedContent = await photoProcessingService.ProcessPhotoAsync(photo.Content);
+
+        var processedPhoto = new Photo()
         {
-            Content = await photoProcessingService.ProcessPhotoAsync(photo.Content)
-        });
+            Content = processedContent
+        };
+
+        return Results.Ok(processedPhoto);
     }
 }

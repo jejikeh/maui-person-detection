@@ -18,15 +18,15 @@ public class OnnxNeuralService : IOnnxNeuralService
 
     public OnnxNeuralService(NeuralHub _neuralHub)
     {
-        _yolo5ImagePlainPipeline = _neuralHub.ExtractPipeline<Yolo5ImagePlainPipeline>() 
+        _yolo5ImagePlainPipeline = _neuralHub.ExtractPipeline<Yolo5ImagePlainPipeline>()
                                    ?? throw new NullReferenceException(nameof(_yolo5ImageStreamPipeline));
-        
-        _yolo5ImageStreamPipeline = _neuralHub.ExtractPipeline<Yolo5ImageStreamPipeline>() 
+
+        _yolo5ImageStreamPipeline = _neuralHub.ExtractPipeline<Yolo5ImageStreamPipeline>()
                                     ?? throw new NullReferenceException(nameof(_yolo5ImageStreamPipeline));
-        
+
         _yolo8ImagePlainPipeline = _neuralHub.ExtractPipeline<Yolo8ImagePlainPipeline>()
                                    ?? throw new NullReferenceException(nameof(_yolo8ImagePlainPipeline));
-        
+
         _yolo8ImageStreamPipeline = _neuralHub.ExtractPipeline<Yolo8ImageStreamPipeline>()
                                     ?? throw new NullReferenceException(nameof(_yolo5ImageStreamPipeline));
     }
@@ -42,13 +42,13 @@ public class OnnxNeuralService : IOnnxNeuralService
 
         return processedPhoto;
     }
-    
+
     public void Yolo8ImageStreamRunInBackground(string photo, Func<string, Task> handlePipelineCompleteAsync)
     {
         _yolo8ImageStreamPipeline.RunInBackground(photo, handlePipelineCompleteAsync);
     }
 
-    public async Task<BoxPredictionsToImageTask> Yolo5PlainImageProcessing(ImageToBoxPredictionsTask yoloTask)
+    public async Task<BoxPredictionsToImageTask> Yolo5PlainImageProcessingAsync(ImageToBoxPredictionsTask yoloTask)
     {
         var processedPhoto = await _yolo5ImagePlainPipeline.RunAsync(yoloTask);
 
@@ -71,7 +71,7 @@ public class OnnxNeuralService : IOnnxNeuralService
 
         return processedPhoto;
     }
-    
+
     public void Yolo5ImageStreamRunInBackground(string photo, Func<string, Task> handlePipelineCompleteAsync)
     {
         _yolo5ImageStreamPipeline.RunInBackground(photo, handlePipelineCompleteAsync);

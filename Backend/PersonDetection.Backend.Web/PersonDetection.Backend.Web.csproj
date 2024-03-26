@@ -30,6 +30,12 @@
       <AdditionalFiles Include="Weights\yolov5s.onnx">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </AdditionalFiles>
+      <AdditionalFiles Include="Weights\yolov8n-seg-quantize.onnx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </AdditionalFiles>
+      <AdditionalFiles Include="Weights\yolov8n-seg-unquantize.onnx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </AdditionalFiles>
     </ItemGroup>
 
 </Project>

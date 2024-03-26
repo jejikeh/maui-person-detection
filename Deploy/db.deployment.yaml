@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-deployment
+  labels:
+    app: db-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      name: db
+      labels:
+        app: db
+        app.kubernetes.io/name: db
+    spec:
+      containers:
+        - name: db
+          image: debezium/postgres:13-alpine
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DATABASE
+              value: person-detection
+            - name: POSTGRES_USER
+              value: person-detection
+            - name: POSTGRES_PASSWORD
+              value: person-detection
+            - name: PGUSER
+              value: person-detection
+          volumeMounts:
+            - mountPath: "/data/db"
+              name: db-volume
+      volumes:
+        - name: db-volume
+          persistentVolumeClaim:
+            claimName: db-volume-claim
+      restartPolicy: Always

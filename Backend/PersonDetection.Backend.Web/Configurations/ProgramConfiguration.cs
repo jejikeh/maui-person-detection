@@ -24,15 +24,15 @@ public static class ProgramConfiguration
     public static WebApplicationBuilder Configure(this WebApplicationBuilder builder)
     {
         builder.ConfigureJsonOptions();
-        
+
         builder.ConfigureCors();
-        
+
         builder.ConfigureErrorHandling();
 
         builder.ConfigureServices();
-        
+
         builder.Services.AddAuthorization();
-            
+
         return builder;
     }
 
@@ -52,9 +52,9 @@ public static class ProgramConfiguration
             .ConfigureSignalR()
             .ConfigureNeuralHub()
             .ConfigureApplicationLayers();
-        
+
         builder.Services.AddOptions();
-        
+
         builder.Services.AddSingleton<IVideoPredictionsChannelService, VideoPredictionsChannelService>();
 
         return builder;
@@ -63,7 +63,7 @@ public static class ProgramConfiguration
     private static WebApplicationBuilder ConfigureSignalR(this WebApplicationBuilder builder)
     {
         builder.Services.AddSignalR(options =>
-        { 
+        {
             options.EnableDetailedErrors = true;
             options.MaximumReceiveMessageSize = _signalRMaximumReceiveMessageSize;
         });
@@ -90,15 +90,15 @@ public static class ProgramConfiguration
     {
         var onnxOptions = builder.Services.GetConfigureOptions<OnnxOptions>(builder.Configuration);
         var painterOptions = builder.Services.GetConfigureOptions<ImageBoxPainterOptions>(builder.Configuration);
-        
+
         var modelCount = Environment.ProcessorCount / _modelCountDelimiter;
-        
+
         var neuralHubBuilder = NeuralHubConfiguration.FromDefaults();
-        
+
         neuralHubBuilder
             .AddYolo8Models(onnxOptions.Yolo8OnnxModelPath, modelCount)
             .AddImageSegmentationPainterModels(painterOptions, Environment.ProcessorCount);
-        
+
         neuralHubBuilder
             .AddYolo5Models(onnxOptions.Yolo5OnnxModelPath, modelCount)
             .AddImageBoxPainterModels(painterOptions, Environment.ProcessorCount)
@@ -118,13 +118,13 @@ public static class ProgramConfiguration
             options.AddPolicy(_allowFrontendPolicyName, policy =>
             {
                 policy
-                    .WithOrigins(frontendOptions.Host)
+                    .SetIsOriginAllowed(anyHost => true)
                     .AllowCredentials()
                     .AllowAnyMethod()
                     .AllowAnyHeader();
             });
         });
-        
+
         return builder;
     }
 
@@ -136,20 +136,20 @@ public static class ProgramConfiguration
         app.UseAuthorization();
         app.MapHub<VideoHub>("/video");
         app.MapEndpoints();
-        
+
         return app;
     }
-    
+
     public static async Task<WebApplication> RunAppAsync(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
         var serviceProvider = scope.ServiceProvider;
-        
+
         try
         {
             var identityDbContext = serviceProvider.GetRequiredService<PersonDetectionDbContext>();
             await identityDbContext.Database.MigrateAsync();
-            
+
             await app.RunAsync();
         }
         catch (Exception ex)
@@ -157,10 +157,10 @@ public static class ProgramConfiguration
             Console.WriteLine("Host terminated unexpectedly");
             Console.WriteLine(ex);
         }
-        
+
         return app;
     }
-    
+
     private static T GetConfigureOptions<T>(this IServiceCollection serviceCollection, IConfiguration configuration) where T : class, new()
     {
         var options = new T();
@@ -169,4 +169,4 @@ public static class ProgramConfiguration
 
         return options;
     }
-} 
+}
