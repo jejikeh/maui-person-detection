@@ -8,14 +8,11 @@ public static class NeuralHubConfiguration
 {
     public static NeuralHubBuilder FromDefaults(
         IFileSystemProvider? fileSystemProvider = null, 
-        IModelProvider? modelProvider = null,
-        IClusterProvider? clusterProvider = null)
+        IModelProvider? modelProvider = null)
     {
         fileSystemProvider ??= new OpenReadFileSystemProvider();
         modelProvider ??= new WorkerModelProvider();
         
-        return new NeuralHubBuilder(
-            fileSystemProvider, 
-            modelProvider);
+        return new NeuralHubBuilder(fileSystemProvider, modelProvider);
     }
 }

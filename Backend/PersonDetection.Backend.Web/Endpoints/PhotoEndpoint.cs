@@ -6,8 +6,12 @@ namespace PersonDetection.Backend.Web.Endpoints;
 
 public static class PhotoEndpoint
 {
-    public static async Task<IResult> HandlerAsync([FromBody] Photo photo, [FromServices] IPhotoProcessingService photoProcessingService)
+    public static async Task<IResult> HandlerAsync([FromBody] Photo photo,
+        [FromServices] IPhotoProcessingService photoProcessingService)
     {
-        return Results.Ok(await photoProcessingService.ProcessPhotoAsync(photo.Content));
+        return Results.Ok(new Photo()
+        {
+            Content = await photoProcessingService.ProcessPhotoAsync(photo.Content)
+        });
     }
 }

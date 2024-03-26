@@ -43,6 +43,7 @@ public static class MauiAppConfiguration
     private static MauiAppBuilder AddConfiguration(this MauiAppBuilder builder)
     {
         var platform = DeviceInfo.Current.Platform.ToString();
+        
         var config = new ConfigurationBuilder()
             .AddJsonStream(GetManifestResourceStream("PersonDetection.Client.appsettings.json"))
             .AddJsonStream(GetManifestResourceStream($"PersonDetection.Client.appsettings.{platform}.json"))
@@ -60,7 +61,7 @@ public static class MauiAppConfiguration
         
         if (stream is null)
         {
-            throw new Exception($"{name} not found");
+            throw new FileNotFoundException($"{name} not found");
         }
         
         return stream;
