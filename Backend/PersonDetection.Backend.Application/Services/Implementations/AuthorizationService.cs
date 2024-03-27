@@ -1,25 +1,25 @@
+using System.Security.Claims;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using PersonDetection.Backend.Application.Common.Exceptions;
+using PersonDetection.Backend.Application.Common.Models.Dtos;
 using PersonDetection.Backend.Application.Common.Models.Requests.Login;
 using PersonDetection.Backend.Application.Common.Models.Requests.Register;
+using PersonDetection.Backend.Infrastructure.Models;
 
 namespace PersonDetection.Backend.Application.Services.Implementations;
 
 public class AuthorizationService(
-    UserManager<IdentityUser> _userManager,
-    SignInManager<IdentityUser> _signInManager) : IAuthorizationService
+    UserManager<User> _userManager,
+    SignInManager<User> _signInManager) : IAuthorizationService
 {
     public async Task<IResult> RegisterAsync(RegisterRequest registerRequest, IValidator<RegisterRequest> validator)
     {
         await ValidateModelAsync(registerRequest, validator);
 
-        var user = new IdentityUser(registerRequest.UserName)
-        {
-            Email = registerRequest.Email
-        };
+        var user = new User(registerRequest.UserName, registerRequest.Email);
         
         var createUserResult = await _userManager.CreateAsync(user, registerRequest.Password);
 
@@ -30,7 +30,7 @@ public class AuthorizationService(
         
         await _signInManager.SignInAsync(user, true);
         
-        return Results.Ok();
+        return Results.Ok(UserDto.FromIdentityUser(user));
     }
 
     public async Task<IResult> LoginAsync(LoginRequest loginRequest, IValidator<LoginRequest> validator)
@@ -43,7 +43,40 @@ public class AuthorizationService(
             true, 
             false);
         
-        return result.Succeeded ? Results.Ok() : Results.Unauthorized();
+        if (!result.Succeeded)
+        {
+            return Results.Unauthorized();
+        }
+        
+        var user = await _userManager.FindByNameAsync(loginRequest.UserName);
+        
+        return Results.Ok(UserDto.FromIdentityUser(user!));
+    }
+
+    public async Task<IResult> IdentifyAsync(ClaimsPrincipal claimsPrincipal)
+    {
+        var userName = claimsPrincipal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Name);
+        
+        if (userName is null)
+        {
+            throw new InvalidCredentialsException();
+        }
+        
+        var email = claimsPrincipal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email);
+        
+        if (email is null)
+        {
+            throw new InvalidCredentialsException();
+        }
+        
+        var user = await _userManager.FindByNameAsync(userName.Value);
+        
+        if (user is null)
+        {
+            throw new InvalidCredentialsException();
+        }
+        
+        return Results.Ok(new UserDto(userName.Value, email.Value));
     }
 
     public async Task<IResult> LogoutAsync()

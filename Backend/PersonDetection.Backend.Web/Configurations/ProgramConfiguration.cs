@@ -19,6 +19,7 @@ public static class ProgramConfiguration
 {
     private const long _signalRMaximumReceiveMessageSize = 1024 * 1024 * 10;
     private const string _allowFrontendPolicyName = "_allowFrontend";
+    private const int _modelCountDelimiter = 2;
 
     public static WebApplicationBuilder Configure(this WebApplicationBuilder builder)
     {
@@ -90,14 +91,14 @@ public static class ProgramConfiguration
         var onnxOptions = builder.Services.GetConfigureOptions<OnnxOptions>(builder.Configuration);
         var painterOptions = builder.Services.GetConfigureOptions<ImageBoxPainterOptions>(builder.Configuration);
         
-        var modelCount = Environment.ProcessorCount / 2;
+        var modelCount = Environment.ProcessorCount / _modelCountDelimiter;
         
         var neuralHubBuilder = NeuralHubConfiguration.FromDefaults();
-            
+        
         neuralHubBuilder
             .AddYolo8Models(onnxOptions.Yolo8OnnxModelPath, modelCount)
             .AddImageSegmentationPainterModels(painterOptions, Environment.ProcessorCount);
-            
+        
         neuralHubBuilder
             .AddYolo5Models(onnxOptions.Yolo5OnnxModelPath, modelCount)
             .AddImageBoxPainterModels(painterOptions, Environment.ProcessorCount)
@@ -159,18 +160,6 @@ public static class ProgramConfiguration
         
         return app;
     }
-
-    private static WebApplication MapEndpoints(this WebApplication app)
-    {
-        app.MapGet("identify", IdentifyEndpoint.Handler);
-        app.MapPost("login", LoginEndpoint.HandlerAsync);
-        app.MapPost("logout", LogoutEndpoint.Handler).RequireAuthorization();
-        app.MapPost("register", RegisterEndpoint.HandlerAsync);
-        app.MapPost("photo", PhotoEndpoint.HandlerAsync);
-        app.MapPost("model/switch", SwitchModelTypeEndpoint.HandlerAsync);
-
-        return app;
-    }
     
     private static T GetConfigureOptions<T>(this IServiceCollection serviceCollection, IConfiguration configuration) where T : class, new()
     {
@@ -180,4 +169,4 @@ public static class ProgramConfiguration
 
         return options;
     }
-}
+} 

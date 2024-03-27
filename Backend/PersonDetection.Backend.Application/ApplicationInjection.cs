@@ -12,10 +12,10 @@ public static class ApplicationInjection
     public static IServiceCollection AddApplication(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
         return serviceCollection
-            .AddSingleton<ModelTypeProvider>()
             .AddSingleton<IOnnxNeuralService, OnnxNeuralService>()
             .AddScoped<IAuthorizationService, AuthorizationService>()
             .AddSingleton<IPhotoProcessingService, PhotoProcessingService>()
+            .AddScoped<IGalleryService, GalleryService>()
             .AddValidations();
     }
 

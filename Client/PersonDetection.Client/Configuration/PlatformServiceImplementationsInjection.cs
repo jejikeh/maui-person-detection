@@ -48,6 +48,7 @@ public static class PlatformServiceImplementationsInjection
     }
     
     #if ANDROID
+    
     private static MauiAppBuilder ConfigureNeuralHub(this MauiAppBuilder builder)
     {
         var onnxOptions = builder.Services.GetConfigureOptions<OnnxOptions>(builder.Configuration);

@@ -19,6 +19,8 @@
     <ItemGroup>
       <ProjectReference Include="..\PersonDetection.Backend.Application\PersonDetection.Backend.Application.csproj" />
       <ProjectReference Include="..\PersonDetection.Backend.Infrastructure\PersonDetection.Backend.Infrastructure.csproj" />
+      <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.16.3" />
+      <PackageReference Include="Microsoft.ML.OnnxRuntime.Managed" Version="1.16.3" />
     </ItemGroup>
 
     <ItemGroup>

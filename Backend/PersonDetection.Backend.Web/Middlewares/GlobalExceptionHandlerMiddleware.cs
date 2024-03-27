@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using PersonDetection.Backend.Application.Common.Exceptions;
 
@@ -21,6 +22,24 @@ public class GlobalExceptionHandlerMiddleware(ILogger<GlobalExceptionHandlerMidd
             };
 
             context.Response.StatusCode = statusCodeException.StatusCode;
+            await context.Response.WriteAsJsonAsync(problemDetails);
+        }
+        catch (ValidationException validationException)
+        {
+            var errors = validationException.Errors
+                .GroupBy(x => x.PropertyName)
+                .ToDictionary(x => x.Key, x => x.Select(y => y.ErrorMessage).ToArray());
+            
+            var problemDetails = new ValidationProblemDetails
+            {
+                Title = "An error occurred",
+                Status = StatusCodes.Status400BadRequest,
+                Detail = validationException.Message,
+                Errors = errors,
+                Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1"
+            };
+            
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
             await context.Response.WriteAsJsonAsync(problemDetails);
         }
         catch (Exception exception)

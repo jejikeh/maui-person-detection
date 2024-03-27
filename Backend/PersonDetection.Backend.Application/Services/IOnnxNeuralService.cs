@@ -8,10 +8,6 @@ namespace PersonDetection.Backend.Application.Services;
 public interface IOnnxNeuralService
 {
     public Task<BoxPredictionsToImageTask> Yolo5PlainImageProcessing(ImageToBoxPredictionsTask yoloTask);
-
-    public Task<BoxPredictionsToImageTask> Yolo5PlainTransparentImageProcessing(ImageToBoxPredictionsTask yoloTask);
     public void Yolo5ImageStreamRunInBackground(string photo, Func<string, Task> handlePipelineCompleteAsync);
-
-    public Task<SegmentationPredictionsToImageTask> Yolo8PlainImageProcessing(ImageToSegmentationTask yoloTask);
     public void Yolo8ImageStreamRunInBackground(string photo, Func<string, Task> handlePipelineCompleteAsync);
 }

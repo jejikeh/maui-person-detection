@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\ImageProcessing\PersonDetection.ImageProcessing\PersonDetection.ImageProcessing.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.1" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.1" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.1" />
@@ -20,6 +16,8 @@
       </PackageReference>
       <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.1" />
       <PackageReference Include="Minio" Version="6.0.1" />
+      <PackageReference Include="Minio.AspNetCore" Version="6.0.0" />
+      <PackageReference Include="Minio.AspNetCore.HealthChecks" Version="6.0.0" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
     </ItemGroup>
 
