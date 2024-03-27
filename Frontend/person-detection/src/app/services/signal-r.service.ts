@@ -1,12 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { ApiRoutesService } from './api-routes.service';
 import * as signalR from '@microsoft/signalr';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SignalRService {
+  subject = new Subject<string>();
   hubConnection: signalR.HubConnection;
   api = inject(ApiRoutesService);
 

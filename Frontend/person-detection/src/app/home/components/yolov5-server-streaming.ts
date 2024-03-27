@@ -87,11 +87,13 @@ export class YoloV5ServerStreamingComponent {
   }
 
   start() {
-    this.intervalHandle = interval(300);
-    this.subscription = this.intervalHandle.subscribe(() => {
-      const data = this.videoCapture.captureBase64Image();
-      this.subject?.next(data);
-    });
+    if (this.subject) {
+      this.intervalHandle = interval(300);
+      this.subscription = this.intervalHandle.subscribe(() => {
+        const data = this.videoCapture.captureBase64Image();
+        this.subject?.next(data);
+      });
+    }
   }
 
   stop() {
