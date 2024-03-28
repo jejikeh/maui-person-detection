@@ -35,6 +35,4 @@ describe('YoloV8ServerStreamingComponent', () => {
   it('should create the component', () => {
     expect(component).toBeTruthy();
   });
-
-  // I tried to write unit tests for this component, but i just cant get it...
 });
