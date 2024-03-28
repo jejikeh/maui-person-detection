@@ -7,7 +7,7 @@ declare var document: any;
   providedIn: 'root',
 })
 export class ScriptService {
-  private scripts: any = {};
+  scripts: any = {};
 
   constructor() {
     ScriptStore.forEach((script: any) => {
@@ -26,6 +26,11 @@ export class ScriptService {
 
   loadScript(name: string) {
     return new Promise((resolve, reject) => {
+      if (!this.scripts[name]) {
+        reject({ script: name, loaded: false, status: 'Script not found' });
+        return;
+      }
+
       if (this.scripts[name].loaded) {
         resolve({ script: name, loaded: true, status: 'Already Loaded' });
       } else {
@@ -51,7 +56,11 @@ export class ScriptService {
           };
         }
         script.onerror = (error: any) =>
-          resolve({ script: name, loaded: false, status: 'Loaded' });
+          resolve({
+            script: name,
+            loaded: false,
+            status: 'Error loading script',
+          });
         document.getElementsByTagName('head')[0].appendChild(script);
       }
     });
