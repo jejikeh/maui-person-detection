@@ -2,7 +2,6 @@ import { TestBed, inject, fakeAsync, tick } from '@angular/core/testing';
 import { SignalRService } from './signal-r.service';
 import { ApiRoutesService } from './api-routes.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { Subject } from 'rxjs';
 
 describe('SignalRService', () => {
   let service: SignalRService;

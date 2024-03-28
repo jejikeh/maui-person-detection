@@ -7,7 +7,7 @@ import {
 } from '@angular/core/testing';
 import { GalleryComponent } from './gallery.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { NO_ERRORS_SCHEMA } from '@angular/core'; // Import NO_ERRORS_SCHEMA
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { AuthService } from '../auth/services/auth.service';
 import { of } from 'rxjs';
 import { ApiRoutesService } from '../services/api-routes.service';
