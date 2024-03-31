@@ -7,40 +7,22 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    name: All Steps (Build, Test & Deploy)
+    name: Build and Test
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [21.x]
-
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Cache node modules
-        uses: actions/cache@v1
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Use Node 21.x
+        uses: actions/setup-node@v1
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v1.4.2
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Install Dependencies
+          node-version: "21.x"
+      - name: Install dependencies
         run: npm ci --prefix Frontend/person-detection
+      - name: Build
+        run: npm run build:ci --prefix Frontend/person-detection
+      - name: Test
+        run: npm run test:ci --prefix Frontend/person-detection
 
-      - name: Run Unit Tests
-        run: npm run ci:test --prefix Frontend/person-detection
-
-      - name: Clean Distribution Directory
-        run: npm run ci:clean --prefix Frontend/person-detection
-
-      - name: Build Application
-        run: npm run ci:build --prefix Frontend/person-detection
   docker:
     runs-on: ubuntu-latest
     needs: build
