@@ -50,7 +50,7 @@ jobs:
         run: dotnet test ./Neural/tests/Neural.Defaults.Tests/Neural.Defaults.Tests.csproj --verbosity detailed
 
       - name: Publish
-        run: dotnet publish ./Backend/PersonDetection.Backend.Web/PersonDetection.Backend.Web.csproj --no-build
+        run: dotnet publish ./Backend/PersonDetection.Backend.Web/PersonDetection.Backend.Web.csproj
   docker:
     runs-on: ubuntu-latest
     needs: build
