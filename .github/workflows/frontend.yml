@@ -19,9 +19,9 @@ jobs:
       - name: Install dependencies
         run: npm ci --prefix Frontend/person-detection --force
       - name: Build
-        run: npm run build:ci --prefix Frontend/person-detection
+        run: npm run build --prefix Frontend/person-detection
       - name: Test
-        run: npm run test:ci --prefix Frontend/person-detection
+        run: npm run test --prefix Frontend/person-detection
 
   docker:
     runs-on: ubuntu-latest
