@@ -14,25 +14,22 @@ jobs:
         node-version: [20]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     steps:
-      # {2}
       - name: Checkout the source code
         uses: actions/checkout@v3
 
-      # {3}
-      - name: Setup Node.js $
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: $
           cache: "npm"
           cache-dependency-path: package-lock.json
 
-      # {4}
       - name: Install dependencies
         run: npm ci --prefix Frontend/person-detection
-      # {5}
+
       - name: Run tests
         run: npm run test:ci --prefix Frontend/person-detection
-      # {6}
+
       - name: Build
         run: npm run build --prefix Frontend/person-detection
   docker:
