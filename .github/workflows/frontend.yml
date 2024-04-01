@@ -1,9 +1,9 @@
 name: Angular CI
 on:
   push:
-    branches: ["feature/cicd"]
+    branches: ["feature/cicd", "main"]
   pull_request:
-    branches: ["feature/cicd"]
+    branches: ["feature/cicd", "main"]
   workflow_dispatch:
 jobs:
   build:

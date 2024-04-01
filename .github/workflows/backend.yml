@@ -5,9 +5,9 @@ name: Backend
 
 on:
   push:
-    branches: ["feature/cicd"]
+    branches: ["feature/cicd", "main"]
   pull_request:
-    branches: ["feature/cicd"]
+    branches: ["feature/cicd", "main"]
 
 jobs:
   build:
