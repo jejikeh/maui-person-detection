@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  labels:
+    app: backend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      name: backend
+      labels:
+        app: backend
+        app.kubernetes.io/name: backend
+    spec:
+      containers:
+        - name: backend-deployment
+          image: jejikeh/person-detection
+          ports:
+            - containerPort: 80
+              name: http
+            - containerPort: 443
+              name: https
+          env:
+            - name: ASPNETCORE_URLS
+              value: http://+80;
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /health-check
+              port: 80
+          readinessProbe:
+            httpGet:
+              path: /health-check
+              port: 80
+          volumeMounts:
+            - mountPath: /app/appsettings.Production.json
+              subPath: appsettings.Production.json
+              name: appsettings
+      restartPolicy: Always
+      volumes:
+        - name: appsettings
+          secret:
+            secretName: appsettings

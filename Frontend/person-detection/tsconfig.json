@@ -23,6 +23,12 @@
       "dom"
     ],
     "paths": {
+      "url": [
+        "./node_modules/url"
+      ],
+      "https": [
+        "./node_modules/https"
+      ],
       "@spartan-ng/ui-accordion-helm": [
         "./components/ui-accordion-helm/src/index.ts"
       ],
