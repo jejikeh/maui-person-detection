@@ -34,19 +34,6 @@ public class Yolo8ImageInput(Image<Rgba32> _image) : IModelInput
 
     private Tensor<float> ToTensor()
     {
-        // var tensor = Yolo8TensorSpecification.Tensor();
-        //
-        // Parallel.For(0, Yolo8Specification.InputSize.Height, y =>
-        // {
-        //     Parallel.For(0, Yolo8Specification.InputSize.Width, x =>
-        //     {
-        //         // We can use Tensor structure from yolo5 model
-        //         tensor.FillTensorFromRgbImage(Image, x, y);
-        //     });
-        // });
-        //
-        // return tensor;
-
         var tensor = Yolo8TensorSpecification.Tensor();
         
         ProcessToTensor(Image, tensor);

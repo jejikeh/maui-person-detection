@@ -14,9 +14,9 @@ namespace Neural.Onnx.Services.Implementations;
 public class ImageBoxPainterService(ImageBoxPainterOptions _options) : IImageBoxPainterService
 {
     private static Font? _font;
-    
+
     private static readonly SolidBrush _redBrush = new SolidBrush(Color.Red);
-    
+
     private readonly SolidPen _redPenForBoxes = new SolidPen(_redBrush, _options.StrokeBoxWidth);
     private readonly SolidPen _redPenForText = new SolidPen(_redBrush, _options.StrokeTextWidth);
 
@@ -53,13 +53,13 @@ public class ImageBoxPainterService(ImageBoxPainterOptions _options) : IImageBox
     private void DrawText(IImageProcessingContext imageProcessingContext, Yolo5Prediction prediction)
     {
         var score = Math.Round(prediction.Score, _options.ScoreDigits);
-        
-        var textX = prediction.Rectangle.Left - _options.LeftRectangleOffset; 
+
+        var textX = prediction.Rectangle.Left - _options.LeftRectangleOffset;
         var textY = prediction.Rectangle.Top - _options.TopRectangleOffset;
-        
-        imageProcessingContext.DrawText($"{prediction.Class.DisplayName()} ({score})", 
-            _font!, 
-            _redPenForText, 
+
+        imageProcessingContext.DrawText($"{prediction.Class.DisplayName()} ({score})",
+            _font!,
+            _redPenForText,
             new PointF(textX, textY));
     }
 
@@ -75,14 +75,13 @@ public class ImageBoxPainterService(ImageBoxPainterOptions _options) : IImageBox
 
     private void InitializeFont()
     {
-        // I cant just iterate over SystemFonts.Families and pick random one.
-        // This collection may contain a system font that doesn't have a latin variant.
-        if (!SystemFonts.TryGet("Roboto", out var fontFamily))
+        if (!SystemFonts.TryGet("Arial", out var fontFamily))
         {
-            // Arial have almost all operating systems
-            fontFamily = SystemFonts.Get("Arial");
+            var fontCollectoin = new FontCollection();
+
+            fontFamily = fontCollectoin.Add("./Assets/Roboto-Regular.ttf");
         }
-        
+
         _font ??= fontFamily.CreateFont(_options.FontSize);
     }
 }
